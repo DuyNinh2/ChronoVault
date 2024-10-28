@@ -1,0 +1,129 @@
+/* Reset các kiểu cơ bản */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.header,
+.footer {
+    background-color: #ffffff;
+    /* Màu nền chung */
+    color: #000000;
+    /* Màu chữ chung */
+}
+
+.header {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    /* Thêm hiệu ứng chuyển động cho toàn bộ header */
+
+    &.visible {
+        transform: translateY(0);
+        /* Hiển thị header */
+    }
+
+    &.hidden {
+        transform: translateY(-100%);
+        /* Ẩn header (điều chỉnh theo chiều cao của header) */
+    }
+
+    .header-top {
+        display: flex;
+        height: 50px;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+    }
+
+    .brand {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .account-icon .account {
+        height: 28px;
+    }
+
+    .admin-banner {
+        background-color: #000000;
+        /* Nền đen */
+        color: #ffffff;
+        /* Chữ trắng */
+        width: 100%;
+        text-align: center;
+        padding: 20px 0;
+        font-size: 22px;
+        font-weight: bold;
+    }
+}
+
+/* Footer */
+.footer {
+    background-color: #f3ebd2;
+    padding: 20px;
+    margin-top: auto;
+
+    .footer-content {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+
+        .footer-left {
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 20px;
+
+            h3 {
+                font-size: 1.5em;
+            }
+
+            p {
+                font-size: 0.9em;
+                color: #000000;
+            }
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+
+            .column {
+                width: 150px;
+                margin-bottom: 20px;
+
+                h4 {
+                    font-size: 1em;
+                    margin-bottom: 10px;
+                    color: #000000;
+                }
+
+                ul {
+                    list-style: none;
+                    padding: 0;
+
+                    li {
+                        font-size: 0.9em;
+                        color: #000000;
+
+                        &:hover {
+                            text-decoration: underline;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .footer-bottom {
+        text-align: left;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #000000;
+    }
+}
