@@ -1,0 +1,257 @@
+.App {
+    display: flex;
+    flex-direction: column; // Đặt các phần tử theo chiều dọc
+    align-items: center; // Căn giữa các phần tử theo chiều ngang
+    background-color: #f8f9fa; // Màu nền trang chính
+    min-height: 100vh; // Chiều cao tối thiểu 100% viewport
+    // padding: 20px; // Padding tổng thể
+}
+
+.h-wrapper {
+    width: 100%; // Đảm bảo header chiếm toàn bộ chiều rộng
+    // padding: 20px;
+}
+
+.h-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    max-width: 1400px; // Chiều rộng tối đa
+    margin: 0 auto; // Căn giữa
+    padding: 0 20px; // Padding hai bên
+}
+
+.banner-container {
+    position: relative;
+    width: calc(100% - 40px);
+    max-width: 1500px;
+    margin: 20px auto;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.banner-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out; // Hiệu ứng mờ dần 0.5s
+}
+
+.fade {
+    opacity: 0; // Opacity của hình ảnh khi mờ đi
+}
+
+.banner-text {
+    position: absolute; // Đặt văn bản lên trên hình ảnh
+    color: white; // Màu chữ
+    padding: 10px; // Padding cho văn bản
+    font-size: 3.2vw;
+    max-width: 30%;
+    left: 30px;
+    font-family: 'Poppins', sans-serif;
+
+    // Định dạng cho tiêu đề
+    &.collection-title {
+        font-weight: bold; // Đậm chữ
+    }
+
+    // Vị trí cho Banner 1
+    &.top-left {
+        top: 90px; // Cách từ trên xuống
+    }
+
+    // Vị trí cho Banner 2
+    &.bottom-left {
+        bottom: 20px; // Cách từ dưới lên
+    }
+
+    // Định dạng cho liên kết
+    .shop-link {
+        color: white; // Màu chữ liên kết
+        // text-decoration: none;
+        font-size: 1vw; // Kích thước chữ
+        font-weight: normal; // Chữ bình thường
+        transition: color 0.3s;
+
+        &:hover {
+            color: #ffcc00; // Màu khi hover (màu vàng tối)
+        }
+    }
+}
+
+
+.top-categories {
+    width: calc(100% - 40px); 
+    max-width: 1400px;
+    margin: 40px auto;
+    text-align: center;
+  
+    h2 {
+      font-size: 32px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: normal;
+      margin-bottom: 30px;
+    }
+  
+    .categories-list {
+      display: flex;
+      justify-content: space-between; // Đẩy các mục ra xa đều
+      flex-wrap: wrap;
+      gap: 15px; // Giảm khoảng cách giữa các mục
+    }
+  
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 220px; // Tăng kích thước tối đa của mục
+  
+      .category-image {
+        width: 100%;
+        height: auto;
+        max-width: 200px; // Tăng kích thước hình ảnh
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+  
+        &:hover {
+          transform: scale(1.1); // Hiệu ứng phóng to nhẹ
+        }
+      }
+  
+      .category-name {
+        font-size: 20px; // Tăng kích thước chữ
+        font-family: 'Poppins', sans-serif;
+        margin-top: 12px;
+        color: #333;
+        font-weight: normal;
+      }
+    }
+  }
+
+
+  .intro-section {
+    display: flex;
+    align-items: flex-start;
+    max-width: 1500px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    gap: 30px;
+  
+    .intro-image {
+      width: 50%;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  
+    .intro-content {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+  
+      h2 {
+        font-size: 36px;
+        font-weight: bold;
+        color: #333;
+        font-family: 'Poppins', sans-serif;
+        margin-bottom: 10px;
+      }
+  
+      p {
+        font-size: 18px;
+        color: #555;
+        line-height: 1.6;
+      }
+  
+      .info-block {
+        margin-top: 20px;
+  
+        h3 {
+          font-size: 20px;
+          color: #333;
+          font-weight: bold;
+          margin-bottom: 5px;
+        }
+  
+        p {
+          font-size: 16px;
+          color: #555;
+          margin: 0;
+          line-height: 1.4;
+        }
+      }
+    }
+  }
+
+
+  .ad-banner {
+    width: calc(100% - 40px); // Giới hạn chiều rộng của banner
+    max-width: 1500px; // Chiều rộng tối đa
+    margin: 40px auto; // Căn giữa và tạo khoảng cách trên-dưới
+    border-radius: 15px; // Bo góc
+    overflow: hidden; // Ẩn các phần thừa nếu có
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Bóng đổ cho chiều sâu
+  
+    .ad-image {
+      width: 100%; // Đảm bảo hình ảnh chiếm toàn bộ chiều rộng banner
+      height: auto; // Giữ tỷ lệ khung hình của hình ảnh
+      display: block; // Tránh khoảng trống dưới hình ảnh
+    }
+  }
+
+
+@media (max-width: 768px) {
+    .App {
+        padding: 10px; // Giảm padding trên các thiết bị nhỏ
+    }
+    
+    .h-container {
+        padding: 0 10px; // Giảm padding header trên các thiết bị nhỏ
+    }
+}
+
+@media (max-width: 768px) {
+    .categories-list {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .intro-section {
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+  
+      .intro-image, .intro-content {
+        width: 100%;
+      }
+  
+      .intro-content {
+        h2 {
+          font-size: 28px;
+        }
+  
+        p, .info-block h3, .info-block p {
+          font-size: 16px;
+        }
+      }
+    }
+}
+
+@media (max-width: 768px) {
+    .ad-banner {
+      width: 100%; // Giãn banner cho thiết bị nhỏ hơn
+    }
+}
+
+

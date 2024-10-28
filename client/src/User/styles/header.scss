@@ -1,0 +1,75 @@
+.h-wrapper {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.h-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; // Giữ khoảng cách giữa tiêu đề, menu và các nút bên phải
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.h-container h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    font-family: 'Poppins', sans-serif; // Kiểu chữ cho tiêu đề
+}
+
+.h-menu {
+    display: flex;
+    align-items: center;
+    justify-content: center; // Căn giữa các đường link
+    gap: 15px;
+    flex-grow: 1; // Cho phép .h-menu chiếm không gian còn lại
+}
+
+.h-menu a {
+    color: #333; // Màu vàng tối
+    text-decoration: none;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif; // Kiểu chữ cho các đường link
+    transition: color 0.3s ease;
+}
+
+.h-menu a:hover {
+    color: #e6b800; 
+}
+
+.h-actions {
+    display: flex; // Sử dụng flex để căn lề các nút bên phải
+    align-items: center;
+    gap: 15px; // Khoảng cách giữa nút login và cart icon
+}
+
+.login-button {
+    background-color: #ffcc00; // Màu vàng tươi
+    color: #333; // Màu chữ tối
+    border: none; // Không có đường viền
+    border-radius: 5px; // Bo góc
+    padding: 10px 20px; // Padding
+    cursor: pointer; // Con trỏ tay
+    font-size: 16px; // Kích thước chữ
+    font-family: 'Poppins', sans-serif; // Kiểu chữ
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Bóng đổ
+    transition: background-color 0.3s ease, transform 0.3s ease; // Hiệu ứng chuyển động
+}
+
+.login-button a {
+    color: #333; // Màu chữ
+    text-decoration: none; // Không có gạch chân
+}
+
+.login-button:hover {
+    background-color: #e6b800; // Màu vàng tối hơn khi hover
+    transform: translateY(-2px); // Hiệu ứng nâng lên khi hover
+}
+
+.login-button:active {
+    transform: translateY(0); // Khi nhấn xuống
+}
+
