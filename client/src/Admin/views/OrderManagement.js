@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../../styles/admin/OrderManagement.scss'; // Import SCSS cho giao diện
+import '../../Admin/styles/OrderManagement.scss'; // Import SCSS cho giao diện
 
 class OrderManagement extends Component {
     state = {

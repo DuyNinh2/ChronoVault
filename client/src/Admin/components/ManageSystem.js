@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../../styles/admin/ManageSystem.scss';
+import '../../Admin/styles/ManageSystem.scss';
 
 const ManageSystem = ({ setActiveComponent }) => {
     const [selectedComponent, setSelectedComponent] = useState('product');

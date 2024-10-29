@@ -1,14 +1,14 @@
 // src/layouts/AdminLayout.jsx
 import React, { useState } from 'react';
-import Header from '../../components/admin/Header';
-import Footer from '../../components/admin/Footer';
-import ManageSystem from '../../components/admin/ManageSystem'; // Chắc chắn là import đúng
-import ProductManagement from '../../views/admin/ProductManagement';
-import OrderManagement from '../../views/admin/OrderManagement'; // Nhập các component khác nếu cần
-import PromotionManagement from '../../views/admin/PromotionManagement';
-import UserManagement from '../../views/admin/UserManagement';
-import StatisticsManagement from '../../views/admin/StatisticsManagement';
-import '../../styles/admin/AdminLayout.scss';
+import Header from '../../Admin/components/Header';
+import Footer from '../../Admin/components/Footer';
+import ManageSystem from '../../Admin/components/ManageSystem';
+import ProductManagement from '../../Admin/views/ProductManagement';
+import OrderManagement from '../../Admin/views/OrderManagement';
+import PromotionManagement from '../../Admin/views/PromotionManagement';
+import UserManagement from '../../Admin/views/UserManagement';
+import StatisticsManagement from '../../Admin/views/StatisticsManagement';
+import '../../Admin/styles/AdminLayout.scss';
 
 const AdminLayout = () => {
     const [activeComponent, setActiveComponent] = useState(null);

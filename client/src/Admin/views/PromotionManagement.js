@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../../styles/admin/PromotionManagement.scss';
+import '../../Admin/styles/PromotionManagement.scss';
 
 class PromotionManagement extends Component {
     state = {
