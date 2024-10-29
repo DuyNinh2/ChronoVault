@@ -7,37 +7,67 @@ class ProductManagement extends Component {
         products: [
             { id: 1, name: 'Watch A', price: 100, amount: 10, image: 'path/to/imageA.jpg' },
             { id: 2, name: 'Watch B', price: 200, amount: 5, image: 'path/to/imageB.jpg' },
-            // Thêm sản phẩm khác nếu cần
         ],
+        showAddForm: false,
+        newProduct: {
+            id: '',
+            name: '',
+            price: '',
+            amount: '',
+            image: null,
+        },
+        showConfirmModal: false,
+        showNotification: false,
     };
 
     handleAddProduct = () => {
-        // Logic để thêm sản phẩm mới
-        console.log("Add product functionality");
+        this.setState({ showAddForm: true });
     };
 
-    handleUpdateProduct = (id) => {
-        // Logic để cập nhật sản phẩm
-        console.log(`Update product with ID: ${id}`);
+    handleInputChange = (e) => {
+        const { name, value, files } = e.target;
+        this.setState(prevState => ({
+            newProduct: {
+                ...prevState.newProduct,
+                [name]: files ? files[0] : value,
+            }
+        }));
     };
 
-    handleDeleteProduct = (id) => {
-        // Logic để xóa sản phẩm
-        console.log(`Delete product with ID: ${id}`);
+    handleAddConfirm = () => {
+        this.setState(prevState => ({
+            products: [
+                ...prevState.products,
+                {
+                    ...prevState.newProduct,
+                    id: prevState.products.length + 1
+                }
+            ], // Thêm ID tự động
+            showAddForm: false,
+            newProduct: { id: '', name: '', price: '', amount: '', image: null },
+            showNotification: true,
+        }));
     };
 
-    handleSearchChange = (event) => {
-        this.setState({ searchTerm: event.target.value });
+    handleAddCancel = () => {
+        this.setState({ showAddForm: false, newProduct: { id: '', name: '', price: '', amount: '', image: null } });
+    };
+
+    handleShowConfirm = () => {
+        this.setState({ showConfirmModal: true });
+    };
+
+    handleCloseConfirm = () => {
+        this.setState({ showConfirmModal: false });
     };
 
     render() {
-        const { searchTerm, products } = this.state;
+        const { searchTerm, products, showAddForm, newProduct, showConfirmModal, showNotification } = this.state;
 
-        // Lọc sản phẩm theo ID, tên và giá
         const filteredProducts = products.filter(product =>
-            product.id.toString().includes(searchTerm) || // Tìm theo ID
-            product.name.toLowerCase().includes(searchTerm.toLowerCase()) || // Tìm theo tên
-            product.price.toString().includes(searchTerm) // Tìm theo giá
+            product.id.toString().includes(searchTerm) ||
+            product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.price.toString().includes(searchTerm)
         );
 
         return (
@@ -49,7 +79,7 @@ class ProductManagement extends Component {
                             type="text"
                             placeholder="Search by ID, Name, or Price"
                             value={searchTerm}
-                            onChange={this.handleSearchChange}
+                            onChange={(e) => this.setState({ searchTerm: e.target.value })}
                         />
                         <button className="add-button" onClick={this.handleAddProduct}>Add</button>
                     </div>
@@ -57,7 +87,7 @@ class ProductManagement extends Component {
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Watch Name</th>
+                                <th>Name</th>
                                 <th>Price</th>
                                 <th>Amount</th>
                                 <th>Image</th>
@@ -69,18 +99,63 @@ class ProductManagement extends Component {
                                 <tr key={product.id}>
                                     <td>{product.id}</td>
                                     <td>{product.name}</td>
-                                    <td>${product.price}</td>
+                                    <td>{product.price}</td>
                                     <td>{product.amount}</td>
-                                    <td><img src={product.image} alt={product.name} width="50" /></td>
+                                    <td>
+                                        {product.image && <img src={product.image} alt={product.name} width="50" />}
+                                    </td>
                                     <td className="options">
-                                        <button className="update-btn" onClick={() => this.handleUpdateProduct(product.id)}>Update</button>
-                                        <button className="delete-btn" onClick={() => this.handleDeleteProduct(product.id)}>Delete</button>
+                                        <button className="update-btn">Update</button>
+                                        <button className="delete-btn">Delete</button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
+
+                {showAddForm && (
+                    <div className="overlay"> {/* Lớp phủ xung quanh form */}
+                        <div className="add-product-form">
+                            <button className="back-btn" onClick={this.handleAddCancel}>Back</button>
+                            <h2>Add Product</h2>
+                            <div className="form-row">
+                                <label className="form-row-label">ID:</label>
+                                <input className="form-row-input" type="text" name="id" value={newProduct.id} onChange={this.handleInputChange} />
+                            </div>
+                            <div className="form-row">
+                                <label className="form-row-label">Name:</label>
+                                <input className="form-row-input" type="text" name="name" value={newProduct.name} onChange={this.handleInputChange} />
+                            </div>
+                            <div className="form-row">
+                                <label className="form-row-label">Price:</label>
+                                <input className="form-row-input" type="number" name="price" value={newProduct.price} onChange={this.handleInputChange} />
+                            </div>
+                            <div className="form-row">
+                                <label className="form-row-label">Amount:</label>
+                                <input className="form-row-input" type="number" name="amount" value={newProduct.amount} onChange={this.handleInputChange} />
+                            </div>
+                            <div className="form-row">
+                                <label className="form-row-label">Image:</label>
+                                <input className="form-row-input" type="file" name="image" onChange={this.handleInputChange} />
+                            </div>
+                            <div className="form-actions">
+                                <button className="add-confirm-btn" onClick={this.handleAddConfirm}>Add</button>
+                                <button className="cancel-btn" onClick={this.handleAddCancel}>Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {showNotification && (
+                    <div className="confirm-modal">
+                        <div className="modal-content">
+                            <h3>Notification</h3>
+                            <p>Product added successfully!</p>
+                            <button className="yes-btn" onClick={() => this.setState({ showNotification: false })}>OK</button>
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }
