@@ -1,0 +1,92 @@
+footer {
+    width: 100%; // Full width of the viewport
+    height: 480px;
+    background-color: #F0C880; // Background color
+    padding: 40px 20px; // Padding for the footer
+    display: flex; // Use flexbox for layout
+    flex-direction: column; // Arrange items vertically
+    align-items: center; // Center items horizontally
+    box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.1); // Optional shadow for depth
+    font-family: 'Poppins', sans-serif;
+
+    .footer-content {
+        max-width: 1200px; // Limit content width
+        width: 100%; // Allow content to fill footer
+        display: flex; // Use flexbox for layout
+        justify-content: space-between; // Space between brand and links
+        align-items: flex-start; // Align items at the start
+        margin-bottom: 20px; // Spacing below footer content
+    }
+
+    .brand-section {
+        flex: 1; // Allow brand section to take available space
+        text-align: left; // Align text to left
+
+        .brand-title {
+            font-size: 60px; // Brand title size
+            margin-bottom: 10px; // Spacing
+        }
+
+        .newsletter-title {
+            font-size: 30px; // Larger size for newsletter title
+            margin: 5px 0; // Spacing
+        }
+
+        p {
+            font-size: 16px; // Text size
+            margin: 5px 0; // Spacing
+        }
+    }
+
+    .links-section {
+        display: flex; // Use flexbox for link columns
+        flex: 2; // Allow links section to take available space
+        justify-content: flex-end; // Align links to the right
+
+        .column {
+            display: flex;
+            width: 180px;
+            flex-direction: column; // Arrange links vertically
+            align-items: flex-start; // Align items to the start
+            margin-left: 120px; // Spacing between columns
+             
+
+            h3 {
+                font-size: 18px; // Header size
+                margin-bottom: 10px; // Spacing
+            }
+
+            a {
+                color: #333; // Link color
+                text-decoration: none; // Remove underline
+                font-size: 16px;
+                margin: 5px 0; // Spacing between links
+                transition: color 0.3s; // Smooth transition for hover
+
+                &:hover {
+                    color: #e69a0f; // Change color on hover
+                }
+            }
+
+            p span {
+                color: #333;
+                font-size: 16px;
+                margin: 5px 0;
+            }
+        }
+    }
+
+    hr {
+        width: 90%; // Full width for horizontal line
+        border: 0; // Remove default border
+        height: 0.5px; // Height of the line
+        background-color: #333; // Line color
+        margin: 30px 0; // Spacing above and below the line
+    }
+
+    .footer-note {
+        font-size: 14px; // Footer note size
+        color: #555; // Note color
+        text-align: center; // Center the note
+    }
+}

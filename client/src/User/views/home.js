@@ -1,4 +1,5 @@
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import '../styles/home.scss';
 import { useEffect, useState } from 'react';
 
@@ -10,6 +11,7 @@ function Home() {
       <TopCategories />
       <IntroSection />
       <AdBanner />
+      <Footer />
     </div>
   );
 }
