@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../../styles/admin/StatisticsManagement.scss';
+import '../../Admin/styles/StatisticsManagement.scss';
 
 class StatisticsManagement extends Component {
     state = {

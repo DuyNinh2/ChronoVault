@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import '../../styles/admin/common.scss';
-import accountIcon from '../../assets/images/account.png';
+import '../../Admin/styles/common.scss';
+import accountIcon from '../../Admin/assets/images/account.png';
 
 const Header = () => {
     const [showHeader, setShowHeader] = useState(true);

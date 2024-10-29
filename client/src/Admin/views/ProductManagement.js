@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../../styles/admin/ProductManagement.scss';
+import '../../Admin/styles/ProductManagement.scss';
 
 class ProductManagement extends Component {
     state = {

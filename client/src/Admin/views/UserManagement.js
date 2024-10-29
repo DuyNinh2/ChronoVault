@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../../styles/admin/UserManagement.scss';
+import '../../Admin/styles/UserManagement.scss';
 
 class UserManagement extends Component {
     state = {

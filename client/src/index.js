@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './User/views/home';
-//import App from './views/App';
+
+import App from './User/views/AppUser';
+//import App from './Admin/views/App';
+//import './Admin/styles/global.scss'
 import reportWebVitals from './reportWebVitals';
 //import './styles/global.scss'
 
