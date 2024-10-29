@@ -1,17 +1,14 @@
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import '../styles/home.scss';
+import { Link } from 'react-router-dom';
+import '../styles/Home.scss';
 import { useEffect, useState } from 'react';
 
 function Home() {
   return (
     <div className="App">
-
       <ImageBanner />
       <TopCategories />
       <IntroSection />
       <AdBanner />
-      <Footer />
     </div>
   );
 }
@@ -49,14 +46,14 @@ function ImageBanner() {
         <div className="banner-text top-left">
           <span className="collection-title">OCEAN STAR COLLECTION</span>
           <br />
-          <a href="#" className="shop-link">Shop now &gt;</a>
+          <Link to='/products'>Shop now &gt;</Link>
         </div>
       )}
       {currentImage === 1 && (
         <div className="banner-text bottom-left">
           <span className="collection-title">TIME TELLING JEWELLERY</span>
           <br />
-          <a href="#" className="shop-link">Shop now &gt;</a>
+          <Link to='/products'>Shop now &gt;</Link>
         </div>
       )}
     </div>
