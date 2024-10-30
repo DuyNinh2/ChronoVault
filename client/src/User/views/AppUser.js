@@ -4,6 +4,7 @@ import Header from '../../User/components/Header';
 import Footer from '../../User/components/Footer';
 import Home from './home';
 import Products from './Products';
+import ProductDetail from './ProductDetail';
 import Login from '../../Admin/views/Login';
 import AdminLayout from '../../Admin/layouts/AdminLayout';
 import ProductManagement from '../../Admin/views/ProductManagement';
@@ -23,6 +24,7 @@ const AppUser = () => {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
+                <Route path="/product-detail" element={<ProductDetail />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/admin-system" element={<AdminLayout />} />
                 <Route path="/product-management" element={<ProductManagement />} />

@@ -1,0 +1,15 @@
+.accordion {
+    border-top: 1px solid #ddd;
+    .accordion-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .accordion-content {
+      padding: 0.5rem 0;
+      color: #666;
+    }
+  }
+  

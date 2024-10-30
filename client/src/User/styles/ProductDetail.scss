@@ -1,0 +1,17 @@
+.product-detail {
+    padding: 1rem;
+    .product-detail-container {
+      display: flex;
+      gap: 2rem;
+      width: 100%;
+
+      .img {
+        width: 40%;
+      }
+
+      .detail {
+        width: 60%;
+      }
+    }
+  }
+  

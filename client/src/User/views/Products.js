@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import '../styles/Products.scss';
 
 function AllProducts() {
@@ -51,14 +52,18 @@ function AllProducts() {
         <div className="products">
           {/* Repeat this div for each product */}
           <div className="product">
+            <Link to='/product-detail'>
             <div className="product-image" />
             <p className="product-name">Watch Name</p>
             <p className="product-price">$350.00</p>
+            </Link>
           </div>
           <div className="product">
+            <Link to='/product-detail'>
             <div className="product-image" />
             <p className="product-name">Watch Name</p>
             <p className="product-price">$350.00</p>
+            </Link>
           </div>
           {/* Add more product items as needed */}
         </div>
