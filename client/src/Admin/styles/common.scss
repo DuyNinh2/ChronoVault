@@ -61,69 +61,81 @@ body {
     }
 }
 
-/* Footer */
-.footer {
-    background-color: #f3ebd2;
-    padding: 20px;
-    margin-top: auto;
+// footer {
+//     width: 100%; // Full width of the viewport
+//     height: 480px;
+//     background-color: #e7cc98; // Background color
+//     padding: 40px 20px; // Padding for the footer
+//     display: flex; // Use flexbox for layout
+//     flex-direction: column; // Arrange items vertically
+//     align-items: center; // Center items horizontally
+//     box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.1); // Optional shadow for depth
+//     font-family: 'Poppins', sans-serif;
 
-    .footer-content {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
+//     .footer-content {
+//         max-width: 1200px; // Limit content width
+//         width: 100%; // Allow content to fill footer
+//         display: flex; // Use flexbox for layout
+//         justify-content: space-between; // Space between brand and links
+//         align-items: flex-start; // Align items at the start
+//         margin-bottom: 20px; // Spacing below footer content
+//     }
 
-        .footer-left {
-            width: 100%;
-            max-width: 300px;
-            margin-bottom: 20px;
+//     .brand-section {
+//         flex: 1; // Allow brand section to take available space
+//         text-align: left; // Align text to left
 
-            h3 {
-                font-size: 1.5em;
-            }
+//         .brand-title {
+//             font-size: 60px; // Brand title size
+//             margin-bottom: 10px; // Spacing
+//         }
 
-            p {
-                font-size: 0.9em;
-                color: #000000;
-            }
-        }
+//         .newsletter-title {
+//             font-size: 30px; // Larger size for newsletter title
+//             margin: 5px 0; // Spacing
+//         }
 
-        .footer-links {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
+//         p {
+//             font-size: 16px; // Text size
+//             margin: 5px 0; // Spacing
+//         }
+//     }
 
-            .column {
-                width: 150px;
-                margin-bottom: 20px;
+//     .links-section {
+//         display: flex; // Use flexbox for link columns
+//         flex: 2; // Allow links section to take available space
+//         justify-content: flex-end; // Align links to the right
 
-                h4 {
-                    font-size: 1em;
-                    margin-bottom: 10px;
-                    color: #000000;
-                }
+//         .column {
+//             display: flex;
+//             width: 180px;
+//             flex-direction: column; // Arrange links vertically
+//             align-items: flex-start; // Align items to the start
+//             margin-left: 120px; // Spacing between columns
 
-                ul {
-                    list-style: none;
-                    padding: 0;
 
-                    li {
-                        font-size: 0.9em;
-                        color: #000000;
+//             h3 {
+//                 font-size: 18px; // Header size
+//                 margin-bottom: 10px; // Spacing
+//             }
 
-                        &:hover {
-                            text-decoration: underline;
-                            cursor: pointer;
-                        }
-                    }
-                }
-            }
-        }
-    }
+//             a {
+//                 color: #333; // Link color
+//                 text-decoration: none; // Remove underline
+//                 font-size: 16px;
+//                 margin: 5px 0; // Spacing between links
+//                 transition: color 0.3s; // Smooth transition for hover
 
-    .footer-bottom {
-        text-align: left;
-        margin-top: 20px;
-        font-size: 14px;
-        color: #000000;
-    }
-}
+//                 &:hover {
+//                     color: #e69a0f; // Change color on hover
+//                 }
+//             }
+
+//             p span {
+//                 color: #333;
+//                 font-size: 16px;
+//                 margin: 5px 0;
+//             }
+//         }
+//     }
+//}

@@ -42,6 +42,8 @@ $input-border-color: #ccc;
         display: flex;
         justify-content: space-between;
         padding: 20px;
+        padding-top: 60px;
+        min-height: 70vh;
         //border-top: 0.1px solid $input-border-color;
 
         .login-section,
@@ -109,67 +111,6 @@ $input-border-color: #ccc;
         .divider {
             width: 1px;
             background-color: $input-border-color;
-        }
-    }
-
-    footer {
-        background-color: #f3ebd2;
-        padding: 20px;
-        margin-top: 40px;
-
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-
-            .footer-left {
-                width: 30%;
-
-                h3 {
-                    font-size: 2em;
-                }
-
-                p {
-                    font-size: 0.9em;
-                    color: $text-color;
-                }
-            }
-
-            .footer-links {
-                display: flex;
-                gap: 20px;
-
-                .column {
-                    width: 150px;
-
-                    h4 {
-                        font-size: 1em;
-                        margin-bottom: 10px;
-                    }
-
-                    ul {
-                        list-style: none;
-                        padding: 0;
-
-
-                        li {
-                            font-size: 0.9em;
-                            color: $text-color;
-
-                            &:hover {
-                                text-decoration: underline;
-                                cursor: pointer;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        .footer-bottom {
-            text-align: left;
-            margin-top: 20px;
-            font-size: 14px;
         }
     }
 }

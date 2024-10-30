@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Header from '../../User/components/Header';
-import Footer from '../components/Footer';
-import Home from './Home';
+import Footer from '../../User/components/Footer';
+import Home from './home';
 import Products from './Products';
 import Login from '../../Admin/views/Login';
 import AdminLayout from '../../Admin/layouts/AdminLayout';

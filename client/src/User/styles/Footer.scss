@@ -1,7 +1,7 @@
 footer {
     width: 100%; // Full width of the viewport
     height: 480px;
-    background-color: #F0C880; // Background color
+    background-color: #ffeecf; // Background color
     padding: 40px 20px; // Padding for the footer
     display: flex; // Use flexbox for layout
     flex-direction: column; // Arrange items vertically
@@ -49,7 +49,7 @@ footer {
             flex-direction: column; // Arrange links vertically
             align-items: flex-start; // Align items to the start
             margin-left: 120px; // Spacing between columns
-             
+
 
             h3 {
                 font-size: 18px; // Header size

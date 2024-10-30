@@ -36,7 +36,7 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-            <hr /> {/* Horizontal line */}
+            <hr />
             <p className="footer-note">© 2035 by CHRONOVAULT.</p>
         </footer>
     );

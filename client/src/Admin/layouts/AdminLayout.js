@@ -1,7 +1,7 @@
 // src/layouts/AdminLayout.jsx
 import React, { useState } from 'react';
 import Header from '../../Admin/components/Header';
-import Footer from '../../Admin/components/Footer';
+import Footer from '../../User/components/Footer';
 import ManageSystem from '../../Admin/components/ManageSystem';
 import ProductManagement from '../../Admin/views/ProductManagement';
 import OrderManagement from '../../Admin/views/OrderManagement';
