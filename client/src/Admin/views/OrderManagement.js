@@ -49,7 +49,7 @@ class OrderManagement extends Component {
                             value={searchTerm}
                             onChange={this.handleSearchChange}
                         />
-                        <button className="add-button" onClick={this.handleAddOrder}>Add</button>
+
                     </div>
                     <table className="order-table">
                         <thead>
@@ -60,7 +60,7 @@ class OrderManagement extends Component {
                                 <th>Amount</th>
                                 <th>Booking Date</th>
                                 <th>Status</th>
-                                <th>Options</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -81,10 +81,7 @@ class OrderManagement extends Component {
                                             <option value="Đã giao hàng">Đã giao hàng</option>
                                         </select>
                                     </td>
-                                    <td className="options">
-                                        <button className="update-btn" onClick={() => this.handleUpdateOrderStatus(order.id)}>Update</button>
-                                        <button className="delete-btn" onClick={() => this.handleUpdateOrderStatus(order.id)}>Delete</button>
-                                    </td>
+
                                 </tr>
                             ))}
                         </tbody>

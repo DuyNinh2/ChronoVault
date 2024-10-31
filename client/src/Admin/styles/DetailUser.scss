@@ -1,0 +1,97 @@
+.admin-detailuser-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; // Đảm bảo lớp phủ ở trên cùng
+}
+
+.admin-detailuser-form hr {
+    border: 0;
+    /* Xóa đường viền mặc định */
+    height: 1px;
+    /* Chiều cao của đường gạch ngang */
+    background-color: #a7a7a7;
+    /* Màu sắc của đường gạch ngang */
+    margin: 15px;
+    /* Khoảng cách trên và dưới đường gạch ngang */
+}
+
+
+.admin-detailuser-back-button {
+    padding: 0px 15px;
+    border: none;
+    width: 10%;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    background-color: #4b4b4b;
+    color: white;
+
+    &:hover {
+        background-color: #7a7a7a;
+    }
+}
+
+.admin-detailuser-form {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+
+    .useraccount {
+        text-align: center;
+        font-size: 25px;
+        margin-bottom: -5px;
+    }
+
+    .admin-detailuser-form-group {
+        margin-bottom: 15px;
+
+        .admin-detailuser-form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+
+            label {
+                width: 100px; // Chiều rộng nhãn
+                font-weight: bold;
+            }
+
+            input {
+                padding: 10px;
+                width: 100%;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+        }
+    }
+
+    .admin-detailuser-form-actions {
+        display: flex;
+        justify-content: flex-end;
+
+        .admin-detailuser-ok-button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            background-color: #2ebb2a;
+            color: white;
+
+            &:hover {
+                background-color: #47e620;
+            }
+        }
+    }
+}

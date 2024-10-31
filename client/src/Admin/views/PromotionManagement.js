@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../../Admin/styles/PromotionManagement.scss';
+import AddPromotion from '../../Admin/components/ui/AddPromotion'; // Đảm bảo import đúng component
 
 class PromotionManagement extends Component {
     state = {
@@ -9,11 +10,15 @@ class PromotionManagement extends Component {
             { id: 2, name: 'Promotion B', startDate: '2024-02-01', endDate: '2024-02-28', discount: '20%' },
             // Thêm các khuyến mãi khác nếu cần
         ],
+        showAddForm: false, // State để kiểm soát việc hiển thị form thêm
     };
 
     handleAddPromotion = () => {
-        // Logic để thêm khuyến mãi mới
-        console.log("Add promotion functionality");
+        this.setState({ showAddForm: true }); // Hiện form khi nhấn nút Add
+    };
+
+    handleCloseAddForm = () => {
+        this.setState({ showAddForm: false }); // Đóng form khi cần
     };
 
     handleUpdatePromotion = (id) => {
@@ -31,7 +36,7 @@ class PromotionManagement extends Component {
     };
 
     render() {
-        const { searchTerm, promotions } = this.state;
+        const { searchTerm, promotions, showAddForm } = this.state;
 
         // Lọc khuyến mãi theo ID và tên
         const filteredPromotions = promotions.filter(promotion =>
@@ -79,6 +84,9 @@ class PromotionManagement extends Component {
                             ))}
                         </tbody>
                     </table>
+                    {showAddForm && (
+                        <AddPromotion onClose={this.handleCloseAddForm} /> // Hiện form thêm
+                    )}
                 </div>
             </div>
         );

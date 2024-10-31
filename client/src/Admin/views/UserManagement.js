@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../../Admin/styles/UserManagement.scss';
+import DetailUser from '../components/ui/DetailUser'; // Import component DetailUser
 
 class UserManagement extends Component {
     state = {
@@ -33,41 +34,6 @@ class UserManagement extends Component {
             user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
-
-        if (selectedUser) {
-            return (
-                <div className="user-detail-form">
-                    <div className="form-header">
-                        <button className="back-button" onClick={this.handleBackClick}>Back</button>
-                        <h3>User Account</h3>
-                    </div>
-                    <hr />
-                    <div className="form-group">
-                        <label>ID:</label>
-                        <input type="text" value={selectedUser.id} readOnly />
-                    </div>
-                    <div className="form-group">
-                        <label>User Name:</label>
-                        <input type="text" value={selectedUser.username} readOnly />
-                    </div>
-                    <div className="form-group">
-                        <label>Email:</label>
-                        <input type="text" value={selectedUser.email} readOnly />
-                    </div>
-                    <div className="form-group">
-                        <label>Phone:</label>
-                        <input type="text" value={selectedUser.phone} readOnly />
-                    </div>
-                    <div className="form-group">
-                        <label>Password:</label>
-                        <input type="text" value={selectedUser.password} readOnly />
-                    </div>
-                    <div className="form-actions">
-                        <button className="back-button" onClick={this.handleBackClick}>Back</button>
-                    </div>
-                </div>
-            );
-        }
 
         return (
             <div className="admin-usermanagement">
@@ -105,6 +71,9 @@ class UserManagement extends Component {
                             </tbody>
                         </table>
                     </div>
+                    {selectedUser && (
+                        <DetailUser user={selectedUser} onBackClick={this.handleBackClick} />
+                    )}
                 </div>
             </div>
         );
