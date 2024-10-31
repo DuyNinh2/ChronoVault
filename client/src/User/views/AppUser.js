@@ -5,6 +5,8 @@ import Footer from '../../User/components/Footer';
 import Home from './home';
 import Products from './Products';
 import ProductDetail from './ProductDetail';
+import Cart from './Cart';
+import CheckOut from './CheckOut';
 import Login from '../../Admin/views/Login';
 import AdminLayout from '../../Admin/layouts/AdminLayout';
 import ProductManagement from '../../Admin/views/ProductManagement';
@@ -25,6 +27,8 @@ const AppUser = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/product-detail" element={<ProductDetail />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<CheckOut />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/admin-system" element={<AdminLayout />} />
                 <Route path="/product-management" element={<ProductManagement />} />

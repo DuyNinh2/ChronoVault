@@ -1,0 +1,40 @@
+.delivery {
+    width: 60%;
+  
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+  
+    .delivery-form {
+      display: flex;
+      flex-direction: column;
+  
+      input, select {
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+  
+      .dropdowns {
+        display: flex;
+        gap: 10px;
+  
+        select {
+          flex: 1;
+        }
+      }
+  
+      h3 {
+        margin-top: 20px;
+      }
+  
+      .note {
+        font-size: 12px;
+        color: #888;
+      }
+    }
+  }
+  

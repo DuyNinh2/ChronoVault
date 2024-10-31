@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/CartDrawer.scss';
 
 const CartDrawer = ({ isOpen, onClose, cartItems }) => (
@@ -32,8 +33,8 @@ const CartDrawer = ({ isOpen, onClose, cartItems }) => (
           <span>${cartItems.reduce((total, item) => total + item.price * item.quantity, 0)}</span>
         </p>
         <p className="checkout-info">Taxes and shipping are calculated at checkout.</p>
-        <button className="checkout-btn">Checkout</button>
-        <button className="view-cart-btn">View Cart</button>
+        <button className="checkout-btn"><Link to='/checkout'>Checkout</Link></button>
+        <button className="view-cart-btn"><Link to='/cart'>View Cart</Link></button>
       </div>
     </div>
   </>
