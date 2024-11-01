@@ -15,6 +15,13 @@ const Login = () => {
             alert('Sai tên đăng nhập hoặc mật khẩu!');
         }
     };
+    const handleForgotPassword = () => {
+        navigate('/forgot-password'); // Điều hướng đến trang quên mật khẩu
+    };
+
+    const handleCreateAccount = () => {
+        navigate('/create-account'); // Điều hướng đến trang tạo tài khoản
+    };
 
     return (
         <div className="login-container">
@@ -44,7 +51,8 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    <a href="#" className="forgot-password">Forgot Password?</a>
+                    <a href="" className="forgot-password" onClick={handleForgotPassword}>Forgot Password?</a>
+
                     <button className="login-button" onClick={handleLogin}>Log In</button>
                 </div>
 
@@ -56,14 +64,13 @@ const Login = () => {
                         Create a personal account that allows you to experience the services
                         of the web in the best possible way.
                     </p>
-                    <button className="signup-button">Create an account</button>
+                    <button className="signup-button" onClick={handleCreateAccount}>Create an account</button>
                 </div>
             </div>
             <div className='ft'>
                 <Footer />
             </div>
         </div>
-
     );
 };
 

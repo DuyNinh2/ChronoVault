@@ -8,17 +8,19 @@ import ProductDetail from './ProductDetail';
 import Cart from './Cart';
 import CheckOut from './CheckOut';
 import Login from '../../Admin/views/Login';
+import CreatAccount from '../../Admin/views/CreatAccount';
 import AdminLayout from '../../Admin/layouts/AdminLayout';
 import ProductManagement from '../../Admin/views/ProductManagement';
 import PromotionManagement from '../../Admin/views/PromotionManagement';
 import UserManagement from '../../Admin/views/UserManagement';
 import OrderManagement from '../../Admin/views/OrderManagement';
+import ForgotPassword from '../../Admin/views/ForgotPassword';
 import StatisticsManagement from '../../Admin/views/StatisticsManagement';
 
 const AppUser = () => {
     const location = useLocation(); // Lấy thông tin đường dẫn hiện tại
 
-    const noHeaderFooterRoutes = ['/login', '/admin-system', '/product-management', '/order-management', '/promotion-management', '/user-management', '/statistics-management'];
+    const noHeaderFooterRoutes = ['/forgot-password', '/create-account', '/login', '/admin-system', '/product-management', '/order-management', '/promotion-management', '/user-management', '/statistics-management'];
 
     return (
         <>
@@ -30,6 +32,8 @@ const AppUser = () => {
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<CheckOut />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/create-account" element={<CreatAccount />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/admin-system" element={<AdminLayout />} />
                 <Route path="/product-management" element={<ProductManagement />} />
                 <Route path="/order-management" element={<OrderManagement />} />
