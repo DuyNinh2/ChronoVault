@@ -11,6 +11,8 @@ const Login = () => {
     const handleLogin = () => {
         if (username === 'admin' && password === '1') {
             navigate('/admin-system'); // Điều hướng về AdminLayout
+        } else if (username === 'user' && password === '1') {
+            navigate('/user1');
         } else {
             alert('Sai tên đăng nhập hoặc mật khẩu!');
         }

@@ -47,7 +47,7 @@ function AllProducts() {
       
       <main className="product-list">
         <h1>All Products</h1>
-        <p>44 products</p>
+        <p>2 products</p>
         
         <div className="products">
           {/* Repeat this div for each product */}

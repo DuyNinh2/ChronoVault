@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-import Header from '../../User/components/Header';
-import Footer from '../../User/components/Footer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import User1 from '../components/User1';
 import Home from './home';
 import Products from './Products';
 import ProductDetail from './ProductDetail';
@@ -18,13 +19,16 @@ import StatisticsManagement from '../../Admin/views/StatisticsManagement';
 const AppUser = () => {
     const location = useLocation(); // Lấy thông tin đường dẫn hiện tại
 
-    const noHeaderFooterRoutes = ['/login', '/admin-system', '/product-management', '/order-management', '/promotion-management', '/user-management', '/statistics-management'];
+    const noHeaderFooterRoutes = ['/', '/login', '/admin-system', '/product-management', '/order-management', '/promotion-management', '/user-management', '/statistics-management'];
+    const HeaderRoutes = ['/'];
 
     return (
         <>
-            {!noHeaderFooterRoutes.includes(location.pathname) && <Header />}
+            {!noHeaderFooterRoutes.includes(location.pathname) && <User1 />}
+            {HeaderRoutes.includes(location.pathname) && <Header />}
             <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/user1" element={<Home />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/product-detail" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />
