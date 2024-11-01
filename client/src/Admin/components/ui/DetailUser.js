@@ -14,7 +14,7 @@ class DetailUser extends Component {
                 <div className="admin-detailuser-form">
                     <button className="admin-detailuser-back-button" onClick={onBackClick}>Back</button>
                     <h3 className="useraccount">User Account</h3>
-                    <hr /> {/* Thêm đường gạch ngang */}
+                    <hr />
                     <div className="admin-detailuser-form-group">
                         <div className="admin-detailuser-form-row">
                             <label>ID:</label>

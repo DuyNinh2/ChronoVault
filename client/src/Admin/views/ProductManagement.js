@@ -1,4 +1,6 @@
+// src/pages/ProductManagement.js
 import React, { Component } from 'react';
+import UpdateProduct from '../components/ui/UpdateProduct';
 import '../../Admin/styles/ProductManagement.scss';
 
 class ProductManagement extends Component {
@@ -9,6 +11,8 @@ class ProductManagement extends Component {
             { id: 2, name: 'Watch B', price: 200, amount: 5, image: 'path/to/imageB.jpg' },
         ],
         showAddForm: false,
+        showUpdateForm: false,
+        selectedProduct: null,
         newProduct: {
             id: '',
             name: '',
@@ -16,8 +20,6 @@ class ProductManagement extends Component {
             amount: '',
             image: null,
         },
-        showConfirmModal: false,
-        showNotification: false,
     };
 
     handleAddProduct = () => {
@@ -35,34 +37,65 @@ class ProductManagement extends Component {
     };
 
     handleAddConfirm = () => {
-        this.setState(prevState => ({
-            products: [
-                ...prevState.products,
-                {
-                    ...prevState.newProduct,
-                    id: prevState.products.length + 1
-                }
-            ], // Thêm ID tự động
-            showAddForm: false,
-            newProduct: { id: '', name: '', price: '', amount: '', image: null },
-            showNotification: true,
-        }));
+        const confirmAdd = window.confirm("Are you sure you want to add this product?");
+        if (confirmAdd) {
+            this.setState(prevState => ({
+                products: [
+                    ...prevState.products,
+                    {
+                        ...prevState.newProduct,
+                        id: prevState.products.length + 1
+                    }
+                ],
+                showAddForm: false,
+                newProduct: { id: '', name: '', price: '', amount: '', image: null }
+            }), () => {
+                alert('Product added successfully!');
+            });
+        }
     };
 
     handleAddCancel = () => {
         this.setState({ showAddForm: false, newProduct: { id: '', name: '', price: '', amount: '', image: null } });
     };
 
-    handleShowConfirm = () => {
-        this.setState({ showConfirmModal: true });
+    handleEditClick = (product) => {
+        this.setState({ showUpdateForm: true, selectedProduct: product });
     };
 
-    handleCloseConfirm = () => {
-        this.setState({ showConfirmModal: false });
+    handleUpdateProduct = (updatedProduct) => {
+        this.setState(prevState => ({
+            products: prevState.products.map(product =>
+                product.id === updatedProduct.id ? updatedProduct : product
+            ),
+            showUpdateForm: false,
+            selectedProduct: null,
+        }));
+    };
+
+    handleUpdateCancel = () => {
+        this.setState({ showUpdateForm: false, selectedProduct: null });
+    };
+
+    // Mở hộp thoại xác nhận xóa
+    handleDeleteClick = (product) => {
+        const confirmDelete = window.confirm(`Are you sure you want to delete the product: ${product.name}?`);
+        if (confirmDelete) {
+            this.handleDeleteProduct(product.id);
+        }
+    };
+
+    // Xóa sản phẩm
+    handleDeleteProduct = (productId) => {
+        this.setState(prevState => ({
+            products: prevState.products.filter(product => product.id !== productId),
+        }), () => {
+            alert('Product deleted successfully!');
+        });
     };
 
     render() {
-        const { searchTerm, products, showAddForm, newProduct, showConfirmModal, showNotification } = this.state;
+        const { searchTerm, products, showAddForm, newProduct, showUpdateForm, selectedProduct } = this.state;
 
         const filteredProducts = products.filter(product =>
             product.id.toString().includes(searchTerm) ||
@@ -105,8 +138,13 @@ class ProductManagement extends Component {
                                         {product.image && <img src={product.image} alt={product.name} width="50" />}
                                     </td>
                                     <td className="options">
-                                        <button className="update-btn">Update</button>
-                                        <button className="delete-btn">Delete</button>
+                                        <button className="update-btn" onClick={() => this.handleEditClick(product)}>Update</button>
+                                        <button
+                                            className="delete-btn"
+                                            onClick={() => this.handleDeleteClick(product)}
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -114,8 +152,9 @@ class ProductManagement extends Component {
                     </table>
                 </div>
 
+                {/* Form thêm sản phẩm */}
                 {showAddForm && (
-                    <div className="overlay"> {/* Lớp phủ xung quanh form */}
+                    <div className="overlay">
                         <div className="add-product-form">
                             <button className="back-btn" onClick={this.handleAddCancel}>Back</button>
                             <h2>Add Product</h2>
@@ -147,14 +186,13 @@ class ProductManagement extends Component {
                     </div>
                 )}
 
-                {showNotification && (
-                    <div className="confirm-modal">
-                        <div className="modal-content">
-                            <h3>Notification</h3>
-                            <p>Product added successfully!</p>
-                            <button className="yes-btn" onClick={() => this.setState({ showNotification: false })}>OK</button>
-                        </div>
-                    </div>
+                {/* Form cập nhật sản phẩm */}
+                {showUpdateForm && selectedProduct && (
+                    <UpdateProduct
+                        product={selectedProduct}
+                        onUpdate={this.handleUpdateProduct}
+                        onClose={this.handleUpdateCancel}
+                    />
                 )}
             </div>
         );

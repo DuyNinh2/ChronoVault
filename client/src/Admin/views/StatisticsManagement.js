@@ -45,7 +45,16 @@ class StatisticsManagement extends Component {
         this.setState({ filteredStatistics: filtered });
     };
 
+    getTotals = () => {
+        const { filteredStatistics } = this.state;
+        const totalRevenue = filteredStatistics.reduce((total, stat) => total + stat.price * stat.amount, 0);
+        const totalAmount = filteredStatistics.reduce((total, stat) => total + stat.amount, 0);
+        return { totalRevenue, totalAmount };
+    };
+
     render() {
+        const { totalRevenue, totalAmount } = this.getTotals(); // Lấy tổng doanh thu và số lượng
+
         return (
             <div className="statistics-management">
                 <div className="display-content">
@@ -71,6 +80,13 @@ class StatisticsManagement extends Component {
                             {/* Add more months as needed */}
                         </select>
                     </div>
+
+                    {/* Hiển thị tổng doanh thu và tổng số lượng ngoài bảng */}
+                    <div className="totals">
+                        <span>Total Revenue: {totalRevenue}</span>
+                        <span>Total Amount: {totalAmount}</span>
+                    </div>
+
                     <table className="statistics-table">
                         <thead>
                             <tr>

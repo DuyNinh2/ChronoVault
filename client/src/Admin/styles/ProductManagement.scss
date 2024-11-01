@@ -58,7 +58,6 @@
             background-color: #f7f7f7;
             color: #333;
             font-weight: bold;
-            font-size: 18px;
         }
 
         .options {
@@ -112,7 +111,6 @@
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         width: 600px;
-        /* Chiều rộng form */
         text-align: center;
         display: flex;
         flex-direction: column;
@@ -129,7 +127,6 @@
 
             &-label {
                 width: 100px;
-                /* Chiều rộng nhãn */
                 font-weight: bold;
             }
 
@@ -172,36 +169,6 @@
                 &:hover {
                     background-color: #c0392b;
                 }
-            }
-        }
-    }
-
-    .confirm-modal {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-
-        h3 {
-            margin-bottom: 15px;
-        }
-
-        .yes-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #3498db;
-            color: white;
-            float: right;
-
-            &:hover {
-                background-color: #2980b9;
             }
         }
     }
