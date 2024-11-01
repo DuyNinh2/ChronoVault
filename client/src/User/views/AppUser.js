@@ -21,7 +21,8 @@ import StatisticsManagement from '../../Admin/views/StatisticsManagement';
 const AppUser = () => {
     const location = useLocation(); // Lấy thông tin đường dẫn hiện tại
 
-    const noHeaderFooterRoutes = ['/login', '/admin-system', '/product-management', '/order-management', '/promotion-management', '/user-management', '/statistics-management'];
+    const noHeaderFooterRoutes = ['/', '/login', '/admin-system', '/product-management', '/order-management', '/promotion-management', '/user-management', '/statistics-management'];
+    const HeaderRoutes = ['/'];
 
     return (
         <>
