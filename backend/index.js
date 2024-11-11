@@ -1,8 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const productRoutes = require('./routes/watchRoutes');
+const cors = require('cors');
+
+const watchRoutes = require('./routes/watchRoutes');
+const userRoutes = require('./routes/userRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 
 const app = express();
+app.use(express.json());
+app.use(cors());
 
 // Kết nối MongoDB
 mongoose.connect('mongodb://localhost:27017/ChronoVault', {
@@ -12,15 +19,12 @@ mongoose.connect('mongodb://localhost:27017/ChronoVault', {
   .then(() => console.log('MongoDB connected'))
   .catch((error) => console.error('MongoDB connection error:', error));
 
-// Middleware
-app.use(express.json());
+// Use the routes
+app.use('/api/watches', watchRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
 
-// Routes
-app.use('/api', productRoutes); 
-
-app.get('/', (req, res) => {
-  res.send('Welcome to ChronoVault API!');
-});
-
-// Khởi động server
-app.listen(3000, () => console.log('Server is running on port 3000'));
+// Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
