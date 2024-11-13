@@ -6,6 +6,8 @@ const watchRoutes = require('./routes/watchRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+//admin
+const adminRoutes = require('./routes/adminRoutes')
 
 const app = express();
 app.use(express.json());
@@ -24,6 +26,8 @@ app.use('/api/watches', watchRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
+
+app.use('/api/admin', adminRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

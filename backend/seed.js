@@ -6,7 +6,7 @@ const Cart = require('./models/Cart');
 const Order = require('./models/Order');
 const Review = require('./models/Review');
 const User = require('./models/User');
-const Admin = require('./models/Admin');
+const Admin = require('../models/Admin');
 const Promotion = require('./models/Promotion');
 const Statistic = require('./models/Statistic');
 
@@ -22,10 +22,10 @@ mongoose.connect('mongodb://localhost:27017/ChronoVault', {
 async function createSampleData() {
 
   // Tạo dữ liệu mẫu cho Admin
-  const admin = new Admin({ 
-    username: 'admin', 
-    password: '1', 
-});
+  const admin = new Admin({
+    username: 'admin',
+    password: '1',
+  });
 
   await admin.save();
 
@@ -60,7 +60,7 @@ async function createSampleData() {
     brandID: brand2._id, // Tham chiếu đến Brand
     price: 150,
     description: 'A stylish classic watch with leather strap',
-    category_id: cat1._id, 
+    category_id: cat1._id,
     images: [
       {
         image_url: '../client/public/images/omega1.jpg',
@@ -86,7 +86,7 @@ async function createSampleData() {
     userName: 'duyninh',
     password: '1234',
     email: 'duy@gmail.com',
-    phone: 12334567890, 
+    phone: 12334567890,
     address: [
       {
         street: 'Nguyen Van Luong',
@@ -99,7 +99,7 @@ async function createSampleData() {
 
 
   await user1.save();
-  
+
 
   console.log('Sample data created');
   mongoose.connection.close();

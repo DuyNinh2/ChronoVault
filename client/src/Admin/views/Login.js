@@ -1,5 +1,7 @@
+// src/components/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../../Admin/styles/Login.scss';
 import Footer from '../../User/components/Footer';
 
@@ -8,21 +10,29 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-        if (username === 'admin' && password === '1') {
-            navigate('/admin-system'); // Điều hướng về AdminLayout
-        } else if (username === 'user' && password === '1') {
-            navigate('/user1');
-        } else {
+    const handleLogin = async () => {
+        if (!username || !password) {
+            alert('Tên đăng nhập và mật khẩu không được để trống!');
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://localhost:5000/api/admin/login', { username, password });
+            if (response.status === 200) {
+                navigate('/admin-system'); // Điều hướng tới Admin layout
+            }
+        } catch (error) {
             alert('Sai tên đăng nhập hoặc mật khẩu!');
         }
     };
+
+
     const handleForgotPassword = () => {
-        navigate('/forgot-password'); // Điều hướng đến trang quên mật khẩu
+        navigate('/forgot-password');
     };
 
     const handleCreateAccount = () => {
-        navigate('/create-account'); // Điều hướng đến trang tạo tài khoản
+        navigate('/create-account');
     };
 
     return (
