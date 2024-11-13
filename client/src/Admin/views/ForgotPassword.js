@@ -1,5 +1,8 @@
+// src/Admin/views/ForgotPassword.js
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../../Admin/styles/ForgotPassword.scss';
 import Footer from '../../User/components/Footer';
 
@@ -9,9 +12,24 @@ const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const navigate = useNavigate();
 
-    const handleForgotPassword = () => {
-        // Xử lý yêu cầu quên mật khẩu tại đây
-        alert('Thông tin mật khẩu đã được gửi để đăng nhập!');
+    const handleForgotPassword = async () => {
+        try {
+            const response = await axios.post('http://localhost:5000/api/users/forgot-password', {
+                username,
+                phone,
+                email
+            });
+            alert(response.data.message);
+            navigate('/login');
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                alert(error.response.data.message);
+            } else if (error.response && error.response.status === 404) {
+                alert("Không tìm thấy người dùng với thông tin này.");
+            } else {
+                alert("Xử lý yêu cầu quên mật khẩu không thành công, vui lòng thử lại.");
+            }
+        }
     };
 
     return (
@@ -51,8 +69,8 @@ const ForgotPassword = () => {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
-                    <a href="" className="register-login" onClick={() => navigate('/login')}>Login</a>
                     <button className="forgot-button" onClick={handleForgotPassword}>Submit</button>
+                    <a href="" className="register-login" onClick={() => navigate('/login')}>Login</a>
                 </div>
             </div>
             <div className='ft'>
