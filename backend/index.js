@@ -20,7 +20,8 @@ mongoose.connect('mongodb://localhost:27017/ChronoVault', {
   .catch((error) => console.error('MongoDB connection error:', error));
 
 // Use the routes
-app.use('/api/watches', watchRoutes);
+// app.use('/api/watches', watchRoutes);
+app.use(watchRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
