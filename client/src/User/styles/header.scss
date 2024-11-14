@@ -1,6 +1,6 @@
 .h-wrapper {
     width: 100%;
-    background-color: #f8f9fa;
+    background-color: #FFF7ED;
     padding: 20px 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -8,7 +8,7 @@
 .h-container {
     display: flex;
     align-items: center;
-    justify-content: space-between; // Giữ khoảng cách giữa tiêu đề, menu và các nút bên phải
+    justify-content: space-between;
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
@@ -21,59 +21,64 @@
 .h-container h1 {
     font-size: 24px;
     font-weight: bold;
-    color: #333;
-    font-family: 'Poppins', sans-serif; // Kiểu chữ cho tiêu đề
+    color: #5B3724;
+    font-family: 'Poppins', sans-serif;
 }
 
 .h-menu {
     display: flex;
     align-items: center;
-    justify-content: center; // Căn giữa các đường link
+    justify-content: center;
     gap: 15px;
-    flex-grow: 1; // Cho phép .h-menu chiếm không gian còn lại
+    flex-grow: 1;
 }
 
 .h-menu a {
-    color: #333; // Màu vàng tối
+    color: #5B3724; /* Đổi sang màu nâu nhạt */
     text-decoration: none;
     font-size: 16px;
-    font-family: 'Poppins', sans-serif; // Kiểu chữ cho các đường link
+    font-family: 'Poppins', sans-serif;
     transition: color 0.3s ease;
 }
 
 .h-menu a:hover {
-    color: #e6b800;
+    color: #C09B81;
 }
 
 .h-actions {
-    display: flex; // Sử dụng flex để căn lề các nút bên phải
+    display: flex;
     align-items: center;
-    gap: 15px; // Khoảng cách giữa nút login và cart icon
+    gap: 15px;
 }
 
 .login-button {
-    background-color: #ffcc00; // Màu vàng tươi
-    color: #333; // Màu chữ tối
-    border: none; // Không có đường viền
-    border-radius: 5px; // Bo góc
-    padding: 10px 20px; // Padding
-    cursor: pointer; // Con trỏ tay
-    font-size: 16px; // Kích thước chữ
-    font-family: 'Poppins', sans-serif; // Kiểu chữ
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Bóng đổ
-    transition: background-color 0.3s ease, transform 0.3s ease; // Hiệu ứng chuyển động
+    background-color: #C09B81; /* Sử dụng màu nâu nhạt */
+    color: #FFF7ED;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .login-button a {
-    color: #333; // Màu chữ
-    text-decoration: none; // Không có gạch chân
+    color: #FFF7ED;
+    text-decoration: none;
+}
+
+.login-button a:hover {
+    color: #FFF7ED;
+    text-decoration: none;
 }
 
 .login-button:hover {
-    background-color: #e6b800; // Màu vàng tối hơn khi hover
-    transform: translateY(-2px); // Hiệu ứng nâng lên khi hover
+    background-color: #ADA399;
+    transform: translateY(-2px);
 }
 
 .login-button:active {
-    transform: translateY(0); // Khi nhấn xuống
+    transform: translateY(0);
 }

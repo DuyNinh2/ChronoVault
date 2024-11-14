@@ -1,58 +1,66 @@
 .watches-list {
-    h1 {
+  background-color: #FFF7ED;
+  h1 {
       font-size: 1.5em;
       font-weight: bold;
       margin-bottom: 0.5em;
-    }
-  
-    .products-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-  
-    .product-card {
-      width: calc(50% - 10px);
-      background-color: #f0f0f0;
-      padding: 1em;
-      text-align: center;
+      color: #5B3724;
+  }
+
+  .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+  }
+
+  .product-card {
+      width: 20vw;
+      background-color: #DBD5CB;
+      padding: 1rem;
+      text-align: left;
       border-radius: 8px;
-  
+
       .product-image {
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-        transition: opacity 0.3s ease;
+          text-align: center;
+          width: 100%;
+          height: auto;
+          border-radius: 8px;
+          transition: opacity 0.3s ease;
       }
-  
+
       h2 {
-        font-size: 1.2em;
-        font-weight: 600;
+          font-size: 1.2em;
+          font-weight: 600;
+          color: #5B3724;
       }
-  
+
       p {
-        font-size: 1em;
-        color: #333;
+          font-size: 1em;
+          color: #5B3724;
       }
-    }
-  
-    .pagination {
+  }
+
+  .pagination {
       display: flex;
       justify-content: center;
-      margin-top: 1em;
-  
-      button {
-        background-color: #333;
-        color: white;
-        padding: 0.5em 1em;
-        margin: 0 5px;
-        border: none;
-        cursor: pointer;
-        &:disabled {
-          background-color: #999;
-          cursor: not-allowed;
-        }
-      }
-    }
+      margin-top: 20px;
   }
-  
+
+  .pagination button {
+      background-color: #DBD5CB;
+      border: 1px solid #ADA399;
+      padding: 8px 12px;
+      margin: 0 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+  }
+
+  .pagination button.active {
+      background-color: #5B3724;
+      color: #FFF7ED;
+  }
+
+  .pagination button:hover {
+      background-color: #ADA399;
+  }
+}

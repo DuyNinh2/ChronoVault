@@ -6,7 +6,7 @@ const Cart = require('./models/Cart');
 const Order = require('./models/Order');
 const Review = require('./models/Review');
 const User = require('./models/User');
-const Admin = require('../models/Admin');
+const Admin = require('./models/Admin');
 const Promotion = require('./models/Promotion');
 const Statistic = require('./models/Statistic');
 
@@ -22,10 +22,10 @@ mongoose.connect('mongodb://localhost:27017/ChronoVault', {
 async function createSampleData() {
 
   // Tạo dữ liệu mẫu cho Admin
-  //   const admin = new Admin({ 
-  //     username: 'admin', 
-  //     password: '1', 
-  // });
+  const admin = new Admin({
+    username: 'admin',
+    password: '1',
+  });
 
   //   await admin.save();
 
@@ -60,25 +60,26 @@ async function createSampleData() {
     brandID: brand2._id,
     price: 150,
     description: 'A stylish classic watch with leather strap',
-    category_id: cat1._id,
+    category_id: ObjectId('6730c13ff8bbe679aadde5ae'),
     images: [
       {
-        image_url: '/images/omega1.jpg',
+        image_url: '/images/DeVille1.jpg',
         alt_text: 'Omega',
       },
       {
-        image_url: '/images/omega2.jpg',
+        image_url: '/images/DeVille2.jpg',
         alt_text: 'Omega',
       },
       {
-        image_url: '/images/omega3.jpg',
+        image_url: '/images/DeVille3.jpg',
         alt_text: 'Omega',
       },
     ],
   });
 
 
-  await watch1.save();
+  await watch2.save();
+  await watch3.save();
 
 
   // Tạo dữ liệu mẫu cho User
