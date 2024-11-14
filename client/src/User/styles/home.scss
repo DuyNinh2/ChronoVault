@@ -9,7 +9,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f8f9fa;
+    background-color: #FFF7ED;
     min-height: 100vh;
 }
 
@@ -38,7 +38,7 @@ body {
 
 .banner-text {
     position: absolute;
-    color: white;
+    color: #FFF7ED;
     padding: 10px;
     font-size: 3.2vw;
     max-width: 30%;
@@ -54,13 +54,13 @@ body {
     }
 
     &.top-left a {
-        color: white;
+        color: #FFF7ED;
         font-size: 1vw;
         font-weight: normal;
         transition: color 0.3s;
 
         &:hover {
-            color: #ffcc00;
+            color: #C09B81;
         }
     }
 
@@ -69,13 +69,13 @@ body {
     }
 
     &.bottom-left a {
-        color: white;
+        color: #FFF7ED;
         font-size: 1vw;
         font-weight: normal;
         transition: color 0.3s;
 
         &:hover {
-            color: #ffcc00;
+            color: #C09B81;
         }
     }
 }
@@ -87,6 +87,7 @@ body {
     text-align: center;
 
     h2 {
+        color: #5B3724;
         font-size: 32px;
         font-family: 'Poppins', sans-serif;
         font-weight: normal;
@@ -124,7 +125,7 @@ body {
             font-size: 20px;
             font-family: 'Poppins', sans-serif;
             margin-top: 12px;
-            color: #333;
+            color: #755543;
             font-weight: normal;
         }
     }
@@ -136,7 +137,7 @@ body {
     max-width: 1500px;
     margin: 50px auto;
     padding: 40px;
-    background-color: #f8f9fa;
+    background-color: #DBD5CB;
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     gap: 30px;
@@ -157,14 +158,14 @@ body {
         h2 {
             font-size: 36px;
             font-weight: bold;
-            color: #333;
+            color: #5B3724;
             font-family: 'Poppins', sans-serif;
             margin-bottom: 10px;
         }
 
         p {
             font-size: 18px;
-            color: #555;
+            color: #755543;
             line-height: 1.6;
         }
 
@@ -173,14 +174,14 @@ body {
 
             h3 {
                 font-size: 20px;
-                color: #333;
+                color: #5B3724;
                 font-weight: bold;
                 margin-bottom: 5px;
             }
 
             p {
                 font-size: 16px;
-                color: #555;
+                color: #755543;
                 margin: 0;
                 line-height: 1.4;
             }

@@ -6,7 +6,7 @@ const Cart = require('./models/Cart');
 const Order = require('./models/Order');
 const Review = require('./models/Review');
 const User = require('./models/User');
-const Admin = require('../models/Admin');
+const Admin = require('./models/Admin');
 const Promotion = require('./models/Promotion');
 const Statistic = require('./models/Statistic');
 
@@ -22,10 +22,10 @@ mongoose.connect('mongodb://localhost:27017/ChronoVault', {
 async function createSampleData() {
 
   // Tạo dữ liệu mẫu cho Admin
-  const admin = new Admin({ 
-    username: 'admin', 
-    password: '1', 
-});
+//   const admin = new Admin({ 
+//     username: 'admin', 
+//     password: '1', 
+// });
 
 //   await admin.save();
 
@@ -54,51 +54,75 @@ async function createSampleData() {
 //   await cat5.save();
 
   // Tạo dữ liệu mẫu cho Watch
-  const watch1 = new Watch({
-    name: 'Speedmaster Anniversary Series',
-    stock_quantity: 5,
-    brandID: brand2._id, 
-    price: 150,
+  const watch2 = new Watch({
+    name: 'Ocean Star Decompression Worldtimer',
+    stock_quantity: 21,
+    brandID: ObjectId('6730c13ff8bbe679aadde5a4'), 
+    price: 250,
     description: 'A stylish classic watch with leather strap',
-    category_id: cat1._id,
+    category_id: ObjectId('6730c13ff8bbe679aadde5aa'),
     images: [
       {
-        image_url: '/images/omega1.jpg',
+        image_url: '/images/mido1.jpg',
+        alt_text: 'Mido',
+      },
+      {
+        image_url: '/images/mido2.jpg',
+        alt_text: 'Mido',
+      },
+      {
+        image_url: '/images/mido3.jpg',
+        alt_text: 'Mido',
+      },
+    ],
+  });
+
+  const watch3 = new Watch({
+    name: 'De Ville Prestige',
+    stock_quantity: 15,
+    brandID: ObjectId('6730c13ff8bbe679aadde5a3'), 
+    price: 200,
+    description: 'A stylish classic watch with leather strap',
+    category_id: ObjectId('6730c13ff8bbe679aadde5ae'),
+    images: [
+      {
+        image_url: '/images/DeVille1.jpg',
         alt_text: 'Omega',
       },
       {
-        image_url: '/images/omega2.jpg',
+        image_url: '/images/DeVille2.jpg',
         alt_text: 'Omega',
       },
       {
-        image_url: '/images/omega3.jpg',
+        image_url: '/images/DeVille3.jpg',
         alt_text: 'Omega',
       },
     ],
   });
 
 
-  await watch1.save();
+  await watch2.save();
+  await watch3.save();
 
 
   // Tạo dữ liệu mẫu cho User
-  const user1 = new User({
-    userName: 'duyninh',
-    password: '1234',
-    email: 'duy@gmail.com',
-    phone: 12334567890, 
-    address: [
-      {
-        street: 'Nguyen Van Luong',
-        city: 'Ho Chi Minh',
-        district: 'Go Vap',
-        country: 'Vietnam',
-      },
-    ],
-  });
+  // const user1 = new User({
+  //   userName: 'duyninh',
+  //   password: '1234',
+  //   email: 'duy@gmail.com',
+  //   phone: 12334567890, 
+  //   address: [
+  //     {
+  //       street: 'Nguyen Van Luong',
+  //       city: 'Ho Chi Minh',
+  //       district: 'Go Vap',
+  //       country: 'Vietnam',
+  //     },
+  //   ],
+  // });
 
 
-  await user1.save();
+  // await user1.save();
   
 
   console.log('Sample data created');

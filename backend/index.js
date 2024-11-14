@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const watchRoutes = require('./routes/watchRoutes');
+const brandRoutes = require('./routes/brandRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const cartRoutes = require('./routes/cartRoutes');
@@ -24,6 +25,7 @@ mongoose.connect('mongodb://localhost:27017/ChronoVault', {
 // Use the routes
 // app.use('/api/watches', watchRoutes);
 app.use(watchRoutes);
+app.use(brandRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
