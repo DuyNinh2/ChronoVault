@@ -29,7 +29,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
 
 app.use('/api/admin', adminRoutes);
-
+app.use('/api/product-management', watchRoutes);
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

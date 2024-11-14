@@ -1,18 +1,35 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import '../../Admin/styles/UserManagement.scss';
-import DetailUser from '../components/ui/DetailUser'; // Import component DetailUser
+import DetailUser from '../components/ui/DetailUser';
 
 class UserManagement extends Component {
     state = {
         selectedManagement: 'user',
         searchTerm: '',
-        users: [
-            { id: 1, username: 'JohnDoe', email: 'johndoe@example.com', phone: '0123456789', password: 'password123' },
-            { id: 2, username: 'JaneSmith', email: 'janesmith@example.com', phone: '0987654321', password: 'password456' },
-            { id: 3, username: 'AliceBrown', email: 'alicebrown@example.com', phone: '0234567891', password: 'password789' },
-            { id: 4, username: 'BobJohnson', email: 'bobjohnson@example.com', phone: '0345678912', password: 'password101' },
-        ],
+        users: [],
         selectedUser: null,
+    };
+
+    componentDidMount() {
+        this.fetchUsers(); // Gọi hàm để lấy danh sách người dùng từ BE
+    }
+
+    fetchUsers = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/users/user-management'); // URL của API
+            // Kiểm tra dữ liệu trước khi setState
+            const users = response.data.map(user => ({
+                _id: user._id || 'N/A', // Đảm bảo có ID
+                username: user.username || 'Unknown', // Đảm bảo có tên người dùng
+                email: user.email || 'Unknown', // Đảm bảo có email
+                phone: user.phone || 'Unknown', // Đảm bảo có số điện thoại
+                created_at: user.created_at || 'Unknown' // Lấy ngày tạo
+            }));
+            this.setState({ users });
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
     };
 
     handleSearchChange = (event) => {
@@ -27,12 +44,18 @@ class UserManagement extends Component {
         this.setState({ selectedUser: null });
     };
 
+    formatDate = (dateString) => {
+        if (!dateString) return 'Unknown';
+        const date = new Date(dateString);
+        return !isNaN(date) ? date.toLocaleDateString() : 'Invalid Date';
+    };
+
     render() {
         const { searchTerm, users, selectedUser } = this.state;
+        // Thêm điều kiện để tránh lỗi undefined khi tìm kiếm
         const filteredUsers = users.filter(user =>
-            user.id.toString().includes(searchTerm) ||
-            user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase())
+            (user.username && user.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase()))
         );
 
         return (
@@ -43,7 +66,7 @@ class UserManagement extends Component {
                         <div className="user-actions">
                             <input
                                 type="text"
-                                placeholder="Search by ID, username, or email"
+                                placeholder="Search by username or email"
                                 value={searchTerm}
                                 onChange={this.handleSearchChange}
                             />
@@ -54,15 +77,17 @@ class UserManagement extends Component {
                                     <th>ID</th>
                                     <th>User Name</th>
                                     <th>Email</th>
+                                    <th>Created At</th> {/* Cột mới cho ngày tạo */}
                                     <th>Options</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredUsers.map(user => (
-                                    <tr key={user.id}>
-                                        <td>{user.id}</td>
+                                    <tr key={user._id}>
+                                        <td>{user._id}</td>
                                         <td>{user.username}</td>
                                         <td>{user.email}</td>
+                                        <td>{this.formatDate(user.created_at)}</td> {/* Hiển thị ngày tạo */}
                                         <td className="options">
                                             <button className="detail-btn" onClick={() => this.handleDetailClick(user)}>Detail</button>
                                         </td>

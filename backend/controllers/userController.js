@@ -90,4 +90,12 @@ exports.forgotPassword = async (req, res) => {
     }
 };
 
-
+// Xu ly ben Admin: quan ly thong tin User
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find(); // Lấy tất cả user từ MongoDB
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi khi lấy dữ liệu người dùng.', error });
+    }
+};
