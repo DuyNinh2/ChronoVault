@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Dropdown } from 'react-bootstrap'; 
 import '../styles/Header.scss';
 
 function Header() {
     const location = useLocation();
     const navigate = useNavigate();
+    const [username, setUsername] = useState(localStorage.getItem('username') || '');
+
+    useEffect(() => {
+        const storedUsername = localStorage.getItem('username');
+        if (storedUsername) {
+            setUsername(storedUsername);
+        }
+    }, []);
 
     const handleAboutClick = (e) => {
         e.preventDefault();
@@ -18,6 +27,13 @@ function Header() {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        setUsername('');
+        navigate('/');
+    };
+
     return (
         <section className='h-wrapper'>
             <div className='h-container'>
@@ -29,9 +45,26 @@ function Header() {
                     <Link to='/about' onClick={handleAboutClick}>About</Link>
                 </div>
                 <div className='h-actions'>
-                    <button className='login-button'>
-                        <Link to='/login'>Login</Link>
-                    </button>
+                    {username ? (
+                        <Dropdown>
+                            <Dropdown.Toggle variant="success" id="dropdown-basic" className='username'>
+                                {username}
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                <Dropdown.Item href="/profile">Profile</Dropdown.Item>
+                                <Dropdown.Item href="/orders">Orders</Dropdown.Item>
+                                <Dropdown.Item href="/favorites">Favorites</Dropdown.Item>
+                                <Dropdown.Item href="/settings">Account Settings</Dropdown.Item>
+                                <Dropdown.Item href="/contact">Contact Us</Dropdown.Item>
+                                <Dropdown.Item onClick={handleLogout}>Log Out</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    ) : (
+                        <button className='login-button'>
+                            <Link to='/login'>Login</Link>
+                        </button>
+                    )}
                     <Link to='/cart'><img src={require('../images/cart_icon.png')} alt='cart' width={35} /></Link>
                 </div>
             </div>

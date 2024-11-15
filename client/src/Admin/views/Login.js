@@ -1,4 +1,3 @@
-// src/components/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -8,6 +7,7 @@ import Footer from '../../User/components/Footer';
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false); 
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -17,15 +17,25 @@ const Login = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/api/admin/login', { username, password });
+            const endpoint = isAdmin 
+                ? 'http://localhost:5000/api/admin/login' 
+                : 'http://localhost:5000/api/user/login'; 
+
+            const response = await axios.post(endpoint, { username, password });
+
             if (response.status === 200) {
-                navigate('/admin-system'); // Điều hướng tới Admin layout
+                if (isAdmin) {
+                    navigate('/admin-system'); 
+                } else {
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('username', response.data.username); 
+                    navigate('/'); 
+                }
             }
         } catch (error) {
             alert('Sai tên đăng nhập hoặc mật khẩu!');
         }
     };
-
 
     const handleForgotPassword = () => {
         navigate('/forgot-password');
@@ -62,6 +72,16 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                    </div>
+                    <div className="admin-checkbox">
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={isAdmin}
+                                onChange={(e) => setIsAdmin(e.target.checked)}
+                            />
+                            Log in as Admin
+                        </label>
                     </div>
                     <a href="" className="forgot-password" onClick={handleForgotPassword}>Forgot Password?</a>
 

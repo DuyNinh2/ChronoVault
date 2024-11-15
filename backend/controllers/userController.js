@@ -1,4 +1,6 @@
-const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+// const bcrypt = require('bcryptjs');
+const User = require('../models/User'); 
 
 // Register a new user
 exports.registerUser = async (req, res) => {
@@ -33,21 +35,39 @@ exports.registerUser = async (req, res) => {
     }
 };
 
-// Login user
-exports.loginUser = async (req, res) => {
+// Đăng nhập người dùng
+exports.login = async (req, res) => {
+    const { username, password } = req.body;
+
     try {
-        const { username, password } = req.body;
+        // Tìm người dùng trong cơ sở dữ liệu
         const user = await User.findOne({ username });
-        if (!user || user.password !== password) {
-            return res.status(402).json({ message: 'Thông tin xác thực không hợp lệ' });
+        if (!user) {
+            return res.status(401).json({ message: 'Sai tên đăng nhập hoặc mật khẩu!' });
         }
-        res.status(402).json({ message: 'Đăng nhập thành công', user });
+
+        // So sánh mật khẩu
+        if (password !== user.password) {
+            return res.status(401).json({ message: 'Sai tên đăng nhập hoặc mật khẩu!' });
+        }
+
+        // Tạo JWT token
+        const token = jwt.sign(
+            { userId: user._id, username: user.username },
+            'your_jwt_secret',
+            { expiresIn: '1h' }
+        );
+
+        // Trả về token và thông tin người dùng
+        res.status(200).json({
+            token,
+            username: user.username,
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Đăng nhập không thành công', error });
+        console.error(error);
+        res.status(500).json({ message: 'Đã xảy ra lỗi máy chủ!' });
     }
 };
-
-// controllers/userController.js
 
 exports.forgotPassword = async (req, res) => {
     try {
