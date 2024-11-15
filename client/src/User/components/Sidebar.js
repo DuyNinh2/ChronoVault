@@ -19,6 +19,7 @@ const Sidebar = () => {
       .then(data => setBrands(data))
       .catch(error => console.error("Error fetching brands:", error));
   }, []);
+  
 
   const toggleSection = (section) => {
     if (section === 'price') setIsPriceOpen(!isPriceOpen);
