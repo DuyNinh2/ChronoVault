@@ -31,6 +31,39 @@ body {
         /* Ẩn header (điều chỉnh theo chiều cao của header) */
     }
 
+    /* Thêm style cho menu dropdown */
+    .account-icon {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 40px;
+        right: 0;
+        background-color: white;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        padding: 5px;
+        width: 150px;
+        z-index: 10;
+    }
+
+    .dropdown-menu button {
+        width: 100%;
+        padding: 8px;
+        background-color: #ffe4c6;
+        border: none;
+        color: rgb(0, 0, 0);
+        cursor: pointer;
+        font-size: 14px;
+        text-align: left;
+    }
+
+    .dropdown-menu button:hover {
+        background-color: #ffe298;
+    }
+
     .header-top {
         display: flex;
         height: 50px;

@@ -12,11 +12,13 @@ class ProductManagement extends Component {
         newProduct: {
             name: '',
             price: '',
-            amount: '',
+            stock_quantity: '',
             image: null,
             brand: '',
             category: ''
         },
+        newBrand: '',
+        newCategory: ''
     };
 
     componentDidMount() {
@@ -31,14 +33,26 @@ class ProductManagement extends Component {
     };
 
     fetchBrands = async () => {
-        const response = await axios.get('/api/brands');
-        this.setState({ brands: response.data });
+        try {
+            const response = await axios.get('/api/brands'); // Should match with your backend API
+            this.setState({ brands: response.data });
+        } catch (error) {
+            console.error("Error fetching brands:", error);
+            alert("Error fetching brands: " + error.response?.data?.message || "Unknown error");
+        }
     };
 
+
     fetchCategories = async () => {
-        const response = await axios.get('/api/categories');
-        this.setState({ categories: response.data });
+        try {
+            const response = await axios.get('/api/categories');  // Kiểm tra đường dẫn đúng không
+            this.setState({ categories: response.data });
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+            alert("Error fetching categories: " + error.response?.data?.message || "Unknown error");
+        }
     };
+
 
     handleAddProduct = () => {
         this.setState({ showAddForm: true });
@@ -50,12 +64,14 @@ class ProductManagement extends Component {
             newProduct: {
                 ...prevState.newProduct,
                 [name]: files ? files[0] : value,
-            }
+            },
+            newBrand: name === 'brand' && value === 'new' ? '' : prevState.newBrand,
+            newCategory: name === 'category' && value === 'new' ? '' : prevState.newCategory,
         }));
     };
 
     handleAddConfirm = async () => {
-        const confirmAdd = window.confirm("Bạn có chắc muốn thêm sản phẩm này?");
+        const confirmAdd = window.confirm("Are you sure you want to add this product?");
         if (confirmAdd) {
             try {
                 const formData = new FormData();
@@ -63,29 +79,42 @@ class ProductManagement extends Component {
                     formData.append(key, value);
                 });
 
-                await axios.post('/api/product-management', formData, {
+                if (this.state.newProduct.brand === 'new') {
+                    formData.append('newBrand', this.state.newBrand);
+                }
+                if (this.state.newProduct.category === 'new') {
+                    formData.append('newCategory', this.state.newCategory);
+                }
+
+                await axios.post('/api/addproduct', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-
 
                 this.fetchProducts();
                 this.setState({
                     showAddForm: false,
-                    newProduct: { name: '', price: '', amount: '', image: null, brand: '', category: '' }
+                    newProduct: { name: '', price: '', stock_quantity: '', image: null, brand: '', category: '' },
+                    newBrand: '',
+                    newCategory: ''
                 });
-                alert('Thêm sản phẩm thành công!');
+                alert('Product added successfully!');
             } catch (error) {
-                alert('Không thể thêm sản phẩm');
+                alert('Unable to add product');
             }
         }
     };
 
     handleAddCancel = () => {
-        this.setState({ showAddForm: false, newProduct: { name: '', price: '', amount: '', image: null, brand: '', category: '' } });
+        this.setState({
+            showAddForm: false,
+            newProduct: { name: '', price: '', stock_quantity: '', image: null, brand: '', category: '' },
+            newBrand: '',
+            newCategory: ''
+        });
     };
 
     render() {
-        const { searchTerm, products, brands, categories, showAddForm, newProduct } = this.state;
+        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory } = this.state;
 
         const filteredProducts = products.filter(product =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,44 +124,44 @@ class ProductManagement extends Component {
         return (
             <div className="product-management">
                 <div className="display-content">
-                    <h2>Quản Lý Sản Phẩm</h2>
+                    <h2>Product Management</h2>
                     <div className="product-actions">
                         <input
                             type="text"
-                            placeholder="Tìm kiếm theo tên hoặc giá"
+                            placeholder="Search by name or price"
                             value={searchTerm}
                             onChange={(e) => this.setState({ searchTerm: e.target.value })}
                         />
-                        <button className="add-button" onClick={this.handleAddProduct}>Thêm</button>
+                        <button className="add-button" onClick={this.handleAddProduct}>Add Product</button>
                     </div>
                     <table className="product-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Tên</th>
-                                <th>Giá</th>
-                                <th>Số Lượng</th>
-                                <th>Thương Hiệu</th>
-                                <th>Danh Mục</th>
-                                <th>Hình Ảnh</th>
-                                <th>Tùy Chọn</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th>Brand</th>
+                                <th>Category</th>
+                                <th>Image</th>
+                                <th>Options</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredProducts.map(product => (
-                                <tr key={product.id}>
-                                    <td>{product.id}</td>
+                                <tr key={product._id}> {/* Thay product.id thành product._id */}
+                                    <td>{product._id}</td> {/* Hiển thị _id của sản phẩm */}
                                     <td>{product.name}</td>
                                     <td>{product.price}</td>
-                                    <td>{product.amount}</td>
-                                    <td>{product.brandID?.name}</td> {/* Chỉ hiển thị tên thương hiệu */}
-                                    <td>{product.categoryID?.name}</td> {/* Chỉ hiển thị tên danh mục */}
+                                    <td>{product.stock_quantity}</td>
+                                    <td>{product.brandID?.name}</td>
+                                    <td>{product.category_id?.name}</td>
                                     <td>
                                         {product.image && <img src={product.image} alt={product.name} width="50" />}
                                     </td>
                                     <td className="options">
-                                        <button className="update-btn">Cập Nhật</button>
-                                        <button className="delete-btn">Xóa</button>
+                                        <button className="update-btn">Update</button>
+                                        <button className="delete-btn">Delete</button>
                                     </td>
                                 </tr>
                             ))}
@@ -143,45 +172,63 @@ class ProductManagement extends Component {
                 {showAddForm && (
                     <div className="overlay">
                         <div className="add-product-form">
-                            <button className="back-btn" onClick={this.handleAddCancel}>Trở Lại</button>
-                            <h2>Thêm Sản Phẩm</h2>
+                            <button className="back-btn" onClick={this.handleAddCancel}>Back</button>
+                            <h2>Add Product</h2>
                             <div className="form-row">
-                                <label className="form-row-label">Tên:</label>
+                                <label className="form-row-label">Name:</label>
                                 <input className="form-row-input" type="text" name="name" value={newProduct.name} onChange={this.handleInputChange} />
                             </div>
                             <div className="form-row">
-                                <label className="form-row-label">Giá:</label>
+                                <label className="form-row-label">Price:</label>
                                 <input className="form-row-input" type="number" name="price" value={newProduct.price} onChange={this.handleInputChange} />
                             </div>
                             <div className="form-row">
-                                <label className="form-row-label">Số Lượng:</label>
+                                <label className="form-row-label">Amount:</label>
                                 <input className="form-row-input" type="number" name="amount" value={newProduct.amount} onChange={this.handleInputChange} />
                             </div>
                             <div className="form-row">
-                                <label className="form-row-label">Thương Hiệu:</label>
+                                <label className="form-row-label">Brand:</label>
                                 <select className="form-row-input" name="brand" value={newProduct.brand} onChange={this.handleInputChange}>
-                                    <option value="">Chọn Thương Hiệu</option>
+                                    <option value="">Select Brand</option>
                                     {brands.map(brand => (
                                         <option key={brand._id} value={brand.name}>{brand.name}</option>
                                     ))}
+                                    <option value="new">Add New Brand</option>
                                 </select>
+                                {newProduct.brand === 'new' && (
+                                    <input
+                                        type="text"
+                                        placeholder="Enter new brand"
+                                        value={newBrand}
+                                        onChange={(e) => this.setState({ newBrand: e.target.value })}
+                                    />
+                                )}
                             </div>
                             <div className="form-row">
-                                <label className="form-row-label">Danh Mục:</label>
+                                <label className="form-row-label">Category:</label>
                                 <select className="form-row-input" name="category" value={newProduct.category} onChange={this.handleInputChange}>
-                                    <option value="">Chọn Danh Mục</option>
+                                    <option value="">Select Category</option>
                                     {categories.map(category => (
                                         <option key={category._id} value={category.name}>{category.name}</option>
                                     ))}
+                                    <option value="new">Add New Category</option>
                                 </select>
+                                {newProduct.category === 'new' && (
+                                    <input
+                                        type="text"
+                                        placeholder="Enter new category"
+                                        value={newCategory}
+                                        onChange={(e) => this.setState({ newCategory: e.target.value })}
+                                    />
+                                )}
                             </div>
                             <div className="form-row">
-                                <label className="form-row-label">Hình Ảnh:</label>
+                                <label className="form-row-label">Image:</label>
                                 <input className="form-row-input" type="file" name="image" onChange={this.handleInputChange} />
                             </div>
                             <div className="form-actions">
-                                <button className="add-confirm-btn" onClick={this.handleAddConfirm}>Thêm</button>
-                                <button className="cancel-btn" onClick={this.handleAddCancel}>Hủy</button>
+                                <button className="add-confirm-btn" onClick={this.handleAddConfirm}>Add</button>
+                                <button className="cancel-btn" onClick={this.handleAddCancel}>Cancel</button>
                             </div>
                         </div>
                     </div>
