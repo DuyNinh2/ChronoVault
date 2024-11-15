@@ -7,7 +7,7 @@ import Footer from '../../User/components/Footer';
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [isAdmin, setIsAdmin] = useState(false); 
+    const [isAdmin, setIsAdmin] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -17,19 +17,19 @@ const Login = () => {
         }
 
         try {
-            const endpoint = isAdmin 
-                ? 'http://localhost:5000/api/admin/login' 
-                : 'http://localhost:5000/api/user/login'; 
+            const endpoint = isAdmin
+                ? 'http://localhost:5000/api/admin/login'
+                : 'http://localhost:5000/api/user/login';
 
             const response = await axios.post(endpoint, { username, password });
 
             if (response.status === 200) {
                 if (isAdmin) {
-                    navigate('/admin-system'); 
+                    navigate('/admin-system');
                 } else {
                     localStorage.setItem('token', response.data.token);
-                    localStorage.setItem('username', response.data.username); 
-                    navigate('/'); 
+                    localStorage.setItem('username', response.data.username);
+                    navigate('/');
                 }
             }
         } catch (error) {
