@@ -13,7 +13,7 @@ class ProductManagement extends Component {
             name: '',
             price: '',
             stock_quantity: '',
-            image: null,
+            images: null,
             brand: '',
             category: ''
         },
@@ -79,6 +79,7 @@ class ProductManagement extends Component {
                     formData.append(key, value);
                 });
 
+                // Include the new brand and category if added
                 if (this.state.newProduct.brand === 'new') {
                     formData.append('newBrand', this.state.newBrand);
                 }
@@ -86,19 +87,25 @@ class ProductManagement extends Component {
                     formData.append('newCategory', this.state.newCategory);
                 }
 
+                // Send the data to the backend to add the product
                 await axios.post('/api/addproduct', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
 
+                // Fetch the updated product list after the new product is added
                 this.fetchProducts();
+
+                // Reset the form after successful addition
                 this.setState({
                     showAddForm: false,
-                    newProduct: { name: '', price: '', stock_quantity: '', image: null, brand: '', category: '' },
+                    newProduct: { name: '', price: '', stock_quantity: '', images: null, brand: '', category: '' },
                     newBrand: '',
                     newCategory: ''
                 });
+
                 alert('Product added successfully!');
             } catch (error) {
+                console.error('Error adding product:', error);
                 alert('Unable to add product');
             }
         }
@@ -107,7 +114,7 @@ class ProductManagement extends Component {
     handleAddCancel = () => {
         this.setState({
             showAddForm: false,
-            newProduct: { name: '', price: '', stock_quantity: '', image: null, brand: '', category: '' },
+            newProduct: { name: '', price: '', stock_quantity: '', images: null, brand: '', category: '' },
             newBrand: '',
             newCategory: ''
         });
@@ -157,7 +164,9 @@ class ProductManagement extends Component {
                                     <td>{product.brandID?.name}</td>
                                     <td>{product.category_id?.name}</td>
                                     <td>
-                                        {product.image && <img src={product.image} alt={product.name} width="50" />}
+                                        {product.images && product.images.map((image, index) => (
+                                            <img key={index} src={image.image_url} alt={image.alt_text || 'Product image'} width="24" />
+                                        ))}
                                     </td>
                                     <td className="options">
                                         <button className="update-btn">Update</button>
@@ -224,7 +233,7 @@ class ProductManagement extends Component {
                             </div>
                             <div className="form-row">
                                 <label className="form-row-label">Image:</label>
-                                <input className="form-row-input" type="file" name="image" onChange={this.handleInputChange} />
+                                <input className="form-row-input" type="file" name="images" onChange={this.handleInputChange} />
                             </div>
                             <div className="form-actions">
                                 <button className="add-confirm-btn" onClick={this.handleAddConfirm}>Add</button>

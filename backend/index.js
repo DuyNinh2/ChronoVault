@@ -25,13 +25,14 @@ mongoose.connect('mongodb://localhost:27017/ChronoVault', {
 // Use the routes
 app.use(watchRoutes);
 app.use(brandRoutes);
+app.use(categoryRoutes);
+
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
 
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/addproduct', watchRoutes);
-app.use('/api/categories', categoryRoutes);
+app.use('api/addproduct', watchRoutes);
 
 
 const PORT = process.env.PORT || 5000;

@@ -45,7 +45,7 @@ const Header = () => {
                 </div>
                 {showDropdown && (
                     <div className="dropdown-menu">
-                        <button onClick={handleLogout}>Đăng xuất</button>
+                        <button onClick={handleLogout}>Log out</button>
                     </div>
                 )}
             </div>
