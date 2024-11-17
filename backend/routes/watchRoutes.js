@@ -7,7 +7,7 @@ router.get('/api/watches', watchController.getAllWatches);
 router.get('/:id', watchController.getWatchById);
 
 //admin manage
-router.post('/product-management', watchController.addProduct);
+router.post('/addproduct', watchController.addProduct);
 
 
 // router.get('/api/brands', async (req, res) => {

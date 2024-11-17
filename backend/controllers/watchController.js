@@ -30,28 +30,51 @@ exports.getWatchById = async (req, res) => {
 // Admin add product
 exports.addProduct = async (req, res) => {
     try {
-        const { name, stock_quantity, brand, price, description, category, images } = req.body;
-
-        const existingBrand = await Brand.findOne({ name: brand });
-        const existingCategory = await Category.findOne({ name: category });
+        const { name, stock_quantity, brand, price, description, category, images, newBrand, newCategory } = req.body;
 
         let brandID, categoryID;
-        if (!existingBrand) {
-            const newBrand = new Brand({ name: brand });
-            await newBrand.save();
-            brandID = newBrand._id;
+
+        // Check if a new brand is being added
+        if (brand === 'new') {
+            if (!newBrand) return res.status(400).json({ message: "Brand name is required." });
+            const brandExist = await Brand.findOne({ name: newBrand });
+            if (brandExist) {
+                brandID = brandExist._id;
+            } else {
+                const newBrandObj = new Brand({ name: newBrand });
+                const savedBrand = await newBrandObj.save();
+                brandID = savedBrand._id;
+            }
         } else {
-            brandID = existingBrand._id;
+            const existingBrand = await Brand.findOne({ name: brand });
+            if (existingBrand) {
+                brandID = existingBrand._id;
+            } else {
+                return res.status(400).json({ message: "Brand not found." });
+            }
         }
 
-        if (!existingCategory) {
-            const newCategory = new Category({ name: category });
-            await newCategory.save();
-            categoryID = newCategory._id;
+        // Check if a new category is being added
+        if (category === 'new') {
+            if (!newCategory) return res.status(400).json({ message: "Category name is required." });
+            const categoryExist = await Category.findOne({ name: newCategory });
+            if (categoryExist) {
+                categoryID = categoryExist._id;
+            } else {
+                const newCategoryObj = new Category({ name: newCategory });
+                const savedCategory = await newCategoryObj.save();
+                categoryID = savedCategory._id;
+            }
         } else {
-            categoryID = existingCategory._id;
+            const existingCategory = await Category.findOne({ name: category });
+            if (existingCategory) {
+                categoryID = existingCategory._id;
+            } else {
+                return res.status(400).json({ message: "Category not found." });
+            }
         }
 
+        // Create new product
         const newProduct = new Watch({
             name,
             stock_quantity,
@@ -62,13 +85,18 @@ exports.addProduct = async (req, res) => {
             images
         });
 
+        // Save new product
         await newProduct.save();
+
         res.status(201).json({ message: 'Product added successfully!', product: newProduct });
     } catch (error) {
-        console.error(error);
+        console.error('Error while adding product:', error);  // Log full error message for debugging
         res.status(500).json({ message: 'Failed to add product', error: error.message });
     }
 };
+
+
+
 
 
 

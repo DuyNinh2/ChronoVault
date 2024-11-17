@@ -17,7 +17,7 @@ class UserManagement extends Component {
 
     fetchUsers = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/users/user-management'); // URL của API
+            const response = await axios.get('http://localhost:5000/api/user/user-management');
             // Kiểm tra dữ liệu trước khi setState
             const users = response.data.map(user => ({
                 _id: user._id || 'N/A', // Đảm bảo có ID
