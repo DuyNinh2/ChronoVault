@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Breadcrumb from '../components/Breadcrumb';
 import ProductImage from '../components/ProductImage';
 import ProductInfo from '../components/ProductInfo';
@@ -8,6 +9,9 @@ import CartDrawer from '../components/CartDrawer';
 import '../styles/ProductDetail.scss';
 
 const ProductDetail = () => {
+  const { state } = useLocation();
+  const { product } = state || {};
+  
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const handleAddToCart = () => {

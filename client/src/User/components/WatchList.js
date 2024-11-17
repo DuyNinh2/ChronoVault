@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchProducts } from '../services/productService';
 import '../styles/WatchList.scss';
 
@@ -7,6 +8,7 @@ const WatchesList = () => {
   const [hoveredProduct, setHoveredProduct] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -27,6 +29,10 @@ const WatchesList = () => {
 
   const handleMouseLeave = () => {
     setHoveredProduct(null);
+  };
+
+  const handleProductClick = (product) => {
+    navigate('/product-detail', { state: { product } });
   };
 
   const totalPages = Math.ceil(products.length / productsPerPage);
@@ -50,6 +56,7 @@ const WatchesList = () => {
             className="product-card"
             onMouseEnter={() => handleMouseEnter(product._id)}
             onMouseLeave={handleMouseLeave}
+            onClick={() => handleProductClick(product)}
           >
             <img
               src={hoveredProduct === product._id && product.images[1] ? product.images[1].image_url : product.images[0].image_url}
