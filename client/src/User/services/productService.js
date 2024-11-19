@@ -11,3 +11,13 @@ export const fetchProducts = async () => {
     throw error;
   }
 };
+
+export const fetchRelatedProducts = async (limit = 5) => {
+  try {
+    const response = await axios.get(`${API_URL}?limit=5&sort=desc`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching latest products:", error);
+    throw error;
+  }
+};

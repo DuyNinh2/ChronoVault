@@ -2,13 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import '../styles/ProductInfo.scss';
 
-const ProductInfo = ({ onAddToCart }) => (
+const ProductInfo = ({ name, price, description, onAddToCart }) => (
   <div className="product-info">
-    <h1>WATCH NAME</h1>
-    <p className="price">$350.00</p>
-    <p className="description">
-      Product description. I'm a great place to add more details about your product such as sizing, material, care instructions, and cleaning instructions.
-    </p>
+    <h1>{name}</h1>
+    <p className="price">${price.toFixed(2)}</p>
+    <p className="description">{description}</p>
     <div className="quantity">
       <span>Quantity</span>
       <button>-</button>

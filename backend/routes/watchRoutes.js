@@ -28,6 +28,4 @@ router.post('/addproduct', watchController.addProduct);
 //     }
 // });
 
-
-
 module.exports = router;

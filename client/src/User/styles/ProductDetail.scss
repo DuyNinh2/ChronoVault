@@ -1,17 +1,19 @@
 .product-detail {
     padding: 1rem;
+    background-color: #FFF7ED;
     .product-detail-container {
       display: flex;
       gap: 2rem;
       width: 100%;
+      margin-bottom: 120px;
 
       .img {
-        width: 50%;
+        width: 60%;
       }
 
       .detail {
-        width: 50%;
+        width: 40%;
       }
     }
-  }
+}
   
