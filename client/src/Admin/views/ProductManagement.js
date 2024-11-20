@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import '../../Admin/styles/ProductManagement.scss';
+import DeleteProduct from '../../Admin/components/ui/DeleteProduct';
 
 class ProductManagement extends Component {
     state = {
@@ -9,6 +10,8 @@ class ProductManagement extends Component {
         brands: [],
         categories: [],
         showAddForm: false,
+        showDeleteForm: false,
+        productToDelete: null,
         newProduct: {
             name: '',
             price: '',
@@ -136,8 +139,35 @@ class ProductManagement extends Component {
         });
     };
 
+    handleDeleteProduct = async () => {
+        const { productToDelete } = this.state;
+        if (!productToDelete) {
+            console.log('No product selected for deletion');
+            return;
+        }
+
+        console.log('Deleting product with ID:', productToDelete._id);
+
+
+        try {
+            const response = await axios.delete(`/api/deleteproduct/${productToDelete._id}`);
+
+            if (response.status === 200) {
+                alert('Product deleted successfully');
+                this.fetchProducts();
+                this.setState({ showDeleteForm: false, productToDelete: null });
+            }
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            // Ensure you're logging the full error for better debugging
+            alert("Error deleting product: " + (error.response?.data?.message || error.message || "Unknown error"));
+        }
+    };
+
+
+
     render() {
-        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory } = this.state;
+        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory, showDeleteForm, productToDelete } = this.state;
 
         const filteredProducts = products.filter(product =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -186,13 +216,22 @@ class ProductManagement extends Component {
                                     </td>
                                     <td className="options">
                                         <button className="update-btn">Update</button>
-                                        <button className="delete-btn">Delete</button>
+                                        <button className="delete-btn" onClick={() => this.setState({ showDeleteForm: true, productToDelete: product })}>Delete</button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
+
+                {showDeleteForm && productToDelete && (
+                    <DeleteProduct
+                        product={productToDelete}
+                        onDelete={this.handleDeleteProduct}
+                        onCancel={() => this.setState({ showDeleteForm: false, productToDelete: null })}
+                    />
+                )}
+
 
                 {showAddForm && (
                     <div className="overlay">
@@ -259,7 +298,20 @@ class ProductManagement extends Component {
                             </div>
                             <div className="form-row">
                                 <label className="form-row-label">Images:</label>
-                                <input className="form-row-input" type="file" multiple accept="image/*" onChange={this.handleInputChange} />
+                                <input
+                                    className="form-row-input"
+                                    type="file"
+                                    name="images"
+                                    multiple
+                                    onChange={this.handleInputChange}
+                                />
+                                {newProduct.images.length > 0 && (
+                                    <div className="images-preview">
+                                        {newProduct.images.map((image, index) => (
+                                            <img key={index} src={URL.createObjectURL(image)} alt="preview" width="50" />
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                             <div className="form-actions">
                                 <button className="add-confirm-btn" onClick={this.handleAddConfirm}>Add</button>
