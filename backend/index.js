@@ -11,6 +11,7 @@ const cartRoutes = require('./routes/cartRoutes');
 const adminRoutes = require('./routes/adminRoutes')
 const categoryRoutes = require('./routes/categoryRoutes');
 const app = express();
+const path = require('path');
 app.use(express.json());
 app.use(cors());
 
@@ -22,7 +23,8 @@ mongoose.connect('mongodb://localhost:27017/ChronoVault', {
   .then(() => console.log('MongoDB connected'))
   .catch((error) => console.error('MongoDB connection error:', error));
 
-// Use the routes
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+  // Use the routes
 app.use(watchRoutes);
 app.use(brandRoutes);
 app.use(categoryRoutes);
