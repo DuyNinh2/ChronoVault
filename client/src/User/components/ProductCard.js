@@ -1,18 +1,22 @@
 import React from 'react';
 import '../styles/ProductCard.scss';
 
-const ProductCard = ({ label, name, oldPrice, newPrice }) => (
-  <div className="product-card">
-    <div className="image">
-      {label && <span className="label">{label}</span>}
-      <div className="thumbnail"></div>
+const ProductCard = ({ name, price, images }) => {
+  const mainImage = images && images[0]?.image_url;
+  return (
+    <div className="p-card">
+      <div className="p-image">
+        <img 
+          src={mainImage || 'placeholder.png'} 
+          alt={images && images[0]?.alt_text || 'Product'} 
+        />
+      </div>
+      <div className="p-info">
+        <p className="p-name">{name || 'Unnamed Product'}</p>
+        <p className="p-price">${price ? price.toFixed(2) : 'N/A'}</p>
+      </div>
     </div>
-    <p className="name">{name}</p>
-    <p className="price">
-      {oldPrice && <span className="old-price">${oldPrice}</span>}
-      <span className="new-price">${newPrice}</span>
-    </p>
-  </div>
-);
+  );
+};
 
 export default ProductCard;

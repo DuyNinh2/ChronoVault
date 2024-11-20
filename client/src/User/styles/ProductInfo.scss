@@ -1,38 +1,95 @@
 .product-info {
-    h1 {
-      font-size: 1.5rem;
+  h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #5B3724;
+  }
+
+  .price {
+    color: #5B3724;
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+  }
+
+  .description {
+    color: #755543;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .quantity {
+    display: flexbox;
+    color: #5B3724;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    & > span {
+      font-size: 1rem;
+      margin: 0 1rem;
     }
-    .price {
-      font-size: 1.2rem;
-      color: #333;
-    }
-    .description {
-      margin-top: 1rem;
-      color: #666;
-      width: 50%;
-    }
-    .quantity {
-      display: flex;
-      align-items: center;
-      margin-top: 1rem;
-      span {
-        margin: 0 0.5rem;
+
+    button {
+      background-color: #DBD5CB;
+      border: 1px solid #ADA399;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+
+      &:hover {
+        background-color: #ADA399;
       }
-    }
-    .buttons {
-      display: flex;
-      margin-top: 1rem;
-      .add-to-cart {
-        background-color: #3d2d2a;
-        color: white;
-        padding: 0.5rem 1rem;
-        margin-right: 1rem;
-      }
-      .buy-now,
-      .wishlist {
-        border: 1px solid #3d2d2a;
-        padding: 0.5rem 1rem;
+      &:active {
+        background-color: #5B3724;
+        color: #FFF7ED;
       }
     }
   }
-  
+
+  .buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    button {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      transition: background-color 0.3s, color 0.3s;
+
+      &:hover {
+        background-color: #755543;
+        color: #FFF7ED;
+      }
+    }
+
+    .add-to-cart {
+      background-color: #5B3724;
+      color: #FFF7ED;
+    }
+
+    .buy-now {
+      background-color: #FFF7ED;
+      color: #5B3724;
+      border: 1px solid #5B3724;
+    }
+
+    .wishlist {
+      background-color: #FFF7ED;
+      color: #5B3724;
+      border: 1px solid #5B3724;
+      font-size: 1.5rem;
+    }
+  }
+
+  .product-info-section,
+  .return-refund-policy {
+    margin-top: 1rem;
+
+    & > summary {
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+}

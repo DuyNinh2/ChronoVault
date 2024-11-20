@@ -22,20 +22,29 @@ const ProductDetail = () => {
     setIsCartOpen(false);
   };
 
+  if (!product) {
+    return <div>Product not found</div>;
+  }
+
   return (
     <div className="product-detail">
-      <Breadcrumb />
+      <Breadcrumb productName={product.name} />
       <div className="product-detail-container">
         <div className='img'> 
-          <ProductImage />
+          <ProductImage images={product.images} />
         </div> 
         <div className='detail'>
-          <ProductInfo onAddToCart={handleAddToCart}/>
+          <ProductInfo 
+            name={product.name}
+            price={product.price}
+            description={product.description}
+            onAddToCart={handleAddToCart}
+          />
           <Accordion title="Product Info">
-          {"Hello Hà"}
+            {product.description || "No additional product information available."}
           </Accordion>
           <Accordion title="Return & Refund Policy">
-          {"LOL"}
+            {product.returnPolicy || "No return policy provided."}
           </Accordion>
         </div>
       </div>

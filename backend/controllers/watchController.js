@@ -5,9 +5,12 @@ const Category = require('../models/Category');
 // Get all watches
 exports.getAllWatches = async (req, res) => {
     try {
+        const limit = parseInt(req.query.limit) || 0;
         const watches = await Watch.find()
             .populate('brandID')
-            .populate('category_id');
+            .populate('category_id')
+            .sort({ _id: -1 }) 
+            .limit(limit);
         res.status(200).json(watches);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving watches', error });

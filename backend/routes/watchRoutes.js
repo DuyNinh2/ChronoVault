@@ -11,6 +11,4 @@ const upload = require('../utils/upload'); // Đảm bảo bạn đã cấu hìn
 // Route thêm sản phẩm với multer để upload ảnh
 router.post('/api/addproduct', upload.single('images'), watchController.addProduct);
 
-
-
 module.exports = router;
