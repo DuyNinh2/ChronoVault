@@ -32,8 +32,6 @@ app.use('/api/cart', cartRoutes);
 
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('api/addproduct', watchRoutes);
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

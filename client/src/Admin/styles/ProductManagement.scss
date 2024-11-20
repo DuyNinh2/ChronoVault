@@ -103,11 +103,12 @@
         justify-content: center;
         align-items: center;
         z-index: 999;
+        padding-top: 50px;
     }
 
     .add-product-form {
         background: white;
-        padding: 20px;
+        padding: 30px;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         width: 600px;
@@ -136,6 +137,12 @@
                 border: 1px solid #ddd;
                 border-radius: 5px;
                 font-size: 14px;
+            }
+
+            .addnew {
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
             }
         }
 

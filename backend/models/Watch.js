@@ -1,25 +1,25 @@
 const mongoose = require('mongoose');
 
 const watchSchema = new mongoose.Schema({
-  name: String,
-  stock_quantity: Number,
-  brandID: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand' }, // Reference to Brand
-  price: Number,
-  description: String,
-  category_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' }, // Reference to Category
+  name: { type: String, required: true },
+  stock_quantity: { type: Number, required: true },
+  brandID: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true }, // Reference to Brand
+  price: { type: Number, required: true },
+  description: { type: String },
+  category_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true }, // Reference to Category
   images: [
     {
-        image_url: String,
-        alt_text: String
-      },
-      {
-        image_url: String,
-        alt_text: String
-      },
-      {
-        image_url: String,
-        alt_text: String
-      }
+      image_url: { type: String, required: true },
+      alt_text: { type: String }
+    },
+    {
+      image_url: { type: String, required: true },
+      alt_text: { type: String }
+    },
+    {
+      image_url: { type: String, required: true },
+      alt_text: { type: String }
+    }
   ],
 });
 

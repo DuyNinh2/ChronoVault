@@ -27,77 +27,86 @@ exports.getWatchById = async (req, res) => {
     }
 };
 
-// Admin add product
+
 exports.addProduct = async (req, res) => {
     try {
-        const { name, stock_quantity, brand, price, description, category, images, newBrand, newCategory } = req.body;
+        const { name, stock_quantity, brand, price, description, category, newBrand, newCategory } = req.body;
 
-        let brandID, categoryID;
-
-        // Check if a new brand is being added
+        // Xử lý Brand
+        let brandID;
         if (brand === 'new') {
             if (!newBrand) return res.status(400).json({ message: "Brand name is required." });
-            const brandExist = await Brand.findOne({ name: newBrand });
-            if (brandExist) {
-                brandID = brandExist._id;
+
+            // Kiểm tra xem brand mới có tồn tại trong DB chưa
+            const existingBrand = await Brand.findOne({ name: newBrand.toLowerCase() });
+            if (existingBrand) {
+                brandID = existingBrand._id; // Nếu có rồi, lấy ID của brand cũ
             } else {
-                const newBrandObj = new Brand({ name: newBrand });
+                // Nếu chưa có, tạo brand mới và lấy ID
+                const newBrandObj = new Brand({ name: newBrand.toLowerCase() });
                 const savedBrand = await newBrandObj.save();
                 brandID = savedBrand._id;
             }
-        } else {
-            const existingBrand = await Brand.findOne({ name: brand });
+        } else if (brand !== 'select') {  // Nếu chọn brand có sẵn
+            const existingBrand = await Brand.findOne({ name: brand.toLowerCase() });
             if (existingBrand) {
-                brandID = existingBrand._id;
+                brandID = existingBrand._id;  // Lấy ID của brand đã có
             } else {
-                return res.status(400).json({ message: "Brand not found." });
+                return res.status(400).json({ message: "Brand not found." });  // Nếu không có, báo lỗi
             }
         }
 
-        // Check if a new category is being added
+        // Xử lý Category
+        let category_id;
         if (category === 'new') {
             if (!newCategory) return res.status(400).json({ message: "Category name is required." });
-            const categoryExist = await Category.findOne({ name: newCategory });
-            if (categoryExist) {
-                categoryID = categoryExist._id;
-            } else {
-                const newCategoryObj = new Category({ name: newCategory });
-                const savedCategory = await newCategoryObj.save();
-                categoryID = savedCategory._id;
-            }
-        } else {
-            const existingCategory = await Category.findOne({ name: category });
+
+            // Kiểm tra xem category mới có tồn tại trong DB chưa
+            const existingCategory = await Category.findOne({ name: newCategory.toLowerCase() });
             if (existingCategory) {
-                categoryID = existingCategory._id;
+                category_id = existingCategory._id;  // Nếu có rồi, lấy ID của category cũ
             } else {
-                return res.status(400).json({ message: "Category not found." });
+                // Nếu chưa có, tạo category mới và lấy ID
+                const newCategoryObj = new Category({ name: newCategory.toLowerCase() });
+                const savedCategory = await newCategoryObj.save();
+                category_id = savedCategory._id;
+            }
+        } else if (category !== 'select') {  // Nếu chọn category có sẵn
+            const existingCategory = await Category.findOne({ name: category.toLowerCase() });
+            if (existingCategory) {
+                category_id = existingCategory._id;  // Lấy ID của category đã có
+            } else {
+                return res.status(400).json({ message: "Category not found." });  // Nếu không có, báo lỗi
             }
         }
 
-        // Create new product
+
+        // Xử lý upload hình ảnh
+        let images = [];
+        if (req.files && req.files.images) {
+            const uploadedFiles = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
+            images = uploadedFiles.map(file => ({
+                image_url: `/uploads/${file.filename}`,
+                alt_text: file.originalname || "Product Image"
+            }));
+        }
+
+        // Tạo sản phẩm mới
         const newProduct = new Watch({
             name,
             stock_quantity,
-            brandID,
             price,
             description,
-            categoryID,
+            brandID,
+            category_id,
             images
         });
 
-        // Save new product
-        await newProduct.save();
-
-        res.status(201).json({ message: 'Product added successfully!', product: newProduct });
+        const savedProduct = await newProduct.save();
+        res.status(201).json({ message: "Product added successfully", product: savedProduct });
     } catch (error) {
-        console.error('Error while adding product:', error);  // Log full error message for debugging
-        res.status(500).json({ message: 'Failed to add product', error: error.message });
+        console.error('Error adding product:', error.message);
+        res.status(500).json({ message: 'Internal server error', error });
     }
 };
-
-
-
-
-
-
 

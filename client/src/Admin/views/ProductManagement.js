@@ -13,9 +13,10 @@ class ProductManagement extends Component {
             name: '',
             price: '',
             stock_quantity: '',
-            images: null,
+            images: [],
             brand: '',
-            category: ''
+            category: '',
+            description: ''
         },
         newBrand: '',
         newCategory: ''
@@ -28,13 +29,18 @@ class ProductManagement extends Component {
     }
 
     fetchProducts = async () => {
-        const response = await axios.get('/api/watches');
-        this.setState({ products: response.data });
+        try {
+            const response = await axios.get('/api/watches');
+            this.setState({ products: response.data });
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            alert("Error fetching products: " + error.response?.data?.message || "Unknown error");
+        }
     };
 
     fetchBrands = async () => {
         try {
-            const response = await axios.get('/api/brands'); // Should match with your backend API
+            const response = await axios.get('/api/brands');
             this.setState({ brands: response.data });
         } catch (error) {
             console.error("Error fetching brands:", error);
@@ -42,10 +48,9 @@ class ProductManagement extends Component {
         }
     };
 
-
     fetchCategories = async () => {
         try {
-            const response = await axios.get('/api/categories');  // Kiểm tra đường dẫn đúng không
+            const response = await axios.get('/api/categories');
             this.setState({ categories: response.data });
         } catch (error) {
             console.error("Error fetching categories:", error);
@@ -53,68 +58,79 @@ class ProductManagement extends Component {
         }
     };
 
-
     handleAddProduct = () => {
         this.setState({ showAddForm: true });
     };
 
     handleInputChange = (e) => {
         const { name, value, files } = e.target;
-        this.setState(prevState => ({
-            newProduct: {
-                ...prevState.newProduct,
-                [name]: files ? files[0] : value,
-            },
-            newBrand: name === 'brand' && value === 'new' ? '' : prevState.newBrand,
-            newCategory: name === 'category' && value === 'new' ? '' : prevState.newCategory,
-        }));
+        if (files) {
+            // Giới hạn chỉ chọn tối đa 3 hình ảnh
+            const newImages = Array.from(files).slice(0, 3);
+            this.setState(prevState => ({
+                newProduct: {
+                    ...prevState.newProduct,
+                    images: newImages,
+                }
+            }));
+        } else {
+            this.setState(prevState => ({
+                newProduct: {
+                    ...prevState.newProduct,
+                    [name]: value,
+                },
+                newBrand: name === 'brand' && value === 'new' ? '' : prevState.newBrand,
+                newCategory: name === 'category' && value === 'new' ? '' : prevState.newCategory,
+            }));
+        }
     };
 
     handleAddConfirm = async () => {
+        const { newProduct, newBrand, newCategory } = this.state;
+
+        if (!newProduct.name || !newProduct.price || !newProduct.stock_quantity) {
+            alert("Please fill out all required fields.");
+            return;
+        }
+
         const confirmAdd = window.confirm("Are you sure you want to add this product?");
-        if (confirmAdd) {
-            try {
-                const formData = new FormData();
-                Object.entries(this.state.newProduct).forEach(([key, value]) => {
-                    formData.append(key, value);
-                });
+        if (!confirmAdd) return;
 
-                // Include the new brand and category if added
-                if (this.state.newProduct.brand === 'new') {
-                    formData.append('newBrand', this.state.newBrand);
+        try {
+            const formData = new FormData();
+
+            // Append thông tin sản phẩm
+            Object.keys(newProduct).forEach(key => {
+                if (key === 'images' && newProduct[key].length > 0) {
+                    newProduct[key].forEach(image => formData.append('images', image));
+                } else {
+                    formData.append(key, newProduct[key]);
                 }
-                if (this.state.newProduct.category === 'new') {
-                    formData.append('newCategory', this.state.newCategory);
-                }
+            });
 
-                // Send the data to the backend to add the product
-                await axios.post('/api/addproduct', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
+            // Append brand/category mới nếu cần
+            if (newProduct.brand === 'new' && newBrand) formData.append('newBrand', newBrand);
+            if (newProduct.category === 'new' && newCategory) formData.append('newCategory', newCategory);
 
-                // Fetch the updated product list after the new product is added
-                this.fetchProducts();
+            const response = await axios.post('/api/addproduct', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
 
-                // Reset the form after successful addition
-                this.setState({
-                    showAddForm: false,
-                    newProduct: { name: '', price: '', stock_quantity: '', images: null, brand: '', category: '' },
-                    newBrand: '',
-                    newCategory: ''
-                });
-
+            if (response.status === 201) {
                 alert('Product added successfully!');
-            } catch (error) {
-                console.error('Error adding product:', error);
-                alert('Unable to add product');
+                this.fetchProducts();
+                this.handleAddCancel();
             }
+        } catch (error) {
+            console.error('Error adding product:', error);
+            alert(error.response?.data?.message || "Unexpected error occurred");
         }
     };
 
     handleAddCancel = () => {
         this.setState({
             showAddForm: false,
-            newProduct: { name: '', price: '', stock_quantity: '', images: null, brand: '', category: '' },
+            newProduct: { name: '', price: '', stock_quantity: '', images: [], brand: '', category: '', description: '' },
             newBrand: '',
             newCategory: ''
         });
@@ -156,8 +172,8 @@ class ProductManagement extends Component {
                         </thead>
                         <tbody>
                             {filteredProducts.map(product => (
-                                <tr key={product._id}> {/* Thay product.id thành product._id */}
-                                    <td>{product._id}</td> {/* Hiển thị _id của sản phẩm */}
+                                <tr key={product._id}>
+                                    <td>{product._id}</td>
                                     <td>{product.name}</td>
                                     <td>{product.price}</td>
                                     <td>{product.stock_quantity}</td>
@@ -193,7 +209,17 @@ class ProductManagement extends Component {
                             </div>
                             <div className="form-row">
                                 <label className="form-row-label">Amount:</label>
-                                <input className="form-row-input" type="number" name="amount" value={newProduct.amount} onChange={this.handleInputChange} />
+                                <input className="form-row-input" type="number" name="stock_quantity" value={newProduct.stock_quantity} onChange={this.handleInputChange} />
+                            </div>
+
+                            <div className="form-row">
+                                <label className="form-row-label">Description:</label>
+                                <input
+                                    className="form-row-input"
+                                    name="description"
+                                    value={newProduct.description}
+                                    onChange={this.handleInputChange}
+                                />
                             </div>
                             <div className="form-row">
                                 <label className="form-row-label">Brand:</label>
@@ -205,7 +231,7 @@ class ProductManagement extends Component {
                                     <option value="new">Add New Brand</option>
                                 </select>
                                 {newProduct.brand === 'new' && (
-                                    <input
+                                    <input className='addnew'
                                         type="text"
                                         placeholder="Enter new brand"
                                         value={newBrand}
@@ -223,7 +249,7 @@ class ProductManagement extends Component {
                                     <option value="new">Add New Category</option>
                                 </select>
                                 {newProduct.category === 'new' && (
-                                    <input
+                                    <input className='addnew'
                                         type="text"
                                         placeholder="Enter new category"
                                         value={newCategory}
@@ -232,8 +258,8 @@ class ProductManagement extends Component {
                                 )}
                             </div>
                             <div className="form-row">
-                                <label className="form-row-label">Image:</label>
-                                <input className="form-row-input" type="file" name="images" onChange={this.handleInputChange} />
+                                <label className="form-row-label">Images:</label>
+                                <input className="form-row-input" type="file" multiple accept="image/*" onChange={this.handleInputChange} />
                             </div>
                             <div className="form-actions">
                                 <button className="add-confirm-btn" onClick={this.handleAddConfirm}>Add</button>
