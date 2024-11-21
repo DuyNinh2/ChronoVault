@@ -38,7 +38,8 @@ const ProductDetail = () => {
             name={product.name}
             price={product.price}
             description={product.description}
-            onAddToCart={handleAddToCart}
+            watchID={product._id}
+            userID={"USER_ID_HERE"}
           />
           <Accordion title="Product Info">
             {product.description || "No additional product information available."}

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-// import { Dropdown } from 'react-bootstrap'; 
+import { getCurrentUsername, logout } from '../services/authService';
 import '../styles/Header.scss';
 
 function Header() {
     const location = useLocation();
     const navigate = useNavigate();
-    const [username, setUsername] = useState(localStorage.getItem('username') || '');
+    const [username, setUsername] = useState(getCurrentUsername());
     const [showMenu, setShowMenu] = useState(false);
 
     const toggleMenu = () => setShowMenu((prev) => !prev);
@@ -48,10 +48,9 @@ function Header() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        setUsername('');
-        navigate('/');
+      logout();
+      setUsername('');
+      navigate('/');
     };
 
     return (

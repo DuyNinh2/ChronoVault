@@ -28,9 +28,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(watchRoutes);
 app.use(brandRoutes);
 app.use(categoryRoutes);
+app.use('/api/cart', cartRoutes);
 
 app.use('/api/orders', orderRoutes);
-app.use('/api/cart', cartRoutes);
 
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);

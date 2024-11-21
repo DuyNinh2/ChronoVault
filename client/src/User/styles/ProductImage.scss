@@ -9,7 +9,6 @@
   .main-image {
     width: 100%;
     height: 500px;
-    // aspect-ratio: 1;
     background-color: #DBD5CB; 
     display: flex;
     justify-content: center;
@@ -19,18 +18,20 @@
     img {
       max-width: 100%;
       max-height: 100%;
-      object-fit: contain; // Đảm bảo ảnh không bị méo
+      height: 500px;
+      // object-fit: contain; 
     }
   }
 
   .thumbnails {
     display: flex;
+    width: 100%;
     justify-content: left;
     gap: 8px; 
 
     .thumbnail {
-      width: 30%; 
-      height: auto;
+      width: 35%; 
+      height: 100%;
       // aspect-ratio: 1;
       background-color: #DBD5CB; 
       display: flex;
@@ -39,9 +40,10 @@
       transition: transform 0.3s ease;
 
       img {
-        max-width: 100%;
+        width: 100%;
         max-height: 100%;
-        object-fit: contain; // Đảm bảo ảnh không bị méo
+        height: 300px;
+        // object-fit: contain;
         cursor: pointer; 
       }
 

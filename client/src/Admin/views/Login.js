@@ -28,11 +28,13 @@ const Login = () => {
                     navigate('/admin-system');
                 } else {
                     localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('userId', response.data.userId);
                     localStorage.setItem('username', response.data.username);
                     navigate('/');
                 }
             }
         } catch (error) {
+            console.error("Login error:", error.response?.data || error.message);
             alert('Sai tên đăng nhập hoặc mật khẩu!');
         }
     };
