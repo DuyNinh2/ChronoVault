@@ -9,7 +9,7 @@ exports.getAllWatches = async (req, res) => {
         const watches = await Watch.find()
             .populate('brandID')
             .populate('category_id')
-            .sort({ _id: -1 }) 
+            .sort({ _id: -1 })
             .limit(limit);
         res.status(200).json(watches);
     } catch (error) {
@@ -86,13 +86,15 @@ exports.addProduct = async (req, res) => {
 
         // Xử lý upload hình ảnh
         let images = [];
-        if (req.files && req.files.images) {
-            const uploadedFiles = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
-            images = uploadedFiles.map(file => ({
-                image_url: `/uploads/${file.filename}`,
+        if (req.files && req.files.length > 0) {
+            images = req.files.map(file => ({
+                image_url: `/uploads/images/${file.filename}`,
                 alt_text: file.originalname || "Product Image"
             }));
+        } else {
+            console.log("No files uploaded.");
         }
+
 
         // Tạo sản phẩm mới
         const newProduct = new Watch({
@@ -102,7 +104,7 @@ exports.addProduct = async (req, res) => {
             description,
             brandID,
             category_id,
-            images
+            images,
         });
 
         const savedProduct = await newProduct.save();
@@ -112,4 +114,23 @@ exports.addProduct = async (req, res) => {
         res.status(500).json({ message: 'Internal server error', error });
     }
 };
+
+exports.deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;  // Retrieve the 'id' from URL parameter
+        console.log('Deleting product with ID:', productId);
+
+        const deletedProduct = await Watch.findByIdAndDelete(productId);
+
+        if (!deletedProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        res.status(200).json({ message: 'Product deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).json({ message: 'Error deleting product', error: error.message || error });
+    }
+};
+
 
