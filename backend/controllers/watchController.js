@@ -86,13 +86,15 @@ exports.addProduct = async (req, res) => {
 
         // Xử lý upload hình ảnh
         let images = [];
-        if (req.files && req.files.images) {
-            const uploadedFiles = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
-            images = uploadedFiles.map(file => ({
-                image_url: `/uploads/${file.filename}`,
+        if (req.files && req.files.length > 0) {
+            images = req.files.map(file => ({
+                image_url: `/uploads/images/${file.filename}`,
                 alt_text: file.originalname || "Product Image"
             }));
+        } else {
+            console.log("No files uploaded.");
         }
+
 
         // Tạo sản phẩm mới
         const newProduct = new Watch({
@@ -102,7 +104,7 @@ exports.addProduct = async (req, res) => {
             description,
             brandID,
             category_id,
-            images
+            images,
         });
 
         const savedProduct = await newProduct.save();

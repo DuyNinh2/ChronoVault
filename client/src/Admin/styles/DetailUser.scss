@@ -86,11 +86,12 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            background-color: #2ebb2a;
-            color: white;
+            background-color: #f4e8d8;
+            color: #da7743;
 
             &:hover {
-                background-color: #47e620;
+                background-color: #5b3724;
+                color: white;
             }
         }
     }

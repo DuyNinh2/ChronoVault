@@ -67,17 +67,36 @@ class ProductManagement extends Component {
 
     handleInputChange = (e) => {
         const { name, value, files } = e.target;
+
         if (files) {
-            // Giới hạn chỉ chọn tối đa 3 hình ảnh
-            const newImages = Array.from(files).slice(0, 3);
-            this.setState(prevState => ({
+            // Convert FileList to Array for easier manipulation
+            const selectedFiles = Array.from(files);
+
+            // Ensure no duplicate files (compare by file name or content)
+            const uniqueFiles = selectedFiles.filter(file =>
+                !this.state.newProduct.images.some(img => img.name === file.name)
+            );
+
+            if (uniqueFiles.length === 0) {
+                alert('All selected files are duplicates of existing ones.');
+                return;
+            }
+
+            // Limit to 3 unique files
+            const newImages = [...this.state.newProduct.images, ...uniqueFiles].slice(0, 3);
+
+            if (newImages.length > 3) {
+                alert('You can only select up to 3 unique images.');
+            }
+
+            this.setState((prevState) => ({
                 newProduct: {
                     ...prevState.newProduct,
                     images: newImages,
-                }
+                },
             }));
         } else {
-            this.setState(prevState => ({
+            this.setState((prevState) => ({
                 newProduct: {
                     ...prevState.newProduct,
                     [name]: value,
@@ -87,6 +106,8 @@ class ProductManagement extends Component {
             }));
         }
     };
+
+
 
     handleAddConfirm = async () => {
         const { newProduct, newBrand, newCategory } = this.state;
@@ -125,7 +146,7 @@ class ProductManagement extends Component {
                 this.handleAddCancel();
             }
         } catch (error) {
-            console.error('Error adding product:', error);
+            console.error("Error adding product:", error.response?.data || error.message);
             alert(error.response?.data?.message || "Unexpected error occurred");
         }
     };

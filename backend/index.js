@@ -23,8 +23,11 @@ mongoose.connect('mongodb://localhost:27017/ChronoVault', {
   .then(() => console.log('MongoDB connected'))
   .catch((error) => console.error('MongoDB connection error:', error));
 
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-  // Use the routes
+// Use the routes
 app.use(watchRoutes);
 app.use(brandRoutes);
 app.use(categoryRoutes);
