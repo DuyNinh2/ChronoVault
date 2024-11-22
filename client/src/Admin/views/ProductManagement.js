@@ -22,7 +22,9 @@ class ProductManagement extends Component {
             description: ''
         },
         newBrand: '',
-        newCategory: ''
+        newCategory: '',
+        currentPage: 1,
+        productsPerPage: 6
     };
 
     componentDidMount() {
@@ -107,8 +109,6 @@ class ProductManagement extends Component {
         }
     };
 
-
-
     handleAddConfirm = async () => {
         const { newProduct, newBrand, newCategory } = this.state;
 
@@ -188,12 +188,20 @@ class ProductManagement extends Component {
 
 
     render() {
-        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory, showDeleteForm, productToDelete } = this.state;
+        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory, showDeleteForm, productToDelete, currentPage, productsPerPage } = this.state;
 
         const filteredProducts = products.filter(product =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             product.price.toString().includes(searchTerm)
         );
+
+        // Calculate the products to display based on the current page
+        const indexOfLastProduct = currentPage * productsPerPage;
+        const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+        const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+
+        // Calculate total number of pages
+        const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
         return (
             <div className="product-management">
@@ -222,7 +230,7 @@ class ProductManagement extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredProducts.map(product => (
+                            {currentProducts.map(product => (
                                 <tr key={product._id}>
                                     <td>{product._id}</td>
                                     <td>{product.name}</td>
@@ -243,6 +251,22 @@ class ProductManagement extends Component {
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                <div className="pagination">
+                    <button
+                        onClick={() => this.setState({ currentPage: currentPage - 1 })}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </button>
+                    <span>Page {currentPage} of {totalPages}</span>
+                    <button
+                        onClick={() => this.setState({ currentPage: currentPage + 1 })}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </button>
                 </div>
 
                 {showDeleteForm && productToDelete && (

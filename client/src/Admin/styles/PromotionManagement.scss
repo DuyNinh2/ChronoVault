@@ -97,4 +97,29 @@
             }
         }
     }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            background-color: #8d524d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button[disabled] {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        span {
+            font-size: 16px;
+        }
+    }
 }

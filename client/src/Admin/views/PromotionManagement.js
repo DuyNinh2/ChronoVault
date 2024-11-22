@@ -14,6 +14,8 @@ class PromotionManagement extends Component {
         showUpdateForm: false,
         showDetailForm: false, // New state for detail view
         selectedPromotion: null,
+        currentPage: 1,
+        productsPerPage: 6
     };
 
     componentDidMount() {
@@ -80,11 +82,17 @@ class PromotionManagement extends Component {
     };
 
     render() {
-        const { searchTerm, promotions, showAddForm, showUpdateForm, showDetailForm, selectedPromotion } = this.state;
+        const { searchTerm, promotions, showAddForm, showUpdateForm, showDetailForm, selectedPromotion, currentPage, productsPerPage } = this.state;
 
         const filteredPromotions = promotions.filter(promotion =>
             promotion.promotionName.toLowerCase().includes(searchTerm.toLowerCase())
         );
+
+        const indexOfLastProduct = currentPage * productsPerPage;
+        const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+        const currentProducts = filteredPromotions.slice(indexOfFirstProduct, indexOfLastProduct);
+
+        const totalPages = Math.ceil(filteredPromotions.length / productsPerPage);
 
         return (
             <div className="promotion-management">
@@ -111,7 +119,7 @@ class PromotionManagement extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredPromotions.length > 0 ? (
+                            {currentProducts.length > 0 ? (
                                 filteredPromotions.map(promotion => (
                                     <tr key={promotion._id}>
                                         <td>{promotion._id}</td>
@@ -133,27 +141,44 @@ class PromotionManagement extends Component {
                             )}
                         </tbody>
                     </table>
-                    {showAddForm && (
-                        <AddPromotion
-                            onClose={this.handleCloseAddForm}
-                        />
-                    )}
-                    {showUpdateForm && selectedPromotion && (
-                        <UpdatePromotion
-                            promotion={selectedPromotion}
-                            onClose={() => {
-                                this.setState({ showUpdateForm: false, selectedPromotion: null });
-                                this.fetchPromotions();
-                            }}
-                        />
-                    )}
-                    {showDetailForm && selectedPromotion && (
-                        <DetailPromotion
-                            promotion={selectedPromotion}
-                            onBackClick={this.handleBackToList} // Handle back button click
-                        />
-                    )}
                 </div>
+
+                <div className="pagination">
+                    <button
+                        onClick={() => this.setState({ currentPage: currentPage - 1 })}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </button>
+                    <span>Page {currentPage} of {totalPages}</span>
+                    <button
+                        onClick={() => this.setState({ currentPage: currentPage + 1 })}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
+
+                {showAddForm && (
+                    <AddPromotion
+                        onClose={this.handleCloseAddForm}
+                    />
+                )}
+                {showUpdateForm && selectedPromotion && (
+                    <UpdatePromotion
+                        promotion={selectedPromotion}
+                        onClose={() => {
+                            this.setState({ showUpdateForm: false, selectedPromotion: null });
+                            this.fetchPromotions();
+                        }}
+                    />
+                )}
+                {showDetailForm && selectedPromotion && (
+                    <DetailPromotion
+                        promotion={selectedPromotion}
+                        onBackClick={this.handleBackToList} // Handle back button click
+                    />
+                )}
             </div>
         );
     }
