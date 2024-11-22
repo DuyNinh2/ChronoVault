@@ -1,32 +1,38 @@
-const Cart = require('../models/Cart');
+const Cart = require('../models/Cart'); 
 
-// Add item to cart
-exports.addToCart = async (req, res) => {
-    try {
-        const newItem = new Cart(req.body);
-        await newItem.save();
-        res.status(201).json(newItem);
-    } catch (error) {
-        res.status(400).json({ message: 'Error adding item to cart', error });
-    }
-};
+// Thêm sản phẩm vào giỏ hàng
+exports.addItemToCart = async (req, res) => {
+  const { userID, watchID, quantity } = req.body;
 
-// Get cart items for a user
-exports.getCartItems = async (req, res) => {
-    try {
-        const items = await Cart.find({ userId: req.params.userId });
-        res.status(200).json(items);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving cart items', error });
-    }
-};
+  // Kiểm tra dữ liệu đầu vào
+  if (!userID || !watchID || !Number.isInteger(quantity) || quantity <= 0) {
+    return res.status(400).json({ message: 'Invalid data. Please provide userID, watchID, and valid quantity.' });
+  }
 
-// Remove item from cart
-exports.removeFromCart = async (req, res) => {
-    try {
-        await Cart.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: 'Item removed from cart' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error removing item from cart', error });
+  try {
+    // Kiểm tra xem giỏ hàng của người dùng đã tồn tại chưa
+    let cart = await Cart.findOne({ userID });
+
+    if (!cart) {
+      // Nếu chưa có giỏ hàng, tạo mới
+      cart = new Cart({ userID, items: [{ watchID, quantity }] });
+    } else {
+      // Kiểm tra nếu sản phẩm đã tồn tại trong giỏ hàng
+      const itemIndex = cart.items.findIndex(item => item.watchID.toString() === watchID);
+
+      if (itemIndex > -1) {
+        // Nếu sản phẩm đã tồn tại, tăng số lượng
+        cart.items[itemIndex].quantity += quantity;
+      } else {
+        // Nếu không, thêm sản phẩm mới
+        cart.items.push({ watchID, quantity });
+      }
     }
+
+    await cart.save();
+    res.status(200).json({ message: 'Item added to cart successfully', cart });
+  } catch (err) {
+    console.error('Error adding item to cart:', err);
+    res.status(500).json({ message: 'Error adding item to cart', error: err.message });
+  }
 };

@@ -53,7 +53,7 @@ exports.login = async (req, res) => {
 
         // Tạo JWT token
         const token = jwt.sign(
-            { userId: user._id, username: user.username },
+            { userId: user._id.toString(), username: user.username },
             'your_jwt_secret',
             { expiresIn: '1h' }
         );
@@ -62,6 +62,7 @@ exports.login = async (req, res) => {
         res.status(200).json({
             token,
             username: user.username,
+            userId: user._id.toString(),
         });
     } catch (error) {
         console.error(error);

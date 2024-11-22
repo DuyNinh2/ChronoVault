@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const cartController = require('../controllers/cartController');
 
-router.post('/', cartController.addToCart);
-router.get('/:userId', cartController.getCartItems);
-router.delete('/:id', cartController.removeFromCart);
+// Thêm Middleware xác thực nếu cần thiết
+// const authMiddleware = require('../middleware/authMiddleware');
+
+router.post('/add', cartController.addItemToCart); // Route: POST /api/cart/add
 
 module.exports = router;
