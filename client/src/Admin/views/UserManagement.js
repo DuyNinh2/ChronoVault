@@ -9,6 +9,8 @@ class UserManagement extends Component {
         searchTerm: '',
         users: [],
         selectedUser: null,
+        currentPage: 1, // Trang hiện tại
+        usersPerPage: 6, // Số lượng người dùng mỗi trang
     };
 
     componentDidMount() {
@@ -20,11 +22,11 @@ class UserManagement extends Component {
             const response = await axios.get('http://localhost:5000/api/user/user-management');
             // Kiểm tra dữ liệu trước khi setState
             const users = response.data.map(user => ({
-                _id: user._id || 'N/A', // Đảm bảo có ID
-                username: user.username || 'Unknown', // Đảm bảo có tên người dùng
-                email: user.email || 'Unknown', // Đảm bảo có email
-                phone: user.phone || 'Unknown', // Đảm bảo có số điện thoại
-                created_at: user.created_at || 'Unknown' // Lấy ngày tạo
+                _id: user._id || 'N/A',
+                username: user.username || 'Unknown',
+                email: user.email || 'Unknown',
+                phone: user.phone || 'Unknown',
+                created_at: user.created_at || 'Unknown'
             }));
             this.setState({ users });
         } catch (error) {
@@ -51,12 +53,21 @@ class UserManagement extends Component {
     };
 
     render() {
-        const { searchTerm, users, selectedUser } = this.state;
-        // Thêm điều kiện để tránh lỗi undefined khi tìm kiếm
+        const { searchTerm, users, selectedUser, currentPage, usersPerPage } = this.state;
+
+        // Lọc dữ liệu theo tìm kiếm
         const filteredUsers = users.filter(user =>
             (user.username && user.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
             (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase()))
         );
+
+        // Tính chỉ số người dùng cần hiển thị cho trang hiện tại
+        const indexOfLastUser = currentPage * usersPerPage;
+        const indexOfFirstUser = indexOfLastUser - usersPerPage;
+        const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+        // Tính toán số trang
+        const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
         return (
             <div className="admin-usermanagement">
@@ -82,7 +93,7 @@ class UserManagement extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredUsers.map(user => (
+                                {currentUsers.map(user => (
                                     <tr key={user._id}>
                                         <td>{user._id}</td>
                                         <td>{user.username}</td>
@@ -95,7 +106,25 @@ class UserManagement extends Component {
                                 ))}
                             </tbody>
                         </table>
+
+                        {/* Pagination Controls */}
+                        <div className="pagination">
+                            <button
+                                onClick={() => this.setState({ currentPage: currentPage - 1 })}
+                                disabled={currentPage === 1}
+                            >
+                                Previous
+                            </button>
+                            <span>Page {currentPage} of {totalPages}</span>
+                            <button
+                                onClick={() => this.setState({ currentPage: currentPage + 1 })}
+                                disabled={currentPage === totalPages}
+                            >
+                                Next
+                            </button>
+                        </div>
                     </div>
+
                     {selectedUser && (
                         <DetailUser user={selectedUser} onBackClick={this.handleBackClick} />
                     )}

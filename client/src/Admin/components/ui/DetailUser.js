@@ -57,9 +57,20 @@ class DetailUser extends Component {
                                 className="admin-detailuser-input"
                             />
                         </div>
+
+                        {/* Hiển thị địa chỉ */}
+                        <div className="admin-detailuser-form-row">
+                            <label>Address:</label>
+                            <input
+                                type="text"
+                                value={`Street: ${user.address?.street || ''}, City: ${user.address?.city || ''}, District: ${user.address?.district || ''}, Country: ${user.address?.country || ''}`}
+                                readOnly
+                                className="admin-detailuser-input"
+                            />
+                        </div>
                     </div>
                     <div className="admin-detailuser-form-actions">
-                        <button className="admin-detailuser-ok-button" onClick={onBackClick}>OK</button>
+                        <button className="admin-detailuser-ok-button" onClick={onBackClick}>Close</button>
                     </div>
                 </div>
             </div>

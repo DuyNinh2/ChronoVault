@@ -8,6 +8,7 @@ const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 //admin
+const promotionRoutes = require('./routes/promotionRoutes');
 const adminRoutes = require('./routes/adminRoutes')
 const categoryRoutes = require('./routes/categoryRoutes');
 const app = express();
@@ -31,6 +32,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(watchRoutes);
 app.use(brandRoutes);
 app.use(categoryRoutes);
+app.use(promotionRoutes);
 
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
