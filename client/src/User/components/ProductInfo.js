@@ -4,7 +4,7 @@ import { addToCart } from '../services/cartService';
 import { getCurrentUserID } from '../services/authService';
 import '../styles/ProductInfo.scss';
 
-const ProductInfo = ({ name, price, description, watchID }) => {
+const ProductInfo = ({ name, price, description, watchID, openCartDrawer }) => {
   const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = async () => {
@@ -16,8 +16,9 @@ const ProductInfo = ({ name, price, description, watchID }) => {
     }
   
     try {
-      await addToCart(userID, watchID, quantity); // Gọi API thêm sản phẩm vào giỏ hàng
-      alert('Product added to cart successfully!');
+      await addToCart(userID, watchID, quantity); 
+      openCartDrawer();
+      // alert('Product added to cart successfully!');
     } catch (error) {
       console.error('Error adding to cart:', error.response?.data || error.message);
       alert('Failed to add product to cart. Please try again.');
@@ -51,6 +52,7 @@ ProductInfo.propTypes = {
   price: PropTypes.number.isRequired,
   description: PropTypes.string.isRequired,
   watchID: PropTypes.string.isRequired,
+  onAddToCart: PropTypes.func.isRequired,
 };
 
 export default ProductInfo;

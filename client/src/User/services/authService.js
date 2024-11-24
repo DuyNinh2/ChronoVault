@@ -1,6 +1,6 @@
 export const getCurrentUserID = () => {
-    const userID = localStorage.getItem('userID') || null;
-    console.log('Retrieved userID:', userID);
+    const userID = localStorage.getItem('userId');
+    // console.log('Retrieved userID:', userID);
     return userID;
   };
   
@@ -11,6 +11,6 @@ export const getCurrentUserID = () => {
   export const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
-    localStorage.removeItem('userID');
+    localStorage.removeItem('userId');
   };
   

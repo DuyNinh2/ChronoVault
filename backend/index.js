@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
@@ -14,6 +15,7 @@ const app = express();
 const path = require('path');
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json());
 
 // Kết nối MongoDB
 mongoose.connect('mongodb://localhost:27017/ChronoVault', {
@@ -31,7 +33,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(watchRoutes);
 app.use(brandRoutes);
 app.use(categoryRoutes);
-app.use('/api/cart', cartRoutes);
+app.use(cartRoutes);
 
 app.use('/api/orders', orderRoutes);
 

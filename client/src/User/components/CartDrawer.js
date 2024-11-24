@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCartItems, updateCartQuantity } from '../services/cartService';
+import { fetchCartItems, updateCartQuantity, removeCartItem } from '../services/cartService';
 import { getCurrentUserID } from '../services/authService';
 import { Link } from 'react-router-dom';
 import '../styles/CartDrawer.scss';
@@ -11,16 +11,40 @@ const CartDrawer = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen && userID) {
       fetchCartItems(userID)
-        .then((data) => setCartItems(data.cartItems))
+        .then((cartItems) => {
+          setCartItems(cartItems); 
+          // console.log(cartItems);
+        })
         .catch((err) => console.error('Error fetching cart items:', err));
     }
   }, [isOpen, userID]);
+  
 
-  const updateQuantity = (itemID, newQuantity) => {
-    if (newQuantity <= 0) return;
+  const updateQuantity = (itemID, currentQuantity, stockQuantity, increment) => {
+    const newQuantity = currentQuantity + increment;
+    // console.log(stockQuantity);
+    if (newQuantity < 1 || newQuantity > stockQuantity) {
+      alert(newQuantity > stockQuantity ? 'Out of stock!' : 'Quantity cannot be less than 1.');
+      return;
+    }
+  
     updateCartQuantity(userID, itemID, newQuantity)
-      .then((data) => setCartItems(data.cartItems))
+      .then(() => {
+        setCartItems((prevItems) =>
+          prevItems.map((item) =>
+            item.watchId === itemID ? { ...item, quantity: newQuantity } : item
+          )
+        );
+      })
       .catch((err) => console.error('Error updating quantity:', err));
+  };
+  
+  const handleRemoveItem = (itemID) => {
+    removeCartItem(userID, itemID)
+      .then(() => {
+        setCartItems((prevItems) => prevItems.filter((item) => item.watchId !== itemID));
+      })
+      .catch((err) => console.error('Error removing item:', err));
   };
 
   return (
@@ -33,19 +57,31 @@ const CartDrawer = ({ isOpen, onClose }) => {
         </div>
         <div className="cart-content">
           {cartItems.length > 0 ? (
-            cartItems.map((item, index) => (
-              <div className="cart-item" key={index}>
-                <img src={item.image} alt={item.name} className="item-image" />
+            cartItems.map((item) => (
+              <div className="cart-item" key={item._id}>
+                <img src={item.product.image} alt={item.product.name} className="item-image" />
                 <div className="item-details">
-                  <p className="item-name">{item.name}</p>
-                  <p className="item-price">${item.price}</p>
+                  <p className="item-name">{item.product.name}</p>
+                  <p className="item-price">${item.product.price}</p>
                   <div className="quantity-controls">
-                    <button onClick={() => updateQuantity(item._id, item.quantity - 1)}>-</button>
+                    <button
+                      onClick={() => updateQuantity(item.watchId, item.quantity, item.product.stock_quantity, -1)}
+                      disabled={item.quantity === 1}
+                    >
+                      -
+                    </button>
                     <span>{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item._id, item.quantity + 1)}>+</button>
+                    <button
+                      onClick={() => updateQuantity(item.watchId, item.quantity, item.product.stock_quantity, 1)}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
-                <p className="item-total">${item.price * item.quantity}</p>
+                <p className="item-total">${(item.product.price * item.quantity).toFixed(2)}</p>
+                <button className="remove-item-btn" onClick={() => handleRemoveItem(item.watchId)}>
+                  &#128465;
+                </button>
               </div>
             ))
           ) : (
@@ -55,7 +91,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
         <div className="cart-footer">
           <p className="subtotal">
             <span>Subtotal</span>
-            <span>${cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}</span>
+            <span>${cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0).toFixed(2)}</span>
           </p>
           <p className="checkout-info">Taxes and shipping are calculated at checkout.</p>
           <button className="checkout-btn"><Link to='/checkout'>Checkout</Link></button>

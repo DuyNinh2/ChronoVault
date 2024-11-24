@@ -1,13 +1,5 @@
 import axios from 'axios';
 
-export const fetchCartItems = async (userID) => {
-  const response = await fetch(`/api/cart?userID=${userID}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch cart items');
-  }
-  return response.json();
-};
-
 export const addToCart = async (userID, watchID, quantity) => {
   try {
     const response = await axios.post('/api/cart/add', {
@@ -21,16 +13,37 @@ export const addToCart = async (userID, watchID, quantity) => {
   }
 };
 
-
-export const updateCartQuantity = async (userID, itemID, quantity) => {
-  const response = await fetch(`/api/cart/update`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userID, itemID, quantity }),
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to update quantity');
+export const fetchCartItems = async (userID) => {
+  try {
+    const response = await axios.post('/api/cart', { userID });
+    const cartItems = response.data.cartItems;
+    // console.log('Cart Items:', cartItems);
+    return cartItems; 
+  } catch (error) {
+    console.error('Error fetching cart items:', error.response?.data || error.message);
+    return []; 
   }
-  return response.json();
 };
+
+export const updateCartQuantity = async (userID, watchID, quantity) => {
+  try {
+    console.log(quantity);
+    const response = await axios.post('/api/cart/updatequantity', { userID, watchID, quantity });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to update cart quantity');
+  }
+};
+
+export const removeCartItem = async (userID, watchID) => {
+  try {
+    const response = await axios.post('/api/cart/removewatch', {
+      userID,
+      watchID,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to remove item from cart');
+  }
+};
+

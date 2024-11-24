@@ -13,8 +13,10 @@ const ProductDetail = () => {
   const { product } = state || {};
   
   const [isCartOpen, setIsCartOpen] = useState(false);
+  // const [newCartItem, setNewCartItem] = useState(null);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (item) => {
+    // setNewCartItem(item);
     setIsCartOpen(true);
   };
 
@@ -39,7 +41,7 @@ const ProductDetail = () => {
             price={product.price}
             description={product.description}
             watchID={product._id}
-            userID={"USER_ID_HERE"}
+            openCartDrawer={handleAddToCart}
           />
           <Accordion title="Product Info">
             {product.description || "No additional product information available."}
@@ -50,7 +52,7 @@ const ProductDetail = () => {
         </div>
       </div>
       <RelatedProducts />
-      <CartDrawer isOpen={isCartOpen} onClose={handleCloseCart} cartItems={[{ name: 'WatchName', price: 350, quantity: 1, image: '../images/mechanical.jpg' },]} />
+      <CartDrawer isOpen={isCartOpen} onClose={handleCloseCart} />
     </div>
   );
 };

@@ -54,7 +54,7 @@ exports.login = async (req, res) => {
         // Tạo JWT token
         const token = jwt.sign(
             { userId: user._id.toString(), username: user.username },
-            'your_jwt_secret',
+            'jwtsecret',
             { expiresIn: '1h' }
         );
 
@@ -120,3 +120,4 @@ exports.getAllUsers = async (req, res) => {
         res.status(500).json({ message: 'Lỗi khi lấy dữ liệu người dùng.', error });
     }
 };
+

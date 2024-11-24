@@ -5,7 +5,7 @@
     right: -25%;
     width: 25%;
     height: 100%;
-    background: white;
+    background: #FFF7ED;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
     transition: right 0.3s ease;
     display: flex;
@@ -85,6 +85,18 @@
           font-size: 1rem;
           font-weight: bold;
         }
+        
+        .remove-item-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #5B3724;
+          font-size: 18px;
+  
+          &:hover {
+            color: #755543;
+          }
+        }
       }
     }
   
@@ -100,8 +112,8 @@
       }
   
       .checkout-btn {
-        background: #333;
-        color: white;
+        background-color: #5B3724;
+        color: #FFF7ED;
         border: none;
         padding: 0.8rem;
         width: 100%;
@@ -112,7 +124,8 @@
   
       .view-cart-btn {
         background: none;
-        border: 1px solid #333;
+        color: #5B3724;
+        border: 1px solid #5B3724;
         padding: 0.8rem;
         width: 100%;
         font-size: 1rem;

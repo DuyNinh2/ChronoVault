@@ -9,7 +9,7 @@ const Sidebar = () => {
   const [brands, setBrands] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [isPriceOpen, setIsPriceOpen] = useState(true);
-  const [isBrandOpen, setIsBrandOpen] = useState(true);
+  const [isBrandOpen, setIsBrandOpen] = useState(false);
   const [isMinInput, setIsMinInput] = useState(false);
   const [isMaxInput, setIsMaxInput] = useState(false);
 
