@@ -1,28 +1,60 @@
 import React, { Component } from 'react';
-import '../../Admin/styles/OrderManagement.scss'; // Import SCSS cho giao diện
+import axios from 'axios';
+import '../../Admin/styles/OrderManagement.scss';
 
 class OrderManagement extends Component {
     state = {
         searchTerm: '',
-        orders: [
-            { id: 1, orderName: 'Order 1', userId: 'User 1', amount: '1', bookingDate: '2024-01-01', status: 'Duyệt đơn hàng' },
-            { id: 2, orderName: 'Order 2', userId: 'User 2', amount: '2', bookingDate: '2024-01-02', status: 'Đang giao hàng' },
-            { id: 3, orderName: 'Order 3', userId: 'User 3', amount: '1', bookingDate: '2024-01-03', status: 'Đã giao hàng' },
-            // Thêm các đơn hàng khác tại đây
-        ],
+        orders: [],
+        staffList: [],
     };
 
-    handleUpdateOrderStatus = (id, newStatus) => {
-        this.setState(prevState => ({
-            orders: prevState.orders.map(order =>
-                order.id === id ? { ...order, status: newStatus } : order
-            )
-        }));
+    // Lấy danh sách đơn hàng và nhân viên
+    componentDidMount() {
+        this.fetchOrders();
+        this.fetchStaffList();
+    }
+
+    fetchOrders = async () => {
+        try {
+            const response = await axios.get('/api/orders/getAllOrders');
+            if (response.data.orders) {
+                this.setState({ orders: response.data.orders });
+            }
+        } catch (error) {
+            console.error('Có lỗi khi lấy dữ liệu đơn hàng:', error);
+        }
     };
 
-    handleAddOrder = () => {
-        // Logic để thêm đơn hàng mới
-        console.log("Add order functionality");
+    fetchStaffList = async () => {
+        try {
+            const response = await axios.get('/api/staff/getAllStaff');
+            if (response.data.staff) {
+                this.setState({ staffList: response.data.staff });
+            }
+        } catch (error) {
+            console.error('Có lỗi khi lấy dữ liệu nhân viên:', error);
+        }
+    };
+
+    handleUpdateAssignedStaff = async (orderId, staffId) => {
+        try {
+            const response = await axios.post('/api/orders/assignOrderToStaff', {
+                orderId,
+                staffId,
+            });
+            if (response.data.order) {
+                this.setState(prevState => ({
+                    orders: prevState.orders.map(order =>
+                        order._id === orderId
+                            ? { ...order, assignedStaff: { _id: staffId, username: response.data.order.assignedStaff.username } }
+                            : order
+                    ),
+                }));
+            }
+        } catch (error) {
+            console.error('Có lỗi khi gán nhân viên giao hàng:', error);
+        }
     };
 
     handleSearchChange = (event) => {
@@ -30,12 +62,12 @@ class OrderManagement extends Component {
     };
 
     render() {
-        const { searchTerm, orders } = this.state;
+        const { searchTerm, orders, staffList } = this.state;
 
-        // Lọc đơn hàng theo ID và ngày đặt
+        // Lọc đơn hàng theo từ khóa tìm kiếm
         const filteredOrders = orders.filter(order =>
-            order.id.toString().includes(searchTerm) || // Tìm theo ID
-            order.bookingDate.includes(searchTerm) // Tìm theo ngày đặt
+            order._id.includes(searchTerm) ||
+            (order.order_date && order.order_date.includes(searchTerm))
         );
 
         return (
@@ -49,39 +81,55 @@ class OrderManagement extends Component {
                             value={searchTerm}
                             onChange={this.handleSearchChange}
                         />
-
                     </div>
                     <table className="order-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Orders</th>
-                                <th>ID User</th>
-                                <th>Amount</th>
-                                <th>Booking Date</th>
+                                <th>ID Order</th>
+                                <th>User</th>
+                                <th>Watch - Amount - Price</th>
+                                <th>Total Amount</th>
+                                <th>Order Date</th>
                                 <th>Status</th>
-
+                                <th>Assigned Staff</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredOrders.map(order => (
-                                <tr key={order.id}>
-                                    <td>{order.id}</td>
-                                    <td>{order.orderName}</td>
-                                    <td>{order.userId}</td>
-                                    <td>{order.amount}</td>
-                                    <td>{order.bookingDate}</td>
+                                <tr key={order._id}>
+                                    <td>{order._id}</td>
+                                    <td>{order.userID?.username || 'Unknown'}</td>
                                     <td>
-                                        <select
-                                            value={order.status}
-                                            onChange={(e) => this.handleUpdateOrderStatus(order.id, e.target.value)}
-                                        >
-                                            <option value="Duyệt đơn hàng">Duyệt đơn hàng</option>
-                                            <option value="Đang giao hàng">Đang giao hàng</option>
-                                            <option value="Đã giao hàng">Đã giao hàng</option>
-                                        </select>
+                                        {order.items.map((item, index) => (
+                                            <div key={index}>
+                                                {item.watchID?.name || 'Unknown'} - Amount: {item.quantity} - Price: {item.price}
+                                            </div>
+                                        ))}
                                     </td>
 
+
+                                    {/* <td>{order.items?.length || 0}</td> */}
+                                    <td>{order.total_amount}</td>
+                                    <td>{new Date(order.order_date).toLocaleDateString()}</td>
+                                    <td>{order.status}</td> {/* Chỉ xem, không chỉnh sửa */}
+                                    <td>
+                                        {order.assignedStaff ? (
+                                            order.assignedStaff.username
+                                        ) : (
+                                            <select
+                                                onChange={(e) =>
+                                                    this.handleUpdateAssignedStaff(order._id, e.target.value)
+                                                }
+                                            >
+                                                <option value="">Select Staff</option>
+                                                {staffList.map(staff => (
+                                                    <option key={staff._id} value={staff._id}>
+                                                        {staff.username}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

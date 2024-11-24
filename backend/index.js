@@ -7,9 +7,9 @@ const brandRoutes = require('./routes/brandRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const cartRoutes = require('./routes/cartRoutes');
-//admin
+const staffRoutes = require('./routes/staffRoutes');
 const promotionRoutes = require('./routes/promotionRoutes');
-const adminRoutes = require('./routes/adminRoutes')
+const adminRoutes = require('./routes/adminRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const app = express();
 const path = require('path');
@@ -35,7 +35,7 @@ app.use(categoryRoutes);
 app.use(cartRoutes);
 app.use(promotionRoutes);
 app.use('/api/orders', orderRoutes);
-
+app.use("/api/staff", staffRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 

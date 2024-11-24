@@ -8,24 +8,37 @@ const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isStaff, setIsStaff] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async () => {
-        if (!username || !password) {
+        if (!username.trim() || !password.trim()) {
             alert('Tên đăng nhập và mật khẩu không được để trống!');
             return;
         }
 
+
         try {
-            const endpoint = isAdmin
-                ? 'http://localhost:5000/api/admin/login'
-                : 'http://localhost:5000/api/user/login';
+            let endpoint;
+
+            if (isAdmin) {
+                endpoint = 'http://localhost:5000/api/admin/login';
+            } else if (isStaff) {
+                endpoint = 'http://localhost:5000/api/staff/login';
+            } else {
+                endpoint = 'http://localhost:5000/api/user/login';
+            }
 
             const response = await axios.post(endpoint, { username, password });
 
             if (response.status === 200) {
                 if (isAdmin) {
                     navigate('/admin-system');
+                } else if (isStaff) {
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('staffId', response.data.staffId);
+                    localStorage.setItem('username', response.data.username);
+                    navigate('/staff-dashboard');
                 } else {
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('userId', response.data.userId);
@@ -56,7 +69,7 @@ const Login = () => {
 
             <div className="login-content">
                 <div className="login-section">
-                    <h2 className='login-h2'>LOG IN</h2>
+                    <h2 className="login-h2">LOG IN</h2>
                     <div className="input-field">
                         <label>Username</label>
                         <input
@@ -75,14 +88,28 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    <div className="admin-checkbox">
+                    <div className="role-checkboxes">
                         <label>
                             <input
                                 type="checkbox"
                                 checked={isAdmin}
-                                onChange={(e) => setIsAdmin(e.target.checked)}
+                                onChange={(e) => {
+                                    setIsAdmin(e.target.checked);
+                                    setIsStaff(false); // Đảm bảo chỉ chọn một checkbox
+                                }}
                             />
                             Log in as Admin
+                        </label>
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={isStaff}
+                                onChange={(e) => {
+                                    setIsStaff(e.target.checked);
+                                    setIsAdmin(false); // Đảm bảo chỉ chọn một checkbox
+                                }}
+                            />
+                            Log in as Staff
                         </label>
                     </div>
                     <a href="" className="forgot-password" onClick={handleForgotPassword}>Forgot Password?</a>
@@ -101,7 +128,7 @@ const Login = () => {
                     <button className="signup-button" onClick={handleCreateAccount}>Create an account</button>
                 </div>
             </div>
-            <div className='ft'>
+            <div className="ft">
                 <Footer />
             </div>
         </div>

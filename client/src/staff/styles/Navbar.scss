@@ -1,0 +1,48 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #FFF7ED;
+    color: #5B3724;
+
+    .user-menu {
+        position: relative;
+        cursor: pointer;
+
+        .user-info {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            color: black;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            min-width: 150px;
+
+            p {
+                margin: 5px 0;
+            }
+
+            .logout-btn {
+                background-color: #f44336;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+                border-radius: 3px;
+                margin-top: 10px;
+
+                &:hover {
+                    background-color: #d32f2f;
+                }
+            }
+        }
+    }
+}
