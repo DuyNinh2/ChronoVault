@@ -16,11 +16,12 @@ import UserManagement from '../../Admin/views/UserManagement';
 import OrderManagement from '../../Admin/views/OrderManagement';
 import ForgotPassword from '../../Admin/views/ForgotPassword';
 import StatisticsManagement from '../../Admin/views/StatisticsManagement';
+import Staff from '../../staff/pages/StaffDashboard';
 
 const AppUser = () => {
     const location = useLocation(); // Lấy thông tin đường dẫn hiện tại
 
-    const noHeaderFooterRoutes = ['/forgot-password', '/create-account', '/login', '/admin-system', '/product-management', '/order-management', '/promotion-management', '/user-management', '/statistics-management'];
+    const noHeaderFooterRoutes = ['/staff-dashboard', '/forgot-password', '/create-account', '/login', '/admin-system', '/product-management', '/order-management', '/promotion-management', '/user-management', '/statistics-management'];
 
     return (
         <>
@@ -40,6 +41,7 @@ const AppUser = () => {
                 <Route path="/promotion-management" element={<PromotionManagement />} />
                 <Route path="/user-management" element={<UserManagement />} />
                 <Route path="/statistics-management" element={<StatisticsManagement />} />
+                <Route path="/staff-dashboard" element={<Staff />} />
             </Routes>
             {!noHeaderFooterRoutes.includes(location.pathname) && <Footer />}
         </>

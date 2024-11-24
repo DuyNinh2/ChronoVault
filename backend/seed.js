@@ -9,6 +9,7 @@ const User = require('./models/User');
 const Admin = require('./models/Admin');
 const Promotion = require('./models/Promotion');
 const Statistic = require('./models/Statistic');
+const Staff = require('./models/Staff');
 
 mongoose.connect('mongodb://localhost:27017/ChronoVault', {
   useNewUrlParser: true,
@@ -29,6 +30,36 @@ async function createSampleData() {
 
   //   await admin.save();
 
+  // const staff = new Staff({
+  //   username: 'VanC',
+  //   name: 'Le Van C',
+  //   password: '13',
+  //   phone: '0901264567',
+  //   role: 'Shipper',
+  // });
+  // const savedStaff = await staff.save();
+
+  // Tạo dữ liệu Order
+  const order = new Order({
+    userID: '64f3a3b6e92e1b001234dcba', // Thay thế bằng ObjectId hợp lệ từ User
+    status: 'Pending',
+    total_amount: 2000,
+    order_date: new Date(),
+    items: [
+      {
+        watchID: '64f3a3b6e92e1b0012349999', // Thay thế bằng ObjectId hợp lệ từ Watch
+        quantity: 1,
+        price: 2000,
+      },
+      {
+        watchID: '64f3a3b6e92e1b0012349989', // Thay thế bằng ObjectId hợp lệ từ Watch
+        quantity: 2,
+        price: 2000,
+      },
+    ],
+  });
+
+  await order.save();
   // Tạo dữ liệu mẫu cho Brand
   // const brand1 = new Brand({ name: 'Hublot' });
   // const brand2 = new Brand({ name: 'Omega' });
@@ -81,7 +112,7 @@ async function createSampleData() {
 
 
   // // Tạo dữ liệu mẫu cho User
-  // const user1 = new User({
+  // const user = new User({
   //   userName: 'duyninh',
   //   password: '1234',
   //   email: 'duy@gmail.com',
@@ -97,7 +128,7 @@ async function createSampleData() {
   // });
 
 
-  // await user1.save();
+  // await user.save();
 
 
   console.log('Sample data created');

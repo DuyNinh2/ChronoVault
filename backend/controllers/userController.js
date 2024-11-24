@@ -1,11 +1,16 @@
 const jwt = require('jsonwebtoken');
 // const bcrypt = require('bcryptjs');
-const User = require('../models/User'); 
+const User = require('../models/User');
 
 // Register a new user
 exports.registerUser = async (req, res) => {
     try {
         const { username, email, phone, password } = req.body;
+
+        const existingUsername = await User.findOne({ username })
+        if (existingUsername) {
+            return res.status(400).json({ message: 'Username đã được sử dụng!' });
+        }
 
         const existingEmail = await User.findOne({ email });
         if (existingEmail) {

@@ -36,7 +36,7 @@ const CreatAccount = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/api/users/create-account', {
+            const response = await axios.post('/api/user/create-account', {
                 username,
                 email,
                 phone,

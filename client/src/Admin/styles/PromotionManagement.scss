@@ -28,8 +28,6 @@
         .add-button {
             margin-left: 15px;
             padding: 10px 20px;
-            background-color: #f1c40f;
-            color: #333;
             font-weight: bold;
             border: none;
             border-radius: 5px;
@@ -37,8 +35,12 @@
             transition: background-color 0.3s;
             font-size: 16px;
 
+            background-color: #9b4c1f;
+            color: #f7f7f7;
+
             &:hover {
-                background-color: #e2b007;
+                background-color: #b67552;
+                color: #f7f7f7;
             }
         }
     }
@@ -75,22 +77,49 @@
             }
 
             .delete-btn {
-                background-color: #e74c3c;
-                color: #fff;
+                background-color: #e4dbce;
+                color: #9b4c1f;
 
                 &:hover {
-                    background-color: #c0392b;
+                    background-color: #b67552;
+                    color: #f7f7f7;
                 }
             }
 
             .update-btn {
-                background-color: #3498db; // Màu sắc cho nút cập nhật
-                color: #fff;
+                background-color: #e4dbce;
+                color: #9b4c1f;
 
                 &:hover {
-                    background-color: #155c8b;
+                    background-color: #b67552;
+                    color: #f7f7f7;
                 }
             }
+        }
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            background-color: #8d524d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button[disabled] {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        span {
+            font-size: 16px;
         }
     }
 }
