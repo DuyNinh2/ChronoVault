@@ -126,3 +126,28 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
+// Get user by ID
+exports.getUserById = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.status(200).json(user);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.saveUserAddress = (req, res) => { 
+    const { userID } = req.params; 
+    const { street, city, district, country } = req.body; 
+    User.findByIdAndUpdate(userID, { $push: { address: { street, city, district, country } } }, { new: true }) 
+        .then(user => res.json(user)) 
+        .catch(err => res.status(500).json({ error: 'Error saving address' })); 
+};
+

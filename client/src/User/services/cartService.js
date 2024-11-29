@@ -47,3 +47,9 @@ export const removeCartItem = async (userID, watchID) => {
   }
 };
 
+export const clearCartItems = (userID) => { 
+  return axios.delete(`/api/cart/${userID}`) 
+    .then(response => response.data) 
+    .catch(error => { throw error; }); 
+};
+

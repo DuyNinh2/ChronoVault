@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import '../styles/Payment.scss';
 
 const PaymentSection = () => {
-  const [promoCode, setPromoCode] = useState('');
   const [selectedPayment, setSelectedPayment] = useState('');
-
-  const handlePromoChange = (e) => {
-    setPromoCode(e.target.value);
-  };
 
   const handlePaymentSelection = (method) => {
     setSelectedPayment(method);
@@ -21,16 +16,6 @@ const PaymentSection = () => {
   return (
     <div className="payment-section">
       <h2>Payment</h2>
-      <div className="promo-code">
-        <label>Have a promo code?</label>
-        <input 
-          type="text" 
-          placeholder="Promo" 
-          value={promoCode} 
-          onChange={handlePromoChange} 
-        />
-      </div>
-
       <div className="payment-options">
         <label>How would you like to pay?</label>
         <div 

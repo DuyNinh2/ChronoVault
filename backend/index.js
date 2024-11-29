@@ -12,6 +12,8 @@ const staffRoutes = require('./routes/staffRoutes');
 const promotionRoutes = require('./routes/promotionRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const momoRoutes = require('./routes/momoRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const app = express();
 const path = require('path');
 app.use(express.json());
@@ -36,6 +38,8 @@ app.use(brandRoutes);
 app.use(categoryRoutes);
 app.use(cartRoutes);
 app.use(promotionRoutes);
+app.use(momoRoutes);
+app.use('/api/payments', paymentRoutes);
 
 app.use('/api/orders', orderRoutes);
 app.use("/api/staff", staffRoutes);

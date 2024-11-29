@@ -148,5 +148,17 @@ exports.removeCartItem = async (req, res) => {
 };
 
 
+exports.clearCartItems = (req, res) => {
+  const { userID } = req.params;
+
+  Cart.findOneAndDelete({ userID })
+    .then(() => res.json({ success: true }))
+    .catch(err => res.status(500).json({ error: 'Error clearing cart' }));
+};
+
+
+
+
+
 
 
