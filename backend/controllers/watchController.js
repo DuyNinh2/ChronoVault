@@ -1,21 +1,79 @@
 const Watch = require('../models/Watch');
 const Brand = require('../models/Brand');
 const Category = require('../models/Category');
+const Order = require('../models/Order');
 
 // Get all watches
+// exports.getAllWatches = async (req, res) => {
+//     try {
+//         const limit = parseInt(req.query.limit) || 0;
+//         const watches = await Watch.find()
+//             .populate('brandID')
+//             .populate('category_id')
+//             .sort({ _id: -1 })
+//             .limit(limit);
+//         res.status(200).json(watches);
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error retrieving watches', error });
+//     }
+// };
+
 exports.getAllWatches = async (req, res) => {
     try {
-        const limit = parseInt(req.query.limit) || 0;
-        const watches = await Watch.find()
-            .populate('brandID')
-            .populate('category_id')
-            .sort({ _id: -1 })
-            .limit(limit);
-        res.status(200).json(watches);
+      const { filter, minPrice, maxPrice, brand, limit } = req.query;
+  
+      let query = {};
+  
+      if (filter === 'new-arrivals') {
+        query = {}; // Không lọc gì thêm, chỉ sort
+      } else if (filter === 'best-sellers') {
+        // Lấy 10 đồng hồ có tổng số lượng mua nhiều nhất
+        const topWatches = await Order.aggregate([
+          { $unwind: "$items" },
+          {
+            $group: {
+              _id: "$items.watchID",
+              totalQuantity: { $sum: "$items.quantity" },
+            },
+          },
+          { $sort: { totalQuantity: -1 } },
+          { $limit: 10 },
+        ]);
+  
+        const watchIDs = topWatches.map((item) => item._id);
+        query._id = { $in: watchIDs };
+      }
+      
+      if (minPrice && maxPrice) {
+        query.price = { $gte: Number(minPrice), $lte: Number(maxPrice) };
+      }
+
+      
+      if (brand) {
+        const brandNames = brand.split(',').map(name => name.trim()); 
+        const brands = await Brand.find({ name: { $in: brandNames } });
+        if (brands.length > 0) {
+          query.brandID = { $in: brands.map((b) => b._id) };
+        }
+      }
+
+    //   console.log("Query being executed:", query);
+  
+      let watchesQuery = Watch.find(query)
+        .populate('brandID')
+        .populate('category_id')
+        
+      if (filter === 'new-arrivals') {
+        watchesQuery = watchesQuery.sort({ _id: -1 }).limit(parseInt(limit) || 0);
+      }
+  
+      const watches = await watchesQuery;
+      res.status(200).json(watches);
     } catch (error) {
-        res.status(500).json({ message: 'Error retrieving watches', error });
+      res.status(500).json({ message: 'Error retrieving watches', error });
     }
-};
+  };
+  
 
 // Get a single watch by ID
 exports.getWatchById = async (req, res) => {

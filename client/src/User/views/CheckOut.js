@@ -36,6 +36,9 @@ const CheckoutPage = () => {
                 },
               },
             ],
+            application_context: {
+              "shipping_preference": "NO_SHIPPING"
+            },
           });
         },
         onApprove: async (data, actions) => {
