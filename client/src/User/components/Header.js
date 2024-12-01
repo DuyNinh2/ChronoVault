@@ -59,7 +59,11 @@ function Header() {
                 <Link to='/'><h1>ChronoVault</h1></Link>
                 <div className='h-menu'>
                     <Link to='/products'>All Products</Link>
-                    <Link to='/new-arrivals'>New Arrivals</Link>
+                    <Link to={{
+                      pathname: '/products',
+                      state: { filter: 'new-arrivals' }
+                    }}>New Arrivals</Link>
+
                     <Link to='/brands'>Brands</Link>
                     <Link to='/about' onClick={handleAboutClick}>About</Link>
                 </div>

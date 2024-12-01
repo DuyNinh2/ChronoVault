@@ -2,15 +2,26 @@ import axios from 'axios';
 
 const API_URL = '/api/watches';
 
-export const fetchProducts = async () => {
+// export const fetchProducts = async () => {
+//   try {
+//     const response = await axios.get(API_URL);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching products:", error);
+//     throw error;
+//   }
+// };
+
+export const fetchProducts = async (filters) => {
   try {
-    const response = await axios.get(API_URL);
+    const response = await axios.get(API_URL, { params: filters });
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
     throw error;
   }
 };
+
 
 export const fetchRelatedProducts = async (limit = 5) => {
   try {

@@ -1,26 +1,13 @@
 const Watch = require('../models/Watch');
 const Brand = require('../models/Brand');
 const Category = require('../models/Category');
+const Order = require('../models/Order');
 
-// // Get all watches
-// exports.getAllWatches = async (req, res) => {
-//     try {
-//         const limit = parseInt(req.query.limit) || 0;
-//         const watches = await Watch.find()
-//             .populate('brandID')
-//             .populate('category_id')
-//             .sort({ _id: -1 })
-//             .limit(limit);
-//         res.status(200).json(watches);
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error retrieving watches', error });
-//     }
-// };
-
+// Get all watches
 exports.getAllWatches = async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 0;
-        const watches = await Watch.find({ isDeleted: false })
+        const watches = await Watch.find()
             .populate('brandID')
             .populate('category_id')
             .sort({ _id: -1 })
@@ -30,7 +17,6 @@ exports.getAllWatches = async (req, res) => {
         res.status(500).json({ message: 'Error retrieving watches', error });
     }
 };
-
 
 // Get a single watch by ID
 exports.getWatchById = async (req, res) => {
