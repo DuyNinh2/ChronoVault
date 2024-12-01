@@ -7,7 +7,7 @@ const { verifyToken } = require("../controllers/authMiddleware");
 router.post("/login", staffController.loginStaff); // Không cần verifyToken
 router.get("/getAssignedOrders", verifyToken, staffController.getAssignedOrders);
 router.patch("/updateOrderStatus", verifyToken, staffController.updateOrderStatus);
-
+router.get("/getAllStaff", verifyToken, staffController.getAllStaff);
 
 
 module.exports = router; // Export router

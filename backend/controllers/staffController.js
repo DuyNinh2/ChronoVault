@@ -66,3 +66,26 @@ exports.updateOrderStatus = async (req, res) => {
         res.status(500).json({ message: "Có lỗi xảy ra", error: error.message });
     }
 };
+
+exports.getAllStaff = async (req, res) => {
+    try {
+        const staff = await Staff.find().select("_id username");
+        console.log("Staff data:", staff);  // Kiểm tra dữ liệu trả về
+        if (!staff || staff.length === 0) {
+            return res.status(400).json({ message: "Không có nhân viên nào" });
+        }
+        res.json({ staff });
+    } catch (error) {
+        console.error("Chi tiết lỗi:", error.message);
+        res.status(500).json({ message: "Có lỗi xảy ra", error: error.message });
+    }
+};
+
+
+
+
+
+
+
+
+

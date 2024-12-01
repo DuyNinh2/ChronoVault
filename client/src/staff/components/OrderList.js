@@ -9,7 +9,7 @@ const OrderList = ({ orders, setSelectedOrder }) => {
                     <th>Mã đơn hàng</th>
                     <th>Tên khách hàng</th>
                     <th>Số điện thoại</th>
-                    <th>Tên sản phẩm - Số lượng</th>
+                    <th>Tên sản phẩm - Số lượng - Giá</th>
                     <th>Trạng thái</th>
                     <th>Tổng tiền</th>
                     <th>Ngày đặt hàng</th>
@@ -26,7 +26,7 @@ const OrderList = ({ orders, setSelectedOrder }) => {
                         <td>
                             {order.items.map((item, index) => (
                                 <div key={item.watchID._id}>
-                                    <p>{item.watchID.name} - Số lượng: {item.quantity}</p> {/* Tên và giá của sản phẩm */}
+                                    <p>{item.watchID.name} - Số lượng: {item.quantity} - Giá: {item.price}</p> {/* Tên và giá của sản phẩm */}
                                 </div>
                             ))}
                         </td>

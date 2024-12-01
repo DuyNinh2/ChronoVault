@@ -11,7 +11,13 @@ class UpdateProduct extends Component {
                 price: props.product.price,
                 amount: props.product.amount,
                 image: props.product.image,
+                brand: props.product.brand || '', // thêm brand
+                category: props.product.category || '', // thêm category
+                newBrand: '', // input cho brand mới
+                newCategory: '', // input cho category mới
             },
+            brands: props.brands || [], // danh sách các thương hiệu
+            categories: props.categories || [], // danh sách các danh mục
         };
     }
 
@@ -23,6 +29,44 @@ class UpdateProduct extends Component {
                 [name]: files ? files[0] : value,
             }
         }));
+    };
+
+    handleSelectChange = (e) => {
+        const { name, value } = e.target;
+        this.setState(prevState => ({
+            updatedProduct: {
+                ...prevState.updatedProduct,
+                [name]: value,
+            }
+        }));
+    };
+
+    handleAddNewBrand = () => {
+        const { newBrand } = this.state.updatedProduct;
+        if (newBrand) {
+            this.setState(prevState => ({
+                brands: [...prevState.brands, newBrand],
+                updatedProduct: {
+                    ...prevState.updatedProduct,
+                    brand: newBrand,
+                    newBrand: '',
+                }
+            }));
+        }
+    };
+
+    handleAddNewCategory = () => {
+        const { newCategory } = this.state.updatedProduct;
+        if (newCategory) {
+            this.setState(prevState => ({
+                categories: [...prevState.categories, newCategory],
+                updatedProduct: {
+                    ...prevState.updatedProduct,
+                    category: newCategory,
+                    newCategory: '',
+                }
+            }));
+        }
     };
 
     handleUpdateConfirm = () => {
@@ -39,7 +83,7 @@ class UpdateProduct extends Component {
     };
 
     render() {
-        const { updatedProduct } = this.state;
+        const { updatedProduct, brands, categories } = this.state;
 
         return (
             <div className="overlay">
@@ -85,6 +129,52 @@ class UpdateProduct extends Component {
                             value={updatedProduct.amount}
                             onChange={this.handleInputChange}
                         />
+                    </div>
+                    <div className="form-row">
+                        <label className="form-row-label">Brand:</label>
+                        <select
+                            className="form-row-input"
+                            name="brand"
+                            value={updatedProduct.brand}
+                            onChange={this.handleSelectChange}
+                        >
+                            <option value="">Select a brand</option>
+                            {brands.map((brand, index) => (
+                                <option key={index} value={brand}>{brand}</option>
+                            ))}
+                        </select>
+                        <input
+                            className="form-row-input"
+                            type="text"
+                            name="newBrand"
+                            placeholder="Add new brand"
+                            value={updatedProduct.newBrand}
+                            onChange={this.handleInputChange}
+                        />
+                        <button type="button" onClick={this.handleAddNewBrand}>Add Brand</button>
+                    </div>
+                    <div className="form-row">
+                        <label className="form-row-label">Category:</label>
+                        <select
+                            className="form-row-input"
+                            name="category"
+                            value={updatedProduct.category}
+                            onChange={this.handleSelectChange}
+                        >
+                            <option value="">Select a category</option>
+                            {categories.map((category, index) => (
+                                <option key={index} value={category}>{category}</option>
+                            ))}
+                        </select>
+                        <input
+                            className="form-row-input"
+                            type="text"
+                            name="newCategory"
+                            placeholder="Add new category"
+                            value={updatedProduct.newCategory}
+                            onChange={this.handleInputChange}
+                        />
+                        <button type="button" onClick={this.handleAddNewCategory}>Add Category</button>
                     </div>
                     <div className="form-row">
                         <label className="form-row-label">Image:</label>

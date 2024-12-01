@@ -11,6 +11,7 @@ class ProductManagement extends Component {
         categories: [],
         showAddForm: false,
         showDeleteForm: false,
+        productToUpdate: null,
         productToDelete: null,
         newProduct: {
             name: '',
@@ -160,6 +161,49 @@ class ProductManagement extends Component {
         });
     };
 
+    handleUpdateProduct = (product) => {
+        this.setState({
+            showUpdateForm: true,
+            productToUpdate: product,
+            updatedProduct: { ...product }  // Đặt giá trị ban đầu của sản phẩm vào form cập nhật
+        });
+    };
+
+    // Phương thức để cập nhật thông tin sản phẩm
+    handleUpdateConfirm = async () => {
+        const { updatedProduct } = this.state;
+
+        if (!updatedProduct.name || !updatedProduct.price || !updatedProduct.stock_quantity) {
+            alert("Please fill out all required fields.");
+            return;
+        }
+
+        const confirmUpdate = window.confirm("Are you sure you want to update this product?");
+        if (!confirmUpdate) return;
+
+        try {
+            const response = await axios.put(`/api/updateproduct/${updatedProduct._id}`, updatedProduct);
+
+            if (response.status === 200) {
+                alert('Product updated successfully!');
+                this.fetchProducts();
+                this.handleUpdateCancel();
+            }
+        } catch (error) {
+            console.error("Error updating product:", error);
+            alert("Error updating product: " + (error.response?.data?.message || error.message || "Unknown error"));
+        }
+    };
+
+    // Phương thức hủy bỏ form cập nhật
+    handleUpdateCancel = () => {
+        this.setState({
+            showUpdateForm: false,
+            productToUpdate: null,
+            updatedProduct: { name: '', price: '', stock_quantity: '', images: [], brand: '', category: '', description: '' }
+        });
+    };
+
     handleDeleteProduct = async () => {
         const { productToDelete } = this.state;
         if (!productToDelete) {
@@ -188,7 +232,7 @@ class ProductManagement extends Component {
 
 
     render() {
-        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory, showDeleteForm, productToDelete, currentPage, productsPerPage } = this.state;
+        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory, showDeleteForm, productToDelete, currentPage, productsPerPage, productToUpdate } = this.state;
 
         const filteredProducts = products.filter(product =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -215,6 +259,8 @@ class ProductManagement extends Component {
                             onChange={(e) => this.setState({ searchTerm: e.target.value })}
                         />
                         <button className="add-button" onClick={this.handleAddProduct}>Add Product</button>
+                        <button onClick={() => this.fetchDeletedProducts()}>Trash</button>
+
                     </div>
                     <table className="product-table">
                         <thead>
@@ -222,7 +268,7 @@ class ProductManagement extends Component {
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Price</th>
-                                <th>Amount</th>
+                                <th>Quantity</th>
                                 <th>Brand</th>
                                 <th>Category</th>
                                 <th>Image</th>
@@ -244,7 +290,9 @@ class ProductManagement extends Component {
                                         ))}
                                     </td>
                                     <td className="options">
-                                        <button className="update-btn">Update</button>
+                                        <button className="update-btn" onClick={() => this.handleUpdateProduct(product)}>
+                                            Update
+                                        </button>
                                         <button className="delete-btn" onClick={() => this.setState({ showDeleteForm: true, productToDelete: product })}>Delete</button>
                                     </td>
                                 </tr>
@@ -292,7 +340,7 @@ class ProductManagement extends Component {
                                 <input className="form-row-input" type="number" name="price" value={newProduct.price} onChange={this.handleInputChange} />
                             </div>
                             <div className="form-row">
-                                <label className="form-row-label">Amount:</label>
+                                <label className="form-row-label">Quantity:</label>
                                 <input className="form-row-input" type="number" name="stock_quantity" value={newProduct.stock_quantity} onChange={this.handleInputChange} />
                             </div>
 
