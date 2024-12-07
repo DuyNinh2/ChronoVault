@@ -11,12 +11,8 @@ router.post('/api/addproduct', upload.array('images', 3), watchController.addPro
 // Update a watch by ID
 router.put('/api/updatewatch/:id', upload.array('images', 3), watchController.updateWatch);
 
-
-router.delete('/api/deleteproduct/:id', watchController.deleteProduct);
-// router.get('/archived-watches', watchController.getArchivedWatches);
-// router.put('/archive-product/:id', watchController.archiveProduct);
-// router.put('/restore-product/:id', watchController.restoreProduct);
-
-
+// Định nghĩa route cho phục hồi sản phẩm
+router.put('/api/restoreproduct/:id', watchController.restoreProduct);
+router.put('/api/hideproduct/:id', watchController.hideProduct);
 
 module.exports = router;

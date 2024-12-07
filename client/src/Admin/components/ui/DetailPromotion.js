@@ -4,7 +4,7 @@ import '../../styles/DetailPromotion.scss';
 
 class DetailPromotion extends Component {
     state = {
-        availableWatches: [],
+        availableWatches: [], // Lưu đồng hồ giảm giá
         isLoading: true,
     };
 
@@ -13,10 +13,14 @@ class DetailPromotion extends Component {
     }
 
     loadWatches = () => {
+        const { promotion } = this.props; // Lấy ID của promotion từ props
+        if (!promotion || !promotion._id) return;
+
         axios
-            .get("/api/watches")
+            .get(`/api/promotions/${promotion._id}`)
             .then((response) => {
-                this.setState({ availableWatches: response.data, isLoading: false });
+                const { watches } = response.data; // Lấy danh sách watches đã có giá giảm
+                this.setState({ availableWatches: watches || [], isLoading: false });
             })
             .catch((error) => {
                 console.error("Error fetching watches:", error);
@@ -36,12 +40,6 @@ class DetailPromotion extends Component {
         if (!promotion) {
             return null; // Nếu không có promotion, không render gì
         }
-
-        // Tạo danh sách các đồng hồ từ watchID
-        const discountedWatches = promotion.watchID.map(watchID => {
-            const watch = availableWatches.find(watch => watch._id === watchID); // Tìm đồng hồ theo watchID
-            return watch ? `${watch.name} - ${watch.discount}% Off` : null;
-        });
 
         return (
             <div className="admin-detailpromotion-overlay">
@@ -76,11 +74,13 @@ class DetailPromotion extends Component {
                             <div className="discounted-watches">
                                 {isLoading ? (
                                     <span>Loading watches...</span>
-                                ) : discountedWatches && discountedWatches.length > 0 ? (
+                                ) : availableWatches.length > 0 ? (
                                     <ul>
-                                        {discountedWatches.map((watch, index) => (
+                                        {availableWatches.map((watch, index) => (
                                             <li key={index}>
-                                                {watch}
+                                                {watch.name} - Original: {watch.price}$,
+                                                Discount: {promotion.discount}% Off,
+                                                Now: {watch.discountedPrice}$
                                             </li>
                                         ))}
                                     </ul>

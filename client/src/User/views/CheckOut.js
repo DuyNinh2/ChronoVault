@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Checkout.scss';
 import { fetchCartItems, clearCartItems } from '../services/cartService';
 import { getCurrentUserID } from '../services/authService';
-import { fetchUserData, saveUserAddress } from '../services/userService'; 
+import { fetchUserData, saveUserAddress } from '../services/userService';
 import { addDays, format } from 'date-fns';
 import vietnamCities from '../services/vietnamCities';
-import { createOrder } from '../services/orderService'; 
+import { createOrder } from '../services/orderService';
 import { processQRPay, processPayPal, processMoMoPayment } from '../services/momoService';
 
 const CheckoutPage = () => {
@@ -45,7 +45,7 @@ const CheckoutPage = () => {
           const order = await actions.order.capture();
           console.log('Order approved:', order);
           setPaypalPaymentComplete(true);
-          alert('PayPal payment completed successfully.');
+          //alert('PayPal payment completed successfully.');
         },
         onError: (err) => {
           console.error('PayPal error:', err);
@@ -54,7 +54,13 @@ const CheckoutPage = () => {
       }).render('#paypal-button-container');
     }
   }, [selectedPayment]);
-  
+
+  useEffect(() => {
+    if (paypalPaymentComplete) {
+      console.log('paypalPaymentComplete updated:', paypalPaymentComplete);
+      handlePlaceOrder();
+    }
+  }, [paypalPaymentComplete]);
 
   useEffect(() => {
     if (userID) {
@@ -68,8 +74,8 @@ const CheckoutPage = () => {
     fetchUserData()
       .then((data) => {
         setUserData(data);
-        setSelectedCity(data.address[0]?.city || ''); 
-        setSelectedDistrict(data.address[0]?.district || ''); 
+        setSelectedCity(data.address[0]?.city || '');
+        setSelectedDistrict(data.address[0]?.district || '');
         setStreet(data.address[0]?.street || '');
         setLoading(false);
       })
@@ -89,17 +95,17 @@ const CheckoutPage = () => {
     setSelectedPayment(method);
   };
 
-  const handlePlaceOrder = async () => { 
-    if (!street || !selectedCity || !selectedDistrict) { 
-      alert('Please complete all delivery information.'); 
-      return; 
-    } 
-  
+  const handlePlaceOrder = async () => {
+    if (!street || !selectedCity || !selectedDistrict) {
+      alert('Please complete all delivery information.');
+      return;
+    }
+
     if (!selectedPayment) {
       alert('Please select a payment method.');
       return;
     }
-  
+
     if (selectedPayment === 'PayPal') {
       if (!paypalPaymentComplete) {
         alert('Please complete PayPal payment first.');
@@ -112,32 +118,32 @@ const CheckoutPage = () => {
       } else if (selectedPayment === 'MoMo') {
         paymentResult = await processMoMoPayment(totalAmount);
       }
-  
+
       if (!paymentResult.success) {
         alert(`${selectedPayment} payment failed.`);
         return;
       }
     }
-  
-    if (!userData.address || !userData.address.length) { 
-      const address = { street, city: selectedCity, district: selectedDistrict, country: 'Vietnam' }; 
-      await saveUserAddress(userID, address); 
-    } 
-  
-    const newOrder = { 
-      userID, 
-      total_amount: totalAmount, 
+
+    if (!userData.address || !userData.address.length) {
+      const address = { street, city: selectedCity, district: selectedDistrict, country: 'Vietnam' };
+      await saveUserAddress(userID, address);
+    }
+
+    const newOrder = {
+      userID,
+      total_amount: totalAmount,
       delivery_date: addDays(new Date(), 7),
-      assignedStaff: null, 
-      items: cartItems.map(item => ({ 
-        watchID: item.watchId, 
-        quantity: item.quantity, 
-        price: item.product.price, 
-      })), 
+      assignedStaff: null,
+      items: cartItems.map(item => ({
+        watchID: item.watchId,
+        quantity: item.quantity,
+        price: item.product.price,
+      })),
     };
-  
-    await createOrder(newOrder); 
-    await clearCartItems(userID); 
+
+    await createOrder(newOrder);
+    await clearCartItems(userID);
     alert('Order placed successfully!');
     navigate('/');
   };
@@ -150,13 +156,13 @@ const CheckoutPage = () => {
     0
   );
 
-  const deliveryCost = 10; 
+  const deliveryCost = 10;
   const totalAmount = subtotal + deliveryCost;
 
-  const currentDate = new Date(); 
-  const deliveryStartDate = addDays(currentDate, 5); 
-  const deliveryEndDate = addDays(currentDate, 7); 
-  const formattedStartDate = format(deliveryStartDate, 'EEE, MMM d'); 
+  const currentDate = new Date();
+  const deliveryStartDate = addDays(currentDate, 5);
+  const deliveryEndDate = addDays(currentDate, 7);
+  const formattedStartDate = format(deliveryStartDate, 'EEE, MMM d');
   const formattedEndDate = format(deliveryEndDate, 'EEE, MMM d');
 
   return (
@@ -207,13 +213,13 @@ const CheckoutPage = () => {
           <h2>Payment</h2>
           <div className="payment-options">
             <label>How would you like to pay?</label>
-            <div 
+            <div
               className={`payment-option ${selectedPayment === 'QR Pay' ? 'selected' : ''}`}
               onClick={() => handlePaymentSelection('QR Pay')}
             >
               <span>QR Pay</span>
             </div>
-            <div 
+            <div
               className={`payment-option ${selectedPayment === 'PayPal' ? 'selected' : ''}`}
               onClick={() => handlePaymentSelection('PayPal')}
             >
@@ -222,7 +228,7 @@ const CheckoutPage = () => {
             {selectedPayment === 'PayPal' && (
               <div id="paypal-button-container"></div>
             )}
-            <div 
+            <div
               className={`payment-option ${selectedPayment === 'MoMo' ? 'selected' : ''}`}
               onClick={() => handlePaymentSelection('MoMo')}
             >

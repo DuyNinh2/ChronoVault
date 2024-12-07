@@ -3,10 +3,12 @@ const path = require('path');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/images'); // Thư mục lưu hình ảnh
+        cb(null, 'uploads/images'); // Thư mục lưu file
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname)); // Tên file có timestamp
+        // Thêm phần ngẫu nhiên vào tên file
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname)); // Tên file kết hợp timestamp và phần ngẫu nhiên
     }
 });
 

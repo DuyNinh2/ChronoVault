@@ -38,4 +38,10 @@ exports.assignOrderToStaff = async (req, res) => {
     }
 };
 
-
+exports.createOrder = (req, res) => {
+    const { userID, total_amount, delivery_date, assignedStaff, items } = req.body;
+    const newOrder = new Order({ userID, total_amount, delivery_date, assignedStaff, items });
+    newOrder.save()
+        .then(order => res.json(order))
+        .catch(err => res.status(500).json({ error: 'Error creating order' }));
+};

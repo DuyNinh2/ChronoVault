@@ -15,17 +15,16 @@ class UpdatePromotion extends Component {
         isLoading: true,
     };
 
-    // Được gọi khi component được mount, để load dữ liệu từ promotionId đã chọn
+    // Called when the component is mounted to load promotion data and available watches
     componentDidMount() {
         this.loadPromotionData();
         this.loadWatches();
     }
 
-    // Load thông tin của promotion từ server dựa vào promotionId
+    // Load promotion details based on the promotionId passed via props
     loadPromotionData = () => {
-        const { promotionId } = this.props;  // Dùng promotionId từ props hoặc từ URL nếu cần
+        const { promotionId } = this.props;
         if (promotionId) {
-            // Gửi yêu cầu API để lấy thông tin promotion
             axios
                 .get(`/api/promotions/${promotionId}`)
                 .then((response) => {
@@ -47,7 +46,7 @@ class UpdatePromotion extends Component {
         }
     };
 
-    // Load danh sách đồng hồ từ API
+    // Load list of available watches
     loadWatches = () => {
         axios
             .get("/api/watches")
@@ -60,6 +59,7 @@ class UpdatePromotion extends Component {
             });
     };
 
+    // Handle input changes for promotion details
     handleInputChange = (event) => {
         const { name, value } = event.target;
         this.setState((prevState) => ({
@@ -70,6 +70,7 @@ class UpdatePromotion extends Component {
         }));
     };
 
+    // Handle selection and deselection of watches
     handleWatchSelection = (watchId, price) => {
         const { selectedWatches } = this.state;
         const alreadySelected = selectedWatches.some((watch) => watch.id === watchId);
@@ -80,16 +81,20 @@ class UpdatePromotion extends Component {
             });
         } else {
             this.setState({
-                selectedWatches: [...selectedWatches, { id: watchId, discountedPrice: price }],
+                selectedWatches: [
+                    ...selectedWatches,
+                    { id: watchId, discountedPrice: price - (price * (this.state.updatedPromotion.discount / 100)) },
+                ],
             });
         }
     };
 
+    // Handle promotion update
     handleUpdatePromotion = () => {
         const { updatedPromotion, selectedWatches } = this.state;
         const { promotionId } = this.props;
 
-        // Kiểm tra các trường thông tin quan trọng có bị trống hay không
+        // Validate that required fields are filled
         if (!updatedPromotion.promotionName || !updatedPromotion.startDate || !updatedPromotion.endDate || !updatedPromotion.discount) {
             alert("Please fill in all the required fields.");
             return;
@@ -104,7 +109,7 @@ class UpdatePromotion extends Component {
             .put(`/api/updatepromotions/${promotionId}`, promotionData)
             .then(() => {
                 alert("Promotion updated successfully!");
-                this.props.onClose();
+                this.props.onClose(); // Close the form after successful update
             })
             .catch((error) => {
                 console.error("Error updating promotion:", error);
@@ -119,7 +124,7 @@ class UpdatePromotion extends Component {
             <div className="admin-updatepromotion-overlay">
                 <div className="admin-updatepromotion-form">
                     <h2>Update Promotion</h2>
-                    {/* Render promotion details in read-only format */}
+                    {/* Render promotion details allowing editing */}
                     <div className="admin-updatepromotion-form-row">
                         <label>Promotion Name:</label>
                         <input
@@ -127,7 +132,6 @@ class UpdatePromotion extends Component {
                             name="promotionName"
                             value={updatedPromotion.promotionName || ""}
                             onChange={this.handleInputChange}
-                            readOnly
                         />
                     </div>
                     <div className="admin-updatepromotion-form-row">
@@ -137,7 +141,6 @@ class UpdatePromotion extends Component {
                             name="startDate"
                             value={updatedPromotion.startDate || ""}
                             onChange={this.handleInputChange}
-                            readOnly
                         />
                     </div>
                     <div className="admin-updatepromotion-form-row">
@@ -147,7 +150,6 @@ class UpdatePromotion extends Component {
                             name="endDate"
                             value={updatedPromotion.endDate || ""}
                             onChange={this.handleInputChange}
-                            readOnly
                         />
                     </div>
                     <div className="admin-updatepromotion-form-row">
@@ -157,7 +159,6 @@ class UpdatePromotion extends Component {
                             name="discount"
                             value={updatedPromotion.discount || ""}
                             onChange={this.handleInputChange}
-                            readOnly
                         />
                     </div>
 

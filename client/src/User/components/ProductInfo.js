@@ -14,9 +14,9 @@ const ProductInfo = ({ name, price, description, watchID, openCartDrawer }) => {
       window.location.href = '/login';
       return;
     }
-  
+
     try {
-      await addToCart(userID, watchID, quantity); 
+      await addToCart(userID, watchID, quantity);
       openCartDrawer();
       // alert('Product added to cart successfully!');
     } catch (error) {
@@ -40,7 +40,7 @@ const ProductInfo = ({ name, price, description, watchID, openCartDrawer }) => {
         <button className="add-to-cart" onClick={handleAddToCart}>
           Add to Cart
         </button>
-        <button className="buy-now">Buy Now</button>
+        {/* <button className="buy-now">Buy Now</button> */}
         <button className="wishlist">&#10084;</button>
       </div>
     </div>

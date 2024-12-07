@@ -6,14 +6,55 @@ const Order = require('../models/Order');
 // Get all watches
 exports.getAllWatches = async (req, res) => {
     try {
-        const limit = parseInt(req.query.limit) || 0;
-        const watches = await Watch.find()
+        const { filter, minPrice, maxPrice, brand, limit } = req.query;
+
+        let query = {};
+
+        if (filter === 'new-arrivals') {
+            query = {}; // Không lọc gì thêm, chỉ sort
+        } else if (filter === 'best-sellers') {
+            // Lấy 10 đồng hồ có tổng số lượng mua nhiều nhất
+            const topWatches = await Order.aggregate([
+                { $unwind: "$items" },
+                {
+                    $group: {
+                        _id: "$items.watchID",
+                        totalQuantity: { $sum: "$items.quantity" },
+                    },
+                },
+                { $sort: { totalQuantity: -1 } },
+                { $limit: 10 },
+            ]);
+
+            const watchIDs = topWatches.map((item) => item._id);
+            query._id = { $in: watchIDs };
+        }
+
+        if (minPrice && maxPrice) {
+            query.price = { $gte: Number(minPrice), $lte: Number(maxPrice) };
+        }
+
+        if (brand) {
+            const brandNames = brand.split(',').map(name => name.trim());
+            const brands = await Brand.find({ name: { $in: brandNames } });
+            if (brands.length > 0) {
+                query.brandID = { $in: brands.map((b) => b._id) };
+            }
+        }
+        //   console.log("Query being executed:", query);
+
+        let watchesQuery = Watch.find(query)
             .populate('brandID')
             .populate('category_id')
-            .sort({ _id: -1 })
-            .limit(limit);
+
+        if (filter === 'new-arrivals') {
+            watchesQuery = watchesQuery.sort({ _id: -1 }).limit(parseInt(limit) || 0);
+        }
+
+        const watches = await watchesQuery;
         res.status(200).json(watches);
     } catch (error) {
+        res.status(500).json({ message: 'Error retrieving watches', error });
         res.status(500).json({ message: 'Error retrieving watches', error });
     }
 };
@@ -198,66 +239,52 @@ exports.updateWatch = async (req, res) => {
     }
 };
 
-
-// exports.deleteProduct = async (req, res) => {
-//     try {
-//         const productId = req.params.id;  // Retrieve the 'id' from URL parameter
-//         console.log('Deleting product with ID:', productId);
-
-//         const deletedProduct = await Watch.findByIdAndDelete(productId);
-
-//         if (!deletedProduct) {
-//             return res.status(404).json({ message: 'Product not found' });
-//         }
-
-//         res.status(200).json({ message: 'Product deleted successfully' });
-//     } catch (error) {
-//         console.error('Error deleting product:', error);
-//         res.status(500).json({ message: 'Error deleting product', error: error.message || error });
-//     }
-// };
-
-exports.getDeletedWatches = async (req, res) => {
+// Updated controller to match the PUT request
+exports.hideProduct = async (req, res) => {
     try {
-        const watches = await Watch.find({ isDeleted: true })
-            .populate('brandID')
-            .populate('category_id')
-            .sort({ _id: -1 });
-        res.status(200).json(watches);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving deleted watches', error });
-    }
-};
+        const productId = req.params.id;  // Retrieve the 'id' from URL parameter
+        console.log('Hiding product with ID:', productId);
 
-exports.deleteProduct = async (req, res) => {
-    try {
-        const productId = req.params.id;
-        const updatedProduct = await Watch.findByIdAndUpdate(productId, { isDeleted: true }, { new: true });
+        // Tìm và cập nhật sản phẩm với isDeleted = true
+        const updatedProduct = await Watch.findByIdAndUpdate(
+            productId,
+            { isDeleted: true },
+            { new: true }  // Trả về sản phẩm sau khi cập nhật
+        );
 
         if (!updatedProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        res.status(200).json({ message: 'Product moved to trash successfully', product: updatedProduct });
+        res.status(200).json({ message: 'Product hidden successfully', product: updatedProduct });
     } catch (error) {
-        console.error('Error deleting product:', error);
-        res.status(500).json({ message: 'Error moving product to trash', error });
+        console.error('Error hiding product:', error);
+        res.status(500).json({ message: 'Error hiding product', error: error.message || error });
     }
 };
-
+// Controller để phục hồi sản phẩm
 exports.restoreProduct = async (req, res) => {
     try {
-        const productId = req.params.id;
-        const updatedProduct = await Watch.findByIdAndUpdate(productId, { isDeleted: false }, { new: true });
+        const productId = req.params.id; // Lấy ID từ URL
+        console.log('Đang phục hồi sản phẩm với ID:', productId);
 
-        if (!updatedProduct) {
-            return res.status(404).json({ message: 'Product not found' });
+        // Cập nhật trạng thái isDeleted thành false
+        const restoredProduct = await Watch.findByIdAndUpdate(
+            productId,
+            { isDeleted: false },
+            { new: true } // Trả về sản phẩm sau khi cập nhật
+        );
+
+        if (!restoredProduct) {
+            return res.status(404).json({ message: 'Sản phẩm không tìm thấy' });
         }
 
-        res.status(200).json({ message: 'Product restored successfully', product: updatedProduct });
+        res.status(200).json({ message: 'Sản phẩm đã được phục hồi', product: restoredProduct });
     } catch (error) {
-        console.error('Error restoring product:', error);
-        res.status(500).json({ message: 'Error restoring product', error });
+        console.error('Lỗi khi phục hồi sản phẩm:', error);
+        res.status(500).json({ message: 'Lỗi khi phục hồi sản phẩm', error: error.message || error });
     }
 };
+
+
 

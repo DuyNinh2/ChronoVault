@@ -12,6 +12,7 @@ class AddPromotion extends Component {
         },
         selectedWatches: [],
         availableWatches: [],
+        promotedWatches: [], // Danh sách đồng hồ đã được khuyến mãi trong các đợt trước
     };
 
     componentDidMount() {
@@ -22,6 +23,27 @@ class AddPromotion extends Component {
             })
             .catch(error => {
                 console.error("Error fetching watches:", error);
+            });
+
+        // Lấy danh sách các khuyến mãi đã được tạo trước đó
+        axios.get('/api/promotions')
+            .then(response => {
+                const promotedWatches = response.data.reduce((acc, promotion) => {
+                    const now = new Date();
+                    const startDate = new Date(promotion.startDate);
+                    const endDate = new Date(promotion.endDate);
+
+                    // Nếu khuyến mãi đang diễn ra, lấy các đồng hồ đã khuyến mãi
+                    if (now >= startDate && now <= endDate) {
+                        acc.push(...promotion.selectedWatches);
+                    }
+                    return acc;
+                }, []); // Lọc các đồng hồ đã được khuyến mãi trong các đợt hiện tại
+
+                this.setState({ promotedWatches });
+            })
+            .catch(error => {
+                console.error("Error fetching promotions:", error);
             });
     }
 
@@ -72,9 +94,13 @@ class AddPromotion extends Component {
             });
     };
 
-
     render() {
-        const { newPromotion, availableWatches, selectedWatches } = this.state;
+        const { newPromotion, availableWatches, selectedWatches, promotedWatches } = this.state;
+
+        // Lọc ra những đồng hồ chưa được khuyến mãi trong bất kỳ đợt nào
+        const unpromotedWatches = availableWatches.filter(watch => {
+            return !promotedWatches.includes(watch._id); // Đồng hồ chưa được khuyến mãi
+        });
 
         return (
             <div className="admin-addpromotion-overlay">
@@ -119,7 +145,7 @@ class AddPromotion extends Component {
 
                     <div className="watch-selection">
                         <h3>Select Watches:</h3>
-                        {availableWatches.map(watch => (
+                        {unpromotedWatches.map(watch => (
                             <div key={watch._id} className="watch-item">
                                 <input
                                     type="checkbox"
@@ -147,6 +173,8 @@ class AddPromotion extends Component {
             </div>
         );
     }
+
+
 }
 
 export default AddPromotion;

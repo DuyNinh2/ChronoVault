@@ -10,7 +10,7 @@ const AllProducts = () => {
   console.log(location.state?.filter);
   const [filter, setFilter] = useState(location.state?.filter || 'all-products');
   // console.log(filter);
-  const [priceRange, setPriceRange] = useState([100, 350]);
+  const [priceRange, setPriceRange] = useState([100, 4500]);
   const [brands, setBrands] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [isPriceOpen, setIsPriceOpen] = useState(true);
@@ -79,15 +79,15 @@ const AllProducts = () => {
     setCurrentPage(newPage);
   };
 
-  const getHeading = () => { 
-    switch (filter) { 
-      case 'new-arrivals': 
-        return 'New Arrivals'; 
-      case 'best-sellers': 
-        return 'Best Sellers'; 
-      default: 
-        return 'All Products'; 
-    } 
+  const getHeading = () => {
+    switch (filter) {
+      case 'new-arrivals':
+        return 'New Arrivals';
+      case 'best-sellers':
+        return 'Best Sellers';
+      default:
+        return 'All Products';
+    }
   };
 
   return (
@@ -126,7 +126,7 @@ const AllProducts = () => {
                   trackClassName="range-slider-track"
                   value={priceRange}
                   min={0}
-                  max={1000}
+                  max={5000}
                   step={10}
                   onChange={(newRange) => setPriceRange(newRange)}
                 />
@@ -139,7 +139,7 @@ const AllProducts = () => {
                         onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
                         onBlur={() => setIsMinInput(false)}
                         min="0"
-                        max="1000"
+                        max="5000"
                       />
                     ) : (
                       `$ ${priceRange[0].toFixed(2)}`
@@ -153,7 +153,7 @@ const AllProducts = () => {
                         onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
                         onBlur={() => setIsMaxInput(false)}
                         min="0"
-                        max="1000"
+                        max="5000"
                       />
                     ) : (
                       `$ ${priceRange[1].toFixed(2)}`
@@ -172,22 +172,22 @@ const AllProducts = () => {
             </div>
             {isBrandOpen && (
               <div className="brand-filter">
-              {brands.map((brand) => (
-                <div key={brand._id}>
-                  <input
-                    type="checkbox"
-                    value={brand.name}
-                    checked={selectedBrands.includes(brand.name)}
-                    onChange={(e) => {
-                      const updatedBrands = e.target.checked
-                        ? [...selectedBrands, brand.name]
-                        : selectedBrands.filter((b) => b !== brand.name);
-                      setSelectedBrands(updatedBrands);
-                    }}
-                  />
-                  <label>{brand.name}</label>
-                </div>
-              ))}
+                {brands.map((brand) => (
+                  <div key={brand._id}>
+                    <input
+                      type="checkbox"
+                      value={brand.name}
+                      checked={selectedBrands.includes(brand.name)}
+                      onChange={(e) => {
+                        const updatedBrands = e.target.checked
+                          ? [...selectedBrands, brand.name]
+                          : selectedBrands.filter((b) => b !== brand.name);
+                        setSelectedBrands(updatedBrands);
+                      }}
+                    />
+                    <label>{brand.name}</label>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -216,7 +216,7 @@ const AllProducts = () => {
             </div>
           ))}
         </div>
-        
+
         {/* Pagination Controls */}
         <div className="pagination">
           {Array.from({ length: totalPages }, (_, index) => (
