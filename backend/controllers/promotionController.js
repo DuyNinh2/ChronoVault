@@ -4,15 +4,34 @@ const Promotion = require('../models/Promotion');// Đảm bảo rằng đườn
 exports.getPromotionById = async (req, res) => {
     try {
         const promotion = await Promotion.findById(req.params.id)
-            .populate('watchID'); // Nối các đồng hồ với chương trình khuyến mãi
+            .populate('watchID'); // Lấy danh sách các đồng hồ trong khuyến mãi
+
         if (!promotion) {
             return res.status(404).json({ message: 'Promotion not found' });
         }
-        res.status(200).json(promotion); // Trả về thông tin chương trình khuyến mãi
+
+        // Tính toán giá sau khi giảm cho từng đồng hồ
+        const watchesWithDiscount = promotion.watchID.map(watch => {
+            const discountedPrice = (watch.price * (1 - promotion.discount / 100)).toFixed(2); // Giá sau giảm
+            return {
+                ...watch.toObject(), // Chuyển đối tượng watch sang dạng plain object
+                discountedPrice, // Thêm trường discountedPrice vào đối tượng watch
+            };
+        });
+
+        // Trả về chương trình khuyến mãi và các đồng hồ đã tính giá giảm
+        res.status(200).json({
+            promotionName: promotion.promotionName,
+            startDate: promotion.startDate,
+            endDate: promotion.endDate,
+            discount: promotion.discount,
+            watches: watchesWithDiscount,
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving promotion', error });
     }
 };
+
 
 exports.getAllPromotion = async (req, res) => {
     try {

@@ -239,66 +239,52 @@ exports.updateWatch = async (req, res) => {
     }
 };
 
-
-// exports.deleteProduct = async (req, res) => {
-//     try {
-//         const productId = req.params.id;  // Retrieve the 'id' from URL parameter
-//         console.log('Deleting product with ID:', productId);
-
-//         const deletedProduct = await Watch.findByIdAndDelete(productId);
-
-//         if (!deletedProduct) {
-//             return res.status(404).json({ message: 'Product not found' });
-//         }
-
-//         res.status(200).json({ message: 'Product deleted successfully' });
-//     } catch (error) {
-//         console.error('Error deleting product:', error);
-//         res.status(500).json({ message: 'Error deleting product', error: error.message || error });
-//     }
-// };
-
-exports.getDeletedWatches = async (req, res) => {
+// Updated controller to match the PUT request
+exports.hideProduct = async (req, res) => {
     try {
-        const watches = await Watch.find({ isDeleted: true })
-            .populate('brandID')
-            .populate('category_id')
-            .sort({ _id: -1 });
-        res.status(200).json(watches);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving deleted watches', error });
-    }
-};
+        const productId = req.params.id;  // Retrieve the 'id' from URL parameter
+        console.log('Hiding product with ID:', productId);
 
-exports.deleteProduct = async (req, res) => {
-    try {
-        const productId = req.params.id;
-        const updatedProduct = await Watch.findByIdAndUpdate(productId, { isDeleted: true }, { new: true });
+        // Tìm và cập nhật sản phẩm với isDeleted = true
+        const updatedProduct = await Watch.findByIdAndUpdate(
+            productId,
+            { isDeleted: true },
+            { new: true }  // Trả về sản phẩm sau khi cập nhật
+        );
 
         if (!updatedProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        res.status(200).json({ message: 'Product moved to trash successfully', product: updatedProduct });
+        res.status(200).json({ message: 'Product hidden successfully', product: updatedProduct });
     } catch (error) {
-        console.error('Error deleting product:', error);
-        res.status(500).json({ message: 'Error moving product to trash', error });
+        console.error('Error hiding product:', error);
+        res.status(500).json({ message: 'Error hiding product', error: error.message || error });
     }
 };
-
+// Controller để phục hồi sản phẩm
 exports.restoreProduct = async (req, res) => {
     try {
-        const productId = req.params.id;
-        const updatedProduct = await Watch.findByIdAndUpdate(productId, { isDeleted: false }, { new: true });
+        const productId = req.params.id; // Lấy ID từ URL
+        console.log('Đang phục hồi sản phẩm với ID:', productId);
 
-        if (!updatedProduct) {
-            return res.status(404).json({ message: 'Product not found' });
+        // Cập nhật trạng thái isDeleted thành false
+        const restoredProduct = await Watch.findByIdAndUpdate(
+            productId,
+            { isDeleted: false },
+            { new: true } // Trả về sản phẩm sau khi cập nhật
+        );
+
+        if (!restoredProduct) {
+            return res.status(404).json({ message: 'Sản phẩm không tìm thấy' });
         }
 
-        res.status(200).json({ message: 'Product restored successfully', product: updatedProduct });
+        res.status(200).json({ message: 'Sản phẩm đã được phục hồi', product: restoredProduct });
     } catch (error) {
-        console.error('Error restoring product:', error);
-        res.status(500).json({ message: 'Error restoring product', error });
+        console.error('Lỗi khi phục hồi sản phẩm:', error);
+        res.status(500).json({ message: 'Lỗi khi phục hồi sản phẩm', error: error.message || error });
     }
 };
+
+
 

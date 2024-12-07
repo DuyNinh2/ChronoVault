@@ -61,13 +61,26 @@ class DetailUser extends Component {
                         {/* Hiển thị địa chỉ */}
                         <div className="admin-detailuser-form-row">
                             <label>Address:</label>
-                            <input
-                                type="text"
-                                value={`Street: ${user.address?.street || ''}, City: ${user.address?.city || ''}, District: ${user.address?.district || ''}, Country: ${user.address?.country || ''}`}
-                                readOnly
-                                className="admin-detailuser-input"
-                            />
+                            {user.address && user.address.length > 0 ? (
+                                user.address.map((addr, index) => (
+                                    <input
+                                        key={index}
+                                        type="text"
+                                        value={`Street: ${addr.street || ''}, City: ${addr.city || ''}, District: ${addr.district || ''}, Country: ${addr.country || ''}`}
+                                        readOnly
+                                        className="admin-detailuser-input"
+                                    />
+                                ))
+                            ) : (
+                                <input
+                                    type="text"
+                                    value="No address available"
+                                    readOnly
+                                    className="admin-detailuser-input"
+                                />
+                            )}
                         </div>
+
                     </div>
                     <div className="admin-detailuser-form-actions">
                         <button className="admin-detailuser-ok-button" onClick={onBackClick}>Close</button>

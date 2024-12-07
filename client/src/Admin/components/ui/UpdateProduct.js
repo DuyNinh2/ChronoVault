@@ -9,15 +9,16 @@ class UpdateProduct extends Component {
                 id: props.product.id,
                 name: props.product.name,
                 price: props.product.price,
-                amount: props.product.amount,
-                image: props.product.image,
-                brand: props.product.brand || '', // thêm brand
-                category: props.product.category || '', // thêm category
-                newBrand: '', // input cho brand mới
-                newCategory: '', // input cho category mới
+                stock_quantity: props.product.stock_quantity,
+                description: props.product.description,
+                brandID: props.product.brandID || '', // Chỉnh đúng key
+                category_id: props.product.category_id || '', // Chỉnh đúng key
+                newBrand: '',
+                newCategory: '',
+                images: props.product.images || [],
             },
-            brands: props.brands || [], // danh sách các thương hiệu
-            categories: props.categories || [], // danh sách các danh mục
+            brands: props.brands || [],
+            categories: props.categories || [],
         };
     }
 
@@ -26,60 +27,17 @@ class UpdateProduct extends Component {
         this.setState(prevState => ({
             updatedProduct: {
                 ...prevState.updatedProduct,
-                [name]: files ? files[0] : value,
+                [name]: files ? files : value,
             }
         }));
-    };
-
-    handleSelectChange = (e) => {
-        const { name, value } = e.target;
-        this.setState(prevState => ({
-            updatedProduct: {
-                ...prevState.updatedProduct,
-                [name]: value,
-            }
-        }));
-    };
-
-    handleAddNewBrand = () => {
-        const { newBrand } = this.state.updatedProduct;
-        if (newBrand) {
-            this.setState(prevState => ({
-                brands: [...prevState.brands, newBrand],
-                updatedProduct: {
-                    ...prevState.updatedProduct,
-                    brand: newBrand,
-                    newBrand: '',
-                }
-            }));
-        }
-    };
-
-    handleAddNewCategory = () => {
-        const { newCategory } = this.state.updatedProduct;
-        if (newCategory) {
-            this.setState(prevState => ({
-                categories: [...prevState.categories, newCategory],
-                updatedProduct: {
-                    ...prevState.updatedProduct,
-                    category: newCategory,
-                    newCategory: '',
-                }
-            }));
-        }
     };
 
     handleUpdateConfirm = () => {
-        const confirmUpdate = window.confirm("Are you sure you want to update this product?");
-        if (confirmUpdate) {
-            this.props.onUpdate(this.state.updatedProduct);
-            alert('Product updated successfully!');
-            this.props.onClose(); // Đóng form cập nhật
-        }
+        this.props.onUpdate(this.state.updatedProduct);
     };
 
-    handleUpdateCancel = () => {
-        this.props.onClose(); // Đóng form mà không cập nhật
+    handleCancel = () => {
+        this.props.onCancel(); // Giả sử bạn có một hàm onCancel trong props để hủy thay đổi
     };
 
     render() {
@@ -88,107 +46,152 @@ class UpdateProduct extends Component {
         return (
             <div className="overlay">
                 <div className="update-product-form">
-                    <button className="back-btn" onClick={this.handleUpdateCancel}>Back</button>
                     <h2>Update Product</h2>
-                    <div className="form-row">
-                        <label className="form-row-label">ID:</label>
-                        <input
-                            className="form-row-input"
-                            type="text"
-                            name="id"
-                            value={updatedProduct.id}
-                            readOnly
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label className="form-row-label">Name:</label>
-                        <input
-                            className="form-row-input"
-                            type="text"
-                            name="name"
-                            value={updatedProduct.name}
-                            onChange={this.handleInputChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label className="form-row-label">Price:</label>
-                        <input
-                            className="form-row-input"
-                            type="number"
-                            name="price"
-                            value={updatedProduct.price}
-                            onChange={this.handleInputChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label className="form-row-label">Amount:</label>
-                        <input
-                            className="form-row-input"
-                            type="number"
-                            name="amount"
-                            value={updatedProduct.amount}
-                            onChange={this.handleInputChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label className="form-row-label">Brand:</label>
-                        <select
-                            className="form-row-input"
-                            name="brand"
-                            value={updatedProduct.brand}
-                            onChange={this.handleSelectChange}
-                        >
-                            <option value="">Select a brand</option>
-                            {brands.map((brand, index) => (
-                                <option key={index} value={brand}>{brand}</option>
-                            ))}
-                        </select>
-                        <input
-                            className="form-row-input"
-                            type="text"
-                            name="newBrand"
-                            placeholder="Add new brand"
-                            value={updatedProduct.newBrand}
-                            onChange={this.handleInputChange}
-                        />
-                        <button type="button" onClick={this.handleAddNewBrand}>Add Brand</button>
-                    </div>
-                    <div className="form-row">
-                        <label className="form-row-label">Category:</label>
-                        <select
-                            className="form-row-input"
-                            name="category"
-                            value={updatedProduct.category}
-                            onChange={this.handleSelectChange}
-                        >
-                            <option value="">Select a category</option>
-                            {categories.map((category, index) => (
-                                <option key={index} value={category}>{category}</option>
-                            ))}
-                        </select>
-                        <input
-                            className="form-row-input"
-                            type="text"
-                            name="newCategory"
-                            placeholder="Add new category"
-                            value={updatedProduct.newCategory}
-                            onChange={this.handleInputChange}
-                        />
-                        <button type="button" onClick={this.handleAddNewCategory}>Add Category</button>
-                    </div>
-                    <div className="form-row">
-                        <label className="form-row-label">Image:</label>
-                        <input
-                            className="form-row-input"
-                            type="file"
-                            name="image"
-                            onChange={this.handleInputChange}
-                        />
-                    </div>
-                    <div className="form-actions">
-                        <button className="update-confirm-btn" onClick={this.handleUpdateConfirm}>Update</button>
-                        <button className="cancel-btn" onClick={this.handleUpdateCancel}>Cancel</button>
-                    </div>
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        this.handleUpdateConfirm();
+                    }}>
+                        {/* Tên sản phẩm */}
+                        <div className="form-group">
+                            <label htmlFor="name">Product Name</label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={updatedProduct.name}
+                                onChange={this.handleInputChange}
+                                required
+                            />
+                        </div>
+
+                        {/* Giá */}
+                        <div className="form-group">
+                            <label htmlFor="price">Price</label>
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                value={updatedProduct.price}
+                                onChange={this.handleInputChange}
+                                required
+                            />
+                        </div>
+
+                        {/* Số lượng tồn kho */}
+                        <div className="form-group">
+                            <label htmlFor="stock_quantity">Stock Quantity</label>
+                            <input
+                                type="number"
+                                id="stock_quantity"
+                                name="stock_quantity"
+                                value={updatedProduct.stock_quantity}
+                                onChange={this.handleInputChange}
+                                required
+                            />
+                        </div>
+
+                        {/* Mô tả */}
+                        <div className="form-group">
+                            <label htmlFor="description">Description</label>
+                            <input
+                                type="text"
+                                id="description"
+                                name="description"
+                                value={updatedProduct.description}
+                                onChange={this.handleInputChange}
+                            />
+                        </div>
+
+                        {/* Brand */}
+                        {/* <div className="form-group">
+                            <label htmlFor="brandID">Brand</label>
+                            <select
+                                id="brandID"
+                                name="brandID"
+                                value={updatedProduct.brandID}
+                                onChange={this.handleInputChange}
+                            >
+                                <option value="select">Select an existing brand</option>
+                                {brands.map((brand) => (
+                                    <option key={brand._id} value={brand._id}>
+                                        {brand.name}
+                                    </option>
+                                ))}
+                                <option value="new">Add new brand</option>
+                            </select>
+                            {updatedProduct.brandID === 'new' && (
+                                <input
+                                    type="text"
+                                    name="newBrand"
+                                    placeholder="New Brand Name"
+                                    onChange={this.handleInputChange}
+                                />
+                            )}
+                        </div> */}
+
+                        {/* Category */}
+                        {/* <div className="form-group">
+                            <label htmlFor="category_id">Category</label>
+                            <select
+                                id="category_id"
+                                name="category_id"
+                                value={updatedProduct.category_id}
+                                onChange={this.handleInputChange}
+                            >
+                                <option value="select">Select an existing category</option>
+                                {categories.map((category) => (
+                                    <option key={category._id} value={category._id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                                <option value="new">Add new category</option>
+                            </select>
+                            {updatedProduct.category_id === 'new' && (
+                                <input
+                                    type="text"
+                                    name="newCategory"
+                                    placeholder="New Category Name"
+                                    onChange={this.handleInputChange}
+                                />
+                            )}
+                        </div> */}
+
+                        {/* Upload hình ảnh */}
+                        <div className="form-group">
+                            <label htmlFor="images">Upload Images</label>
+                            <input
+                                type="file"
+                                id="images"
+                                name="images"
+                                multiple
+                                onChange={this.handleInputChange}
+                            />
+                            <div className="preview-images">
+                                {updatedProduct.images.map((img, index) => (
+                                    <img
+                                        key={index}
+                                        src={img.image_url}
+                                        alt={img.alt_text}
+                                        style={{ width: '50px', height: '50px', margin: '5px' }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Nút xác nhận và hủy */}
+                        <div className="form-buttons">
+                            <button type="submit" className="btn btn-primary">
+                                Update Product
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                onClick={this.handleCancel}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         );
@@ -196,3 +199,4 @@ class UpdateProduct extends Component {
 }
 
 export default UpdateProduct;
+

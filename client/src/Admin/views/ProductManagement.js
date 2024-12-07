@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import '../../Admin/styles/ProductManagement.scss';
-import DeleteProduct from '../../Admin/components/ui/DeleteProduct';
+import UpdateProduct from '../../Admin/components/ui/UpdateProduct';
 
 class ProductManagement extends Component {
     state = {
@@ -10,9 +10,8 @@ class ProductManagement extends Component {
         brands: [],
         categories: [],
         showAddForm: false,
-        showDeleteForm: false,
         productToUpdate: null,
-        productToDelete: null,
+        showHidden: false,
         newProduct: {
             name: '',
             price: '',
@@ -38,6 +37,11 @@ class ProductManagement extends Component {
         try {
             const response = await axios.get('/api/watches');
             this.setState({ products: response.data });
+            // Lọc sản phẩm theo trạng thái 'isDeleted'
+            const filteredProducts = this.state.showHidden
+                ? response.data
+                : response.data.filter(product => !product.isDeleted);
+            this.setState({ products: filteredProducts });
         } catch (error) {
             console.error("Error fetching products:", error);
             alert("Error fetching products: " + error.response?.data?.message || "Unknown error");
@@ -182,7 +186,20 @@ class ProductManagement extends Component {
         if (!confirmUpdate) return;
 
         try {
-            const response = await axios.put(`/api/updateproduct/${updatedProduct._id}`, updatedProduct);
+            const formData = new FormData();
+
+            // Append các trường cập nhật
+            Object.keys(updatedProduct).forEach(key => {
+                if (key === 'images' && updatedProduct[key]?.length > 0) {
+                    updatedProduct[key].forEach(image => formData.append('images', image));
+                } else {
+                    formData.append(key, updatedProduct[key]);
+                }
+            });
+
+            const response = await axios.put(`/api/updatewatch/${updatedProduct._id}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
 
             if (response.status === 200) {
                 alert('Product updated successfully!');
@@ -200,39 +217,36 @@ class ProductManagement extends Component {
         this.setState({
             showUpdateForm: false,
             productToUpdate: null,
-            updatedProduct: { name: '', price: '', stock_quantity: '', images: [], brand: '', category: '', description: '' }
+            updatedProduct: { name: '', price: '', stock_quantity: '', images: [], brandID: '', category_id: '', description: '' }
         });
     };
 
-    handleDeleteProduct = async () => {
-        const { productToDelete } = this.state;
-        if (!productToDelete) {
-            console.log('No product selected for deletion');
-            return;
-        }
-
-        console.log('Deleting product with ID:', productToDelete._id);
-
-
+    handleDeleteProduct = async (productId, isDeleted) => {
         try {
-            const response = await axios.delete(`/api/deleteproduct/${productToDelete._id}`);
-
+            // Chọn đúng URL tùy theo trạng thái isDeleted
+            const url = isDeleted ? `/api/restoreproduct/${productId}` : `/api/hideproduct/${productId}`;
+            const response = await axios.put(url); // Sử dụng PUT để cập nhật trạng thái
             if (response.status === 200) {
-                alert('Product deleted successfully');
+                alert(isDeleted ? 'Sản phẩm đã được phục hồi' : 'Sản phẩm đã được ẩn');
+                // Sau khi phục hồi/ẩn, cập nhật lại danh sách sản phẩm
                 this.fetchProducts();
-                this.setState({ showDeleteForm: false, productToDelete: null });
             }
         } catch (error) {
-            console.error("Error deleting product:", error);
-            // Ensure you're logging the full error for better debugging
-            alert("Error deleting product: " + (error.response?.data?.message || error.message || "Unknown error"));
+            console.error("Lỗi khi xử lý sản phẩm:", error);
+            alert("Không thể thực hiện hành động này");
         }
     };
 
-
+    toggleShowHidden = () => {
+        this.setState(prevState => {
+            const newShowHidden = !prevState.showHidden;
+            this.fetchProducts();  // Cập nhật lại sản phẩm khi chuyển chế độ hiển thị
+            return { showHidden: newShowHidden };
+        });
+    };
 
     render() {
-        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory, showDeleteForm, productToDelete, currentPage, productsPerPage, productToUpdate } = this.state;
+        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory, showUpdateForm, updatedProduct, currentPage, productsPerPage, productToUpdate, showHidden } = this.state;
 
         const filteredProducts = products.filter(product =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -259,8 +273,9 @@ class ProductManagement extends Component {
                             onChange={(e) => this.setState({ searchTerm: e.target.value })}
                         />
                         <button className="add-button" onClick={this.handleAddProduct}>Add Product</button>
-                        <button onClick={() => this.fetchDeletedProducts()}>Trash</button>
-
+                        <button className="show-button" onClick={this.toggleShowHidden}>
+                            {showHidden ? 'Hide Hidden Products' : 'Show Hidden Products'}
+                        </button>
                     </div>
                     <table className="product-table">
                         <thead>
@@ -293,7 +308,12 @@ class ProductManagement extends Component {
                                         <button className="update-btn" onClick={() => this.handleUpdateProduct(product)}>
                                             Update
                                         </button>
-                                        <button className="delete-btn" onClick={() => this.setState({ showDeleteForm: true, productToDelete: product })}>Delete</button>
+                                        <td>
+                                            <button onClick={() => this.handleDeleteProduct(product._id, product.isDeleted)}>
+                                                {product.isDeleted ? 'Restore' : 'Hide'}
+                                            </button>
+                                        </td>
+
                                     </td>
                                 </tr>
                             ))}
@@ -316,15 +336,13 @@ class ProductManagement extends Component {
                         Next
                     </button>
                 </div>
-
-                {showDeleteForm && productToDelete && (
-                    <DeleteProduct
-                        product={productToDelete}
-                        onDelete={this.handleDeleteProduct}
-                        onCancel={() => this.setState({ showDeleteForm: false, productToDelete: null })}
+                {showUpdateForm && updatedProduct && (
+                    <UpdateProduct
+                        product={updatedProduct}
+                        onDelete={this.handleUpdateProduct}
+                        onCancel={() => this.setState({ showUpdateForm: false, productToUpdate: null })}
                     />
                 )}
-
 
                 {showAddForm && (
                     <div className="overlay">

@@ -149,8 +149,7 @@ class StatisticsManagement extends Component {
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Items</th>
-                                    <th>Amount</th>
+                                    <th>Items - Quantity - Price</th>
                                     <th>Order Date</th>
                                     <th>Total Price</th>
                                     <th>Status</th>
@@ -163,9 +162,11 @@ class StatisticsManagement extends Component {
                                         <tr key={stat._id}>
                                             <td>{stat._id}</td>
                                             <td>
-                                                {stat.items.map((item) => item.watchID?.name || 'Unknown').join(', ')}
+                                                {stat.items.map((item, index) =>
+                                                    `${item.watchID?.name || 'Unknown'} - Quantity: ${item.quantity || 'Unknown'} - Price: ${item.price}`
+                                                ).join(', ')}
                                             </td>
-                                            <td>{stat.total_amount}</td>
+
                                             <td>{new Date(stat.order_date).toLocaleDateString()}</td>
                                             <td>
                                                 {stat.items.reduce((total, item) => total + item.quantity * item.price, 0)}

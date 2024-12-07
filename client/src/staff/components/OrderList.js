@@ -33,7 +33,16 @@ const OrderList = ({ orders, setSelectedOrder }) => {
                         <td>{order.status}</td>
                         <td>{order.total_amount} $</td>
                         <td>{new Date(order.order_date).toLocaleDateString()}</td>
-                        <td>{order.userID ? order.userID.address : 'Không có địa chỉ'}</td>
+                        <td>
+                            {order.userID && order.userID.address && order.userID.address.length > 0
+                                ? order.userID.address.map((addr, idx) => (
+                                    <p key={idx}>
+                                        {addr.street}, {addr.district}, {addr.city}, {addr.country}
+                                    </p>
+                                ))
+                                : 'Không có địa chỉ'}
+                        </td>
+
                         <td>
                             <button
                                 onClick={() => setSelectedOrder(order)} // Gọi hàm setSelectedOrder để chọn đơn hàng

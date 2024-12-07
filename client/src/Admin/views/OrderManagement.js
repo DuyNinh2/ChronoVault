@@ -9,7 +9,10 @@ class OrderManagement extends Component {
         staffList: [],
         currentPage: 1,
         productsPerPage: 6,
-        filterIncompleteOrders: false, // Thêm một trạng thái để lọc đơn hàng chưa hoàn thành
+        filterIncompleteOrders: false,
+        filterOrdersToday: false,
+        filterMonth: '', // Bộ lọc theo tháng
+        filterYear: '',  // Bộ lọc theo năm
     };
 
     componentDidMount() {
@@ -17,7 +20,8 @@ class OrderManagement extends Component {
         this.fetchStaffList();
     }
 
-    // Fetch all orders
+
+    // Lấy danh sách đơn hàng
     fetchOrders = async () => {
         try {
             const response = await axios.get('/api/orders/getAllOrders');
@@ -29,24 +33,22 @@ class OrderManagement extends Component {
         }
     };
 
-    // Fetch all staff
+    // Lấy danh sách nhân viên
     fetchStaffList = async () => {
-        const token = localStorage.getItem("token"); // Lấy token một lần duy nhất
-        console.log("Token sent:", token);
+        const token = localStorage.getItem("token");
         try {
             const response = await axios.get('/api/staff/getAllStaff', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log('Dữ liệu nhận được từ API:', response.data.staff); // Kiểm tra dữ liệu nhận được
             this.setState({ staffList: response.data.staff });
         } catch (error) {
             console.error('Có lỗi khi lấy dữ liệu nhân viên:', error);
         }
     };
 
-    // Update assigned staff for an order
+    // Gán nhân viên giao hàng cho đơn
     handleUpdateAssignedStaff = async (orderId, staffId) => {
         try {
             const response = await axios.post('/api/orders/assignOrderToStaff', {
@@ -69,35 +71,79 @@ class OrderManagement extends Component {
         }
     };
 
+    // Xử lý thay đổi tìm kiếm
     handleSearchChange = (event) => {
         this.setState({ searchTerm: event.target.value });
     };
 
-    // Toggle filter for incomplete orders
+    // Bật/tắt bộ lọc đơn chưa hoàn thành
     toggleIncompleteOrdersFilter = () => {
         this.setState(prevState => ({
             filterIncompleteOrders: !prevState.filterIncompleteOrders
         }));
     };
 
-    render() {
-        const { searchTerm, orders, staffList, currentPage, productsPerPage, filterIncompleteOrders } = this.state;
+    // Bộ lọc theo tháng
+    handleFilterMonth = (event) => {
+        this.setState({ filterMonth: event.target.value });
+    };
 
-        // Filter orders based on search term
-        const filteredOrders = orders.filter(order =>
+    // Bộ lọc theo năm
+    handleFilterYear = (event) => {
+        this.setState({ filterYear: event.target.value });
+    };
+
+    // Lọc theo ngày hôm nay
+    isToday = (dateString) => {
+        const today = new Date();
+        const orderDate = new Date(dateString);
+        return (
+            orderDate.getDate() === today.getDate() &&
+            orderDate.getMonth() === today.getMonth() &&
+            orderDate.getFullYear() === today.getFullYear()
+        );
+    };
+
+    // Lọc theo tháng và năm
+    filterByDate = (orders) => {
+        const { filterMonth, filterYear } = this.state;
+
+        return orders.filter(order => {
+            const orderDate = new Date(order.order_date);
+            const matchesMonth = filterMonth ? (orderDate.getMonth() + 1).toString() === filterMonth : true;
+            const matchesYear = filterYear ? orderDate.getFullYear().toString() === filterYear : true;
+
+            return matchesMonth && matchesYear;
+        });
+    };
+
+    render() {
+        const { searchTerm, orders, staffList, currentPage, productsPerPage, filterIncompleteOrders, filterOrdersToday, filterMonth, filterYear } = this.state;
+
+        // Lọc đơn hàng
+        let filteredOrders = orders.filter(order =>
             order._id.includes(searchTerm) ||
             (order.order_date && order.order_date.includes(searchTerm))
         );
 
-        // Apply additional filter for incomplete orders
-        const incompleteOrders = filterIncompleteOrders
-            ? filteredOrders.filter(order => order.status !== 'Completed') // Giả sử trạng thái "Completed" là hoàn thành
-            : filteredOrders;
+        // Lọc đơn chưa hoàn thành
+        if (filterIncompleteOrders) {
+            filteredOrders = filteredOrders.filter(order => order.status !== 'Completed');
+        }
 
+        // Lọc đơn trong ngày
+        if (filterOrdersToday) {
+            filteredOrders = filteredOrders.filter(order => this.isToday(order.order_date));
+        }
+
+        // Lọc theo tháng và năm
+        filteredOrders = this.filterByDate(filteredOrders);
+
+        // Phân trang
         const indexOfLastProduct = currentPage * productsPerPage;
         const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-        const currentProducts = incompleteOrders.slice(indexOfFirstProduct, indexOfLastProduct);
-        const totalPages = Math.ceil(incompleteOrders.length / productsPerPage);
+        const currentProducts = filteredOrders.slice(indexOfFirstProduct, indexOfLastProduct);
+        const totalPages = Math.ceil(filteredOrders.length / productsPerPage);
 
         return (
             <div className="order-management">
@@ -113,6 +159,21 @@ class OrderManagement extends Component {
                         <button onClick={this.toggleIncompleteOrdersFilter}>
                             {filterIncompleteOrders ? 'Show All Orders' : 'Show Incomplete Orders'}
                         </button>
+                        <button onClick={() => this.setState({ filterOrdersToday: !filterOrdersToday })}>
+                            {filterOrdersToday ? 'Show All Orders' : 'Show Today’s Orders'}
+                        </button>
+                        <select value={filterMonth} onChange={this.handleFilterMonth}>
+                            <option value="">Select Month</option>
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <option key={i + 1} value={i + 1}>{`Month ${i + 1}`}</option>
+                            ))}
+                        </select>
+                        <select value={filterYear} onChange={this.handleFilterYear}>
+                            <option value="">Select Year</option>
+                            {[2022, 2023, 2024].map(year => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
                     </div>
                     <table className="order-table">
                         <thead>
@@ -174,14 +235,13 @@ class OrderManagement extends Component {
                                                 )}
                                             </div>
                                         </td>
-
                                     </tr>
-                                ))) : (
+                                ))
+                            ) : (
                                 <tr>
                                     <td colSpan="7">No orders available</td>
                                 </tr>
                             )}
-
                         </tbody>
                     </table>
                 </div>
