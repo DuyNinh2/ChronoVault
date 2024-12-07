@@ -45,7 +45,8 @@ const CheckoutPage = () => {
           const order = await actions.order.capture();
           console.log('Order approved:', order);
           setPaypalPaymentComplete(true);
-          alert('PayPal payment completed successfully.');
+          console.log(paypalPaymentComplete);
+          // alert('PayPal payment completed successfully.');
         },
         onError: (err) => {
           console.error('PayPal error:', err);
@@ -54,6 +55,13 @@ const CheckoutPage = () => {
       }).render('#paypal-button-container');
     }
   }, [selectedPayment]);
+
+  useEffect(() => {
+    if (paypalPaymentComplete) {
+      console.log('paypalPaymentComplete updated:', paypalPaymentComplete);
+      handlePlaceOrder();
+    }
+  }, [paypalPaymentComplete]);
   
 
   useEffect(() => {

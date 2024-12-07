@@ -6,7 +6,7 @@ const watchSchema = new mongoose.Schema({
   brandID: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true }, // Reference to Brand
   price: { type: Number, required: true },
   description: { type: String },
-  //category_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+  category_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
   images: [
     {
       image_url: { type: String, required: true },
