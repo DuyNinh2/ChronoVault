@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Home from './home';
+import Profile from '../views/Profile';
 import Products from './Products';
 import ProductDetail from './ProductDetail';
 import Cart from './Cart';
@@ -28,6 +29,7 @@ const AppUser = () => {
             {!noHeaderFooterRoutes.includes(location.pathname) && <Header />}
             <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/product-detail" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />

@@ -45,3 +45,15 @@ exports.createOrder = (req, res) => {
       .then(order => res.json(order))
       .catch(err => res.status(500).json({ error: 'Error creating order' }));
   };
+
+  exports.fetchUserOrders = async (req, res) => {
+    const userID = req.params.userID;
+    try {
+      const orders = await Order.find({ userID }).populate('items.watchID');
+      res.status(200).json(orders);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
+

@@ -8,10 +8,10 @@ exports.getAllWatches = async (req, res) => {
     try {
         const { filter, minPrice, maxPrice, brand, limit } = req.query;
   
-      let query = {};
+      let query = { isDeleted: false };
   
       if (filter === 'new-arrivals') {
-        query = {}; // Không lọc gì thêm, chỉ sort
+        //query = {}; // Không lọc gì thêm, chỉ sort
       } else if (filter === 'best-sellers') {
         // Lấy 10 đồng hồ có tổng số lượng mua nhiều nhất
         const topWatches = await Order.aggregate([
@@ -55,7 +55,7 @@ exports.getAllWatches = async (req, res) => {
       res.status(200).json(watches);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving watches', error });
-      res.status(500).json({ message: 'Error retrieving watches', error });
+    //   res.status(500).json({ message: 'Error retrieving watches', error });
     }
 };
 
