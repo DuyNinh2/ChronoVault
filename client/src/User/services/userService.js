@@ -39,3 +39,53 @@ export const fetchWishlist = async (userId) => {
   }
 };
 
+export const getUserSettings = async (userID) => {
+  try {
+    const response = await axios.get(`/api/user/setting/${userID}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user settings:', error);
+    throw error;
+  }
+};
+
+export const updateUserSettings = async (userID, settings) => {
+  try {
+    const response = await axios.put(`/api/user/setting/${userID}`, settings);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user settings:', error);
+    throw error;
+  }
+};
+
+export const addNewAddress = async (userID, address) => {
+  try {
+    const response = await axios.post(`/api/user/add/${userID}/addresses`, address);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding new address", error);
+    throw error;
+  }
+};
+
+export const deleteUserAddress = async (userID, addressID) => {
+  try {
+    const response = await axios.delete(`/api/user/addresses/${userID}/${addressID}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting address:", error);
+    throw error;
+  }
+};
+
+export const changePassword = async (userID, passwordData) => {
+  try {
+    const response = await axios.put(`/api/user/change-password/${userID}`, passwordData);
+    return response.data;
+  } catch (error) {
+    console.error("Error changing password:", error);
+    throw error;
+  }
+};
+

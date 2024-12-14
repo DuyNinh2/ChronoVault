@@ -165,6 +165,18 @@
               border-radius: 8px;
               transition: opacity 0.3s ease;
           }
+
+          .sale-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #ff3e3e;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+          }
         
           h2 {
               font-size: 1.2em;
@@ -175,6 +187,17 @@
           p {
               font-size: 1em;
               color: #5B3724;
+          }
+
+          .original-price {
+            text-decoration: line-through;
+            color: #888;
+            margin-right: 10px;
+          }
+        
+          .discounted-price {
+            color: #ff3e3e;
+            font-weight: bold;
           }
       }
     

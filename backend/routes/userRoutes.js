@@ -11,5 +11,11 @@ router.get('/:id', userController.getUserById);
 router.post('/:userID/address', userController.saveUserAddress);
 router.get("/wishlist/:userId", userController.getWishlist);
 
+router.get('/setting/:id', userController.getUserSettings);
+router.put('/setting/:id', userController.updateUserSettings);
+router.post('/add/:userID/addresses', userController.addAddress);
+router.delete("/addresses/:userID/:addressID", userController.deleteAddress);
+router.put("/change-password/:userID", userController.changePassword);
+
 module.exports = router;
 

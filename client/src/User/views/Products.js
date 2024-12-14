@@ -33,7 +33,7 @@ const AllProducts = () => {
       limit: productsPerPage,
     };
 
-    console.log("Filters being sent:", filters);
+    // console.log("Filters being sent:", filters);
 
     try {
       const data = await fetchProducts(filters);
@@ -206,13 +206,24 @@ const AllProducts = () => {
               onMouseLeave={handleMouseLeave}
               onClick={() => handleProductClick(product)}
             >
+              {/* Nhãn SALE */}
+              {product.discount && (
+                <div className="sale-badge">SALE</div>
+              )}
               <img
                 src={hoveredProduct === product._id && product.images[1] ? product.images[1].image_url : product.images[0].image_url}
                 alt={product.name}
                 className="product-image"
               />
               <h2>{product.name}</h2>
-              <p>${product.price.toFixed(2)}</p>
+              {product.discount ? (
+                <p>
+                  <span className="original-price">${product.originalPrice.toFixed(2)}</span>
+                  <span className="discounted-price">${product.price.toFixed(2)}</span>
+                </p>
+              ) : (
+                <p>${product.price.toFixed(2)}</p>
+              )}
             </div>
           ))}
         </div>

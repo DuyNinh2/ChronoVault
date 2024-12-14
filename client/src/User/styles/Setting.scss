@@ -1,0 +1,194 @@
+.setting-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+
+  h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  hr {
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+  }
+
+  .main-content {
+    display: flex;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+
+    button {
+      padding: 10px 20px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f0f0f0;
+
+      &.active {
+        background-color: #00cc99;
+        color: #fff;
+      }
+    }
+  }
+
+  .content {
+    flex: 1;
+
+    .account-details,
+    .delivery-address,
+    .password {
+      display: flex;
+      flex-direction: column;
+
+      h3 {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      label {
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+
+      input,
+      select {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 15px;
+      }
+
+      .save-button {
+        align-self: flex-end;
+        background-color: #00cc99;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #00b386;
+        }
+      }
+
+      .add-button {
+        align-self: flex-start;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+
+        &:hover {
+          background-color: #0056b3;
+        }
+      }
+
+      .edit-button, .delete-button {
+        align-self: flex-start;
+        background-color: #ff9800;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+        margin-right: 10px;
+
+        &:hover {
+          background-color: #e68900;
+        }
+      }
+
+      .address-block {
+        margin-bottom: 20px;
+
+        &:not(:first-child) {
+          margin-top: 20px;
+        }
+      }
+    }
+  }
+
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    width: 400px;
+    height: auto;
+    max-height: 90vh; // Max height to ensure it doesn't touch top and bottom
+    overflow-y: auto; // Scrollable if content exceeds max height
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    h3 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    input,
+    select {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      width: 100%;
+    }
+
+    .save-button,
+    .add-button {
+      align-self: center;
+      background-color: #00cc99;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #00b386;
+      }
+    }
+  }
+}
