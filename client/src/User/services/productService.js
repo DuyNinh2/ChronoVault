@@ -12,6 +12,25 @@ export const fetchProducts = async (filters) => {
   }
 };
 
+export const fetchDiscountedProducts = async () => {
+  try {
+    const response = await axios.get('/api/products/discounted-products');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching discounted products:', error);
+    throw error;
+  }
+};
+
+export const toggleWishlist = async (userID, watchID) => {
+  try {
+    const response = await axios.post(`/api/products/${userID}/wishlist`, { watchID });
+    return response.data; // Trả về danh sách wishlist mới hoặc thông báo
+  } catch (error) {
+    console.error('Error toggling wishlist:', error.response?.data || error.message);
+    throw error;
+  }
+};
 
 export const fetchRelatedProducts = async (limit = 5) => {
   try {

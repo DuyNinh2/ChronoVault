@@ -5,6 +5,8 @@ const watchController = require('../controllers/watchController');
 // Define routes
 router.get('/api/watches', watchController.getAllWatches);
 router.get('/:id', watchController.getWatchById);
+router.get('/api/products/discounted-products', watchController.getDiscountedProducts);
+router.post('/api/products/:userID/wishlist', watchController.toggleWishlist);
 
 const upload = require('../utils/upload');
 router.post('/api/addproduct', upload.array('images', 3), watchController.addProduct);
