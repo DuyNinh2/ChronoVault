@@ -1,22 +1,20 @@
 // src/Admin/views/ForgotPassword.js
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../Admin/styles/ForgotPassword.scss';
 import Footer from '../../User/components/Footer';
 
 const ForgotPassword = () => {
     const [username, setUsername] = useState('');
-    const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const navigate = useNavigate();
 
     const handleForgotPassword = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/users/forgot-password', {
+            const response = await axios.post('/api/user/forgot-password', {
                 username,
-                phone,
                 email
             });
             alert(response.data.message);
@@ -36,7 +34,7 @@ const ForgotPassword = () => {
         <div className="forgot-container">
             <div className="forgot-header">
                 <button className="forgot-back-button" onClick={() => navigate(-1)}>←</button>
-                <h1 className="forgot-title">ChronoVault</h1>
+                <Link className="forgot-title" to='/'><h1>ChronoVault</h1></Link>
             </div>
 
             <div className="forgot-content">
@@ -51,15 +49,15 @@ const ForgotPassword = () => {
                             onChange={(e) => setUsername(e.target.value)}
                         />
                     </div>
-                    <div className="forgot-input-field">
+                    {/* <div className="forgot-input-field">
                         <label>Phone</label>
                         <input
-                            type="text"
+                            type="number"
                             placeholder="Phone"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                         />
-                    </div>
+                    </div> */}
                     <div className="forgot-input-field">
                         <label>Email</label>
                         <input

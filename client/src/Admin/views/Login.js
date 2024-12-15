@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../Admin/styles/Login.scss';
 import Footer from '../../User/components/Footer';
@@ -64,7 +64,9 @@ const Login = () => {
         <div className="login-container">
             <div className="header">
                 <button className="back-button" onClick={() => navigate(-1)}>←</button>
-                <h1 className="title">ChronoVault</h1>
+                <div className="ChronoVault-h1">
+                    <Link className="ChronoVault" to='/'><h1>ChronoVault</h1></Link>
+                </div>
             </div>
 
             <div className="login-content">

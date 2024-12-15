@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Import thư viện axios để gọi API
 import '../../Admin/styles/CreatAccount.scss';
 import Footer from '../../User/components/Footer';
@@ -61,7 +61,8 @@ const CreatAccount = () => {
         <div className="register-container">
             <div className="register-header">
                 <button className="register-back-button" onClick={() => navigate(-1)}>←</button>
-                <h1 className="register-title">ChronoVault</h1>
+
+                <Link className="register-title" to='/'><h1>ChronoVault</h1></Link>
             </div>
 
             <div className="register-content">
@@ -88,7 +89,7 @@ const CreatAccount = () => {
                     <div className="register-input-field">
                         <label>Phone</label>
                         <input
-                            type="text"
+                            type="number"
                             placeholder="Phone"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
