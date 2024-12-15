@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Breadcrumb from '../components/Breadcrumb';
 import ProductImage from '../components/ProductImage';
@@ -6,6 +6,7 @@ import ProductInfo from '../components/ProductInfo';
 import Accordion from '../components/Accordion';
 import RelatedProducts from '../components/RelatedProducts';
 import CartDrawer from '../components/CartDrawer';
+import { fetchDiscountedProducts } from '../services/productService';
 import '../styles/ProductDetail.scss';
 
 const ProductDetail = () => {
@@ -14,6 +15,7 @@ const ProductDetail = () => {
   
   const [isCartOpen, setIsCartOpen] = useState(false);
   // const [newCartItem, setNewCartItem] = useState(null);
+  const [discountedPrice, setDiscountedPrice] = useState(null);
 
   const handleAddToCart = (item) => {
     // setNewCartItem(item);
@@ -23,6 +25,24 @@ const ProductDetail = () => {
   const handleCloseCart = () => {
     setIsCartOpen(false);
   };
+
+  useEffect(() => {
+    const fetchDiscount = async () => {
+      if (product) {
+        try {
+          const discountedProducts = await fetchDiscountedProducts();
+          const matchingProduct = discountedProducts.find(dp => dp._id === product._id);
+          if (matchingProduct) {
+            setDiscountedPrice(matchingProduct.discountedPrice);
+          }
+        } catch (error) {
+          console.error('Error fetching discounted product details:', error);
+        }
+      }
+    };
+
+    fetchDiscount();
+  }, [product]);
 
   if (!product) {
     return <div>Product not found</div>;
@@ -38,7 +58,8 @@ const ProductDetail = () => {
         <div className='detail'>
           <ProductInfo 
             name={product.name}
-            price={product.price}
+            price={discountedPrice || product.price} 
+            originalPrice={discountedPrice ? product.price : null}
             description={product.description}
             watchID={product._id}
             openCartDrawer={handleAddToCart}

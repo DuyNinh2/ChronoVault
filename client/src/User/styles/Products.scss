@@ -134,8 +134,8 @@
       width: 80%;
       height: auto;
       background-color: #FFF7ED;
-      padding: 30px; 
-
+      padding: 30px;
+    
       h1 {
         font-size: 1.5em;
         font-weight: bold;
@@ -145,86 +145,87 @@
       }
     
       .products-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 30px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
       }
     
       .product-card {
-          width: 20vw;
-          background-color: #DBD5CB;
-          padding: 1rem;
-          text-align: left;
+        width: 20vw;
+        background-color: #DBD5CB;
+        padding: 1rem;
+        text-align: left;
+        border-radius: 8px;
+        cursor: pointer;
+        position: relative; // Add this line
+    
+        .product-image {
+          text-align: center;
+          width: 100%;
+          height: 300px;
           border-radius: 8px;
-          cursor: pointer;
-      
-          .product-image {
-              text-align: center;
-              width: 100%;
-              height: 300px;
-              border-radius: 8px;
-              transition: opacity 0.3s ease;
-          }
-
-          .sale-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: #ff3e3e;
-            color: #fff;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 5px;
-          }
-        
-          h2 {
-              font-size: 1.2em;
-              font-weight: 600;
-              color: #5B3724;
-          }
-        
-          p {
-              font-size: 1em;
-              color: #5B3724;
-          }
-
-          .original-price {
-            text-decoration: line-through;
-            color: #888;
-            margin-right: 10px;
-          }
-        
-          .discounted-price {
-            color: #ff3e3e;
-            font-weight: bold;
-          }
+          transition: opacity 0.3s ease;
+        }
+    
+        .sale-badge {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          background-color: #ff3e3e;
+          color: #fff;
+          font-size: 12px;
+          font-weight: bold;
+          padding: 5px 10px;
+          border-radius: 5px;
+        }
+    
+        h2 {
+          font-size: 1.2em;
+          font-weight: 600;
+          color: #5B3724;
+        }
+    
+        p {
+          font-size: 1em;
+          color: #5B3724;
+        }
+    
+        .original-price {
+          text-decoration: line-through;
+          color: #888;
+          margin-right: 10px;
+        }
+    
+        .discounted-price {
+          color: #ff3e3e;
+          font-weight: bold;
+        }
       }
     
       .pagination {
-          display: flex;
-          justify-content: center;
-          margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
       }
     
       .pagination button {
-          background-color: #DBD5CB;
-          border: 1px solid #ADA399;
-          padding: 8px 12px;
-          margin: 0 4px;
-          cursor: pointer;
-          transition: background-color 0.3s;
+        background-color: #DBD5CB;
+        border: 1px solid #ADA399;
+        padding: 8px 12px;
+        margin: 0 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
       }
     
       .pagination button.active {
-          background-color: #5B3724;
-          color: #FFF7ED;
+        background-color: #5B3724;
+        color: #FFF7ED;
       }
     
       .pagination button:hover {
-          background-color: #ADA399;
+        background-color: #ADA399;
       }
-    }
+    }    
   }
   
   

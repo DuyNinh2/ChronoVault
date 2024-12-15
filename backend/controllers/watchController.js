@@ -2,6 +2,7 @@ const Watch = require('../models/Watch');
 const Brand = require('../models/Brand');
 const Category = require('../models/Category');
 const Order = require('../models/Order');
+const Promotion = require('../models/Promotion');
 
 // Get all watches
 exports.getAllWatches = async (req, res) => {
@@ -58,6 +59,64 @@ exports.getAllWatches = async (req, res) => {
         //   res.status(500).json({ message: 'Error retrieving watches', error });
     }
 };
+
+exports.getDiscountedProducts = async (req, res) => {
+    try {
+      const now = new Date();
+      
+      // Find promotions that are active
+      const promotions = await Promotion.find({
+        startDate: { $lte: now },
+        endDate: { $gte: now },
+      }).populate('watchID'); // Populate watch details
+  
+      // Format response to include product details and discount
+      const discountedProducts = promotions.flatMap((promo) =>
+        promo.watchID.map((watch) => ({
+          ...watch.toObject(),
+          discount: promo.discount, // Add discount percentage to the product
+          discountedPrice: (watch.price * (1 - promo.discount / 100)).toFixed(2),
+        }))
+      );
+  
+      res.status(200).json(discountedProducts);
+    } catch (error) {
+      console.error('Error fetching discounted products:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
+  const User = require('../models/User');
+  exports.toggleWishlist = async (req, res) => {
+    const { userID } = req.params;
+    const { watchID } = req.body;
+  
+    try {
+      const user = await User.findById(userID);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Kiểm tra sản phẩm đã có trong wishlist hay chưa
+      const isInWishlist = user.wishlist.includes(watchID);
+  
+      if (isInWishlist) {
+        // Nếu đã có thì xóa khỏi wishlist
+        user.wishlist = user.wishlist.filter(id => id.toString() !== watchID);
+        await user.save();
+        return res.status(200).json({ message: 'Removed from wishlist', wishlist: user.wishlist });
+      } else {
+        // Nếu chưa có thì thêm vào wishlist
+        user.wishlist.push(watchID);
+        await user.save();
+        return res.status(200).json({ message: 'Added to wishlist', wishlist: user.wishlist });
+      }
+    } catch (error) {
+      console.error('Error toggling wishlist:', error.message);
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
+  };
 
 // Get a single watch by ID
 exports.getWatchById = async (req, res) => {

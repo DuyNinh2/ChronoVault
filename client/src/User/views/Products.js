@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ReactSlider from 'react-slider';
 import '../styles/Products.scss';
 import { fetchBrands } from '../services/brandService';
-import { fetchProducts } from '../services/productService';
+import { fetchProducts, fetchDiscountedProducts } from '../services/productService';
 
 const AllProducts = () => {
   const location = useLocation();
@@ -20,6 +20,7 @@ const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [hoveredProduct, setHoveredProduct] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [discountedProducts, setDiscountedProducts] = useState([]);
   const productsPerPage = 12;
   const navigate = useNavigate();
 
@@ -89,6 +90,18 @@ const AllProducts = () => {
         return 'All Products';
     }
   };
+
+  useEffect(() => {
+    const fetchDiscounts = async () => {
+      try {
+        const discounts = await fetchDiscountedProducts();
+        setDiscountedProducts(discounts);
+      } catch (error) {
+        console.error('Error fetching discounts:', error);
+      }
+    };
+    fetchDiscounts();
+  }, []);
 
   return (
     <div className="all-products-container">
@@ -198,34 +211,37 @@ const AllProducts = () => {
         <h1>{getHeading()}</h1>
         <p>{products.length} products</p>
         <div className="products-grid">
-          {products.map(product => (
-            <div
-              key={product._id}
-              className="product-card"
-              onMouseEnter={() => handleMouseEnter(product._id)}
-              onMouseLeave={handleMouseLeave}
-              onClick={() => handleProductClick(product)}
-            >
-              {/* Nhãn SALE */}
-              {product.discount && (
-                <div className="sale-badge">SALE</div>
-              )}
-              <img
-                src={hoveredProduct === product._id && product.images[1] ? product.images[1].image_url : product.images[0].image_url}
-                alt={product.name}
-                className="product-image"
-              />
-              <h2>{product.name}</h2>
-              {product.discount ? (
-                <p>
-                  <span className="original-price">${product.originalPrice.toFixed(2)}</span>
-                  <span className="discounted-price">${product.price.toFixed(2)}</span>
-                </p>
-              ) : (
-                <p>${product.price.toFixed(2)}</p>
-              )}
-            </div>
-          ))}
+          {products.map(product => {
+            const discountedProduct = discountedProducts.find(dp => dp._id === product._id);
+            const finalPrice = discountedProduct ? discountedProduct.discountedPrice : product.price;
+            return (
+              <div
+                key={product._id}
+                className="product-card"
+                onMouseEnter={() => handleMouseEnter(product._id)}
+                onMouseLeave={handleMouseLeave}
+                onClick={() => handleProductClick(product)}
+              >
+                {/* Nhãn SALE */}
+                {discountedProduct && <div className="sale-badge">SALE</div>}
+              
+                <img
+                  src={hoveredProduct === product._id && product.images[1] ? product.images[1].image_url : product.images[0].image_url}
+                  alt={product.name}
+                  className="product-image"
+                />
+                <h2>{product.name}</h2>
+                {discountedProduct ? (
+                  <p>
+                    <span className="original-price">${product.price.toFixed(2)}</span>
+                    <span className="discounted-price">${finalPrice}</span>
+                  </p>
+                ) : (
+                  <p>${product.price.toFixed(2)}</p>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Pagination Controls */}
