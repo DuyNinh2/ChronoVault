@@ -14,6 +14,7 @@ const orderSchema = new mongoose.Schema({
       price: Number
     },
   ],
+  seen: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model('Order', orderSchema);

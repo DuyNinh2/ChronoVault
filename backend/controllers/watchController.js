@@ -7,55 +7,55 @@ const Order = require('../models/Order');
 exports.getAllWatches = async (req, res) => {
     try {
         const { filter, minPrice, maxPrice, brand, limit } = req.query;
-  
-      let query = { isDeleted: false };
-  
-      if (filter === 'new-arrivals') {
-        //query = {}; // Không lọc gì thêm, chỉ sort
-      } else if (filter === 'best-sellers') {
-        // Lấy 10 đồng hồ có tổng số lượng mua nhiều nhất
-        const topWatches = await Order.aggregate([
-          { $unwind: "$items" },
-          {
-            $group: {
-              _id: "$items.watchID",
-              totalQuantity: { $sum: "$items.quantity" },
-            },
-          },
-          { $sort: { totalQuantity: -1 } },
-          { $limit: 10 },
-        ]);
-  
-        const watchIDs = topWatches.map((item) => item._id);
-        query._id = { $in: watchIDs };
-      }
-      
-      if (minPrice && maxPrice) {
-        query.price = { $gte: Number(minPrice), $lte: Number(maxPrice) };
-      }
-      
-      if (brand) {
-        const brandNames = brand.split(',').map(name => name.trim()); 
-        const brands = await Brand.find({ name: { $in: brandNames } });
-        if (brands.length > 0) {
-          query.brandID = { $in: brands.map((b) => b._id) };
+
+        let query = {};
+
+        if (filter === 'new-arrivals') {
+            //query = {}; // Không lọc gì thêm, chỉ sort
+        } else if (filter === 'best-sellers') {
+            // Lấy 10 đồng hồ có tổng số lượng mua nhiều nhất
+            const topWatches = await Order.aggregate([
+                { $unwind: "$items" },
+                {
+                    $group: {
+                        _id: "$items.watchID",
+                        totalQuantity: { $sum: "$items.quantity" },
+                    },
+                },
+                { $sort: { totalQuantity: -1 } },
+                { $limit: 10 },
+            ]);
+
+            const watchIDs = topWatches.map((item) => item._id);
+            query._id = { $in: watchIDs };
         }
-      }
-    //   console.log("Query being executed:", query);
-  
-      let watchesQuery = Watch.find(query)
-        .populate('brandID')
-        .populate('category_id')
-        
-      if (filter === 'new-arrivals') {
-        watchesQuery = watchesQuery.sort({ _id: -1 }).limit(parseInt(limit) || 0);
-      }
-  
-      const watches = await watchesQuery;
-      res.status(200).json(watches);
+
+        if (minPrice && maxPrice) {
+            query.price = { $gte: Number(minPrice), $lte: Number(maxPrice) };
+        }
+
+        if (brand) {
+            const brandNames = brand.split(',').map(name => name.trim());
+            const brands = await Brand.find({ name: { $in: brandNames } });
+            if (brands.length > 0) {
+                query.brandID = { $in: brands.map((b) => b._id) };
+            }
+        }
+        //   console.log("Query being executed:", query);
+
+        let watchesQuery = Watch.find(query)
+            .populate('brandID')
+            .populate('category_id')
+
+        if (filter === 'new-arrivals') {
+            watchesQuery = watchesQuery.sort({ _id: -1 }).limit(parseInt(limit) || 0);
+        }
+
+        const watches = await watchesQuery;
+        res.status(200).json(watches);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving watches', error });
-    //   res.status(500).json({ message: 'Error retrieving watches', error });
+        //   res.status(500).json({ message: 'Error retrieving watches', error });
     }
 };
 
@@ -160,84 +160,39 @@ exports.addProduct = async (req, res) => {
 // Update a watch by ID
 exports.updateWatch = async (req, res) => {
     try {
-        const { name, stock_quantity, brand, price, description, category, newBrand, newCategory, images } = req.body;
+        const { name, price, stock_quantity, description, brandID, category_id } = req.body;
+        const images = req.files; // Multer handles file uploads
 
-        // Xử lý Brand
-        let brandID;
-        if (brand === 'new') {
-            if (!newBrand) return res.status(400).json({ message: "Brand name is required." });
+        // Kiểm tra thông tin nhận được từ request
+        console.log('Request body:', req.body);
+        console.log('Files:', req.files);
 
-            const existingBrand = await Brand.findOne({ name: newBrand.toLowerCase() });
-            if (existingBrand) {
-                brandID = existingBrand._id;
-            } else {
-                const newBrandObj = new Brand({ name: newBrand.toLowerCase() });
-                const savedBrand = await newBrandObj.save();
-                brandID = savedBrand._id;
-            }
-        } else if (brand !== 'select') {
-            const existingBrand = await Brand.findOne({ name: brand.toLowerCase() });
-            if (existingBrand) {
-                brandID = existingBrand._id;
-            } else {
-                return res.status(400).json({ message: "Brand not found." });
-            }
-        }
+        // Find the watch by ID and update it
+        const watch = await Watch.findById(req.params.id);
 
-        // Xử lý Category
-        let category_id;
-        if (category === 'new') {
-            if (!newCategory) return res.status(400).json({ message: "Category name is required." });
-
-            const existingCategory = await Category.findOne({ name: newCategory.toLowerCase() });
-            if (existingCategory) {
-                category_id = existingCategory._id;
-            } else {
-                const newCategoryObj = new Category({ name: newCategory.toLowerCase() });
-                const savedCategory = await newCategoryObj.save();
-                category_id = savedCategory._id;
-            }
-        } else if (category !== 'select') {
-            const existingCategory = await Category.findOne({ name: category.toLowerCase() });
-            if (existingCategory) {
-                category_id = existingCategory._id;
-            } else {
-                return res.status(400).json({ message: "Category not found." });
-            }
-        }
-
-        // Xử lý upload hình ảnh (Nếu có ảnh mới)
-        let updatedImages = [];
-        if (req.files && req.files.length > 0) {
-            updatedImages = req.files.map(file => ({
+        watch.name = name || watch.name;
+        watch.price = price || watch.price;
+        watch.stock_quantity = stock_quantity || watch.stock_quantity;
+        watch.description = description || watch.description;
+        // Cập nhật brand và category nếu có
+        watch.brandID = brandID || watch.brandID;
+        watch.category_id = category_id || watch._id;
+        // Update images if new images are uploaded
+        if (images && images.length > 0) {
+            watch.images = images.map((file) => ({
                 image_url: `/uploads/images/${file.filename}`,
                 alt_text: file.originalname || "Product Image"
             }));
-        } else {
-            updatedImages = images; // Giữ lại ảnh cũ nếu không có ảnh mới
         }
 
-        // Cập nhật sản phẩm
-        const updatedWatch = await Watch.findByIdAndUpdate(req.params.id, {
-            name,
-            stock_quantity,
-            price,
-            description,
-            brandID,
-            category_id,
-            images: updatedImages
-        }, { new: true });
-
-        if (!updatedWatch) {
-            return res.status(404).json({ message: 'Watch not found' });
-        }
-
-        res.status(200).json({ message: 'Watch updated successfully', watch: updatedWatch });
+        await watch.save();
+        res.status(200).json({ message: 'Product updated successfully', watch });
     } catch (error) {
-        console.error('Error updating watch:', error);
-        res.status(500).json({ message: 'Error updating watch', error });
+        console.error('Product no change', error); // Log chi tiết lỗi 
     }
 };
+
+
 
 // Updated controller to match the PUT request
 exports.hideProduct = async (req, res) => {

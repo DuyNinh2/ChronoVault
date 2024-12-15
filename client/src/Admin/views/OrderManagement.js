@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import io from "socket.io-client";
 import '../../Admin/styles/OrderManagement.scss';
 
 class OrderManagement extends Component {
@@ -11,17 +12,104 @@ class OrderManagement extends Component {
         productsPerPage: 6,
         filterIncompleteOrders: false,
         filterOrdersToday: false,
-        filterMonth: '', // Bộ lọc theo tháng
-        filterYear: '',  // Bộ lọc theo năm
+        filterMonth: '',
+        filterYear: '',
+        newOrdersCount: 0,
+        showNewOrders: false, // Add state to track if new orders are being displayed
+        newOrders: [],
+        selectedOrder: null,
+        seenOrders: [] // Add newOrders state
+    };
+
+    constructor(props) {
+        super(props);
+        this.notificationRef = React.createRef(); // Tạo ref cho thông báo
+    }
+
+    handleNotificationClick = (orderId) => {
+        const { showNewOrders, newOrders } = this.state;
+
+        // Nếu thông báo chưa được hiển thị thì mở thông báo xổ xuống
+        if (!showNewOrders) {
+            this.setState({ showNewOrders: true });
+        }
+
+        setTimeout(() => {
+            // Mark order as seen after the delay
+            axios.post(`/api/orders/markOrderAsSeen/${orderId}`)
+                .then(() => {
+                    // Remove the order from the newOrders list after it's marked as seen
+                    this.setState(prevState => ({
+                        newOrders: prevState.newOrders.filter(order => order._id !== orderId),
+                        newOrdersCount: prevState.newOrdersCount - 1, // Update the notification count
+                    }));
+
+                    // Update the count of new orders
+                    this.fetchNewOrdersCount();
+                })
+                .catch(error => {
+                    console.error('Error marking order as seen:', error);
+                });
+        }, 3000); // 3-second delay
     };
 
     componentDidMount() {
         this.fetchOrders();
         this.fetchStaffList();
-    }
+        this.fetchRecentSeenOrders(); // Fetch the recent seen orders
+        this.socket = io('http://localhost:5000'); // Kết nối tới WebSocket server
+
+        // Lắng nghe sự kiện WebSocket về đơn hàng mới
+        this.socket.on('newOrderNotification', (count) => {
+            this.setState({ newOrdersCount: count });
+        });
+
+        this.fetchNewOrdersCount();
+        this.fetchNewOrders();
+    };
 
 
-    // Lấy danh sách đơn hàng
+    fetchRecentSeenOrders = async () => {
+        try {
+            const response = await axios.get('/api/orders/getRecentSeenOrders');
+            if (response.data.orders) {
+                this.setState({ seenOrders: response.data.orders });
+            }
+        } catch (error) {
+            console.error('Error fetching recent seen orders:', error);
+        }
+    };
+
+
+    // Fetch new orders count
+    fetchNewOrdersCount = async () => {
+        try {
+            const response = await axios.get('/api/orders/getNewOrdersCount');
+            if (response.data && response.data.count !== undefined) {
+                this.setState({ newOrdersCount: response.data.count });
+            }
+        } catch (error) {
+            console.error('Có lỗi khi lấy số lượng đơn hàng mới:', error);
+        }
+    };
+
+    // Fetch new orders
+    fetchNewOrders = async () => {
+        try {
+            const response = await axios.get('/api/orders/getNewOrders');
+            if (response.data.orders) {
+                this.setState({ newOrders: response.data.orders });
+            }
+        } catch (error) {
+            console.error('Error fetching new orders:', error);
+        }
+    };
+
+    closeNotification = () => {
+        // Close the notification dropdown
+        this.setState({ showNewOrders: false });
+    };
+    // Fetch orders
     fetchOrders = async () => {
         try {
             const response = await axios.get('/api/orders/getAllOrders');
@@ -29,11 +117,11 @@ class OrderManagement extends Component {
                 this.setState({ orders: response.data.orders });
             }
         } catch (error) {
-            console.error('Có lỗi khi lấy dữ liệu đơn hàng:', error);
+            console.error('Error fetching orders:', error);
         }
     };
 
-    // Lấy danh sách nhân viên
+    // Fetch staff list
     fetchStaffList = async () => {
         const token = localStorage.getItem("token");
         try {
@@ -44,11 +132,11 @@ class OrderManagement extends Component {
             });
             this.setState({ staffList: response.data.staff });
         } catch (error) {
-            console.error('Có lỗi khi lấy dữ liệu nhân viên:', error);
+            console.error('Error fetching staff data:', error);
         }
     };
 
-    // Gán nhân viên giao hàng cho đơn
+    // Assign staff to an order
     handleUpdateAssignedStaff = async (orderId, staffId) => {
         try {
             const response = await axios.post('/api/orders/assignOrderToStaff', {
@@ -67,33 +155,33 @@ class OrderManagement extends Component {
                 this.fetchOrders();
             }
         } catch (error) {
-            console.error('Có lỗi khi gán nhân viên giao hàng:', error);
+            console.error('Error assigning staff:', error);
         }
     };
 
-    // Xử lý thay đổi tìm kiếm
+    // Handle search input change
     handleSearchChange = (event) => {
         this.setState({ searchTerm: event.target.value });
     };
 
-    // Bật/tắt bộ lọc đơn chưa hoàn thành
+    // Toggle incomplete orders filter
     toggleIncompleteOrdersFilter = () => {
         this.setState(prevState => ({
             filterIncompleteOrders: !prevState.filterIncompleteOrders
         }));
     };
 
-    // Bộ lọc theo tháng
+    // Handle filter by month
     handleFilterMonth = (event) => {
         this.setState({ filterMonth: event.target.value });
     };
 
-    // Bộ lọc theo năm
+    // Handle filter by year
     handleFilterYear = (event) => {
         this.setState({ filterYear: event.target.value });
     };
 
-    // Lọc theo ngày hôm nay
+    // Check if the order was made today
     isToday = (dateString) => {
         const today = new Date();
         const orderDate = new Date(dateString);
@@ -104,7 +192,7 @@ class OrderManagement extends Component {
         );
     };
 
-    // Lọc theo tháng và năm
+    // Filter orders by date (month and year)
     filterByDate = (orders) => {
         const { filterMonth, filterYear } = this.state;
 
@@ -118,31 +206,31 @@ class OrderManagement extends Component {
     };
 
     render() {
-        const { searchTerm, orders, staffList, currentPage, productsPerPage, filterIncompleteOrders, filterOrdersToday, filterMonth, filterYear } = this.state;
+        const { searchTerm, orders, staffList, currentPage, productsPerPage, filterIncompleteOrders, filterOrdersToday, filterMonth, filterYear, newOrdersCount, showNewOrders, newOrders, selectedOrder } = this.state;
 
-        // Lọc đơn hàng
+        // Filter orders
         let filteredOrders = orders.filter(order =>
             order._id.includes(searchTerm) ||
             (order.order_date && order.order_date.includes(searchTerm))
         );
 
-        // Lọc đơn chưa hoàn thành
+        // Filter incomplete orders
         if (filterIncompleteOrders) {
             filteredOrders = filteredOrders.filter(order => order.status !== 'Completed');
         }
 
-        // Lọc đơn trong ngày
+        // Filter orders made today
         if (filterOrdersToday) {
             filteredOrders = filteredOrders.filter(order => this.isToday(order.order_date));
         }
 
-        // Lọc theo tháng và năm
+        // Filter by month and year
         filteredOrders = this.filterByDate(filteredOrders);
 
-        // Phân trang
-        const indexOfLastProduct = currentPage * productsPerPage;
-        const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-        const currentProducts = filteredOrders.slice(indexOfFirstProduct, indexOfLastProduct);
+        // Pagination
+        const indexOfLastOrder = currentPage * productsPerPage;
+        const indexOfFirstOrder = indexOfLastOrder - productsPerPage;
+        const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
         const totalPages = Math.ceil(filteredOrders.length / productsPerPage);
 
         return (
@@ -156,11 +244,11 @@ class OrderManagement extends Component {
                             value={searchTerm}
                             onChange={this.handleSearchChange}
                         />
-                        <button onClick={this.toggleIncompleteOrdersFilter}>
-                            {filterIncompleteOrders ? 'Show All Orders' : 'Show Incomplete Orders'}
+                        <button className='show' onClick={this.toggleIncompleteOrdersFilter}>
+                            {filterIncompleteOrders ? 'Show All' : 'Show Incomplete'}
                         </button>
-                        <button onClick={() => this.setState({ filterOrdersToday: !filterOrdersToday })}>
-                            {filterOrdersToday ? 'Show All Orders' : 'Show Today’s Orders'}
+                        <button className='show' onClick={() => this.setState({ filterOrdersToday: !filterOrdersToday })}>
+                            {filterOrdersToday ? 'Show All' : 'Show Today'}
                         </button>
                         <select value={filterMonth} onChange={this.handleFilterMonth}>
                             <option value="">Select Month</option>
@@ -174,6 +262,39 @@ class OrderManagement extends Component {
                                 <option key={year} value={year}>{year}</option>
                             ))}
                         </select>
+                        <div className="notification" ref={this.notificationRef}>
+                            <button className='notification-btn'
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (newOrdersCount > 0) {
+                                        this.handleNotificationClick(newOrders[0]._id);
+                                    }
+                                }}>
+                                🔔
+                                {newOrdersCount > 0 && (
+                                    <span className="notification-count">{newOrdersCount}</span>
+                                )}
+                            </button>
+                        </div>
+
+
+                        {showNewOrders && (
+                            <div className="new-orders-dropdown">
+                                <button className="close-btn" onClick={this.closeNotification}>X</button>
+                                {newOrders.length > 0 ? (
+                                    newOrders.map(order => (
+                                        <div key={order._id} className="order-item">
+                                            <p>Order ID: {order._id}</p>
+                                            <p>User: {order.userID?.username || 'Unknown'}</p>
+                                            <p>Total: {order.total_amount}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>No new orders</p>
+                                )}
+                            </div>
+                        )}
+
                     </div>
                     <table className="order-table">
                         <thead>
@@ -188,8 +309,8 @@ class OrderManagement extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {currentProducts.length > 0 ? (
-                                currentProducts.map(order => (
+                            {currentOrders.length > 0 ? (
+                                currentOrders.map(order => (
                                     <tr key={order._id}>
                                         <td>{order._id}</td>
                                         <td>{order.userID?.username || 'Unknown'}</td>
@@ -245,6 +366,7 @@ class OrderManagement extends Component {
                         </tbody>
                     </table>
                 </div>
+
                 <div className="pagination">
                     <button
                         onClick={() => this.setState({ currentPage: currentPage - 1 })}
@@ -260,7 +382,8 @@ class OrderManagement extends Component {
                         Next
                     </button>
                 </div>
-            </div>
+
+            </div >
         );
     }
 }

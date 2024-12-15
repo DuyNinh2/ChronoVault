@@ -1,196 +1,168 @@
-import React, { Component } from "react";
-import axios from "axios";
-import "../../styles/UpdatePromotion.scss";
+import React, { Component } from 'react';
+import axios from 'axios';
+import '../../styles/UpdatePromotion.scss'; // Đảm bảo rằng SCSS được import chính xác
 
 class UpdatePromotion extends Component {
     state = {
-        updatedPromotion: {
-            promotionName: "",
-            startDate: "",
-            endDate: "",
-            discount: "",
-        },
-        selectedWatches: [],
-        availableWatches: [],
-        isLoading: true,
+        promotionName: this.props.promotion.promotionName || '',
+        startDate: this.props.promotion.startDate || '',
+        endDate: this.props.promotion.endDate || '',
+        discount: this.props.promotion.discount || '',
+        watchID: this.props.promotion.watchID || [], // Ensure watchID is an array
+        availableWatches: [], // List of available watches
     };
 
-    // Called when the component is mounted to load promotion data and available watches
     componentDidMount() {
-        this.loadPromotionData();
-        this.loadWatches();
+        // Fetch list of watches
+        this.fetchWatches();
     }
 
-    // Load promotion details based on the promotionId passed via props
-    loadPromotionData = () => {
-        const { promotionId } = this.props;
-        if (promotionId) {
-            axios
-                .get(`/api/promotions/${promotionId}`)
-                .then((response) => {
-                    const promotion = response.data;
-                    this.setState({
-                        updatedPromotion: {
-                            promotionName: promotion.promotionName || "",
-                            startDate: promotion.startDate || "",
-                            endDate: promotion.endDate || "",
-                            discount: promotion.discount || "",
-                        },
-                        selectedWatches: promotion.selectedWatches || [],
-                    });
-                })
-                .catch((error) => {
-                    console.error("Error fetching promotion data:", error);
-                    alert("Failed to load promotion data.");
-                });
+    fetchWatches = async () => {
+        try {
+            const response = await axios.get('/api/watches');
+            this.setState({ availableWatches: response.data });
+        } catch (error) {
+            console.error('Error fetching watches:', error);
         }
     };
 
-    // Load list of available watches
-    loadWatches = () => {
-        axios
-            .get("/api/watches")
-            .then((response) => {
-                this.setState({ availableWatches: response.data, isLoading: false });
-            })
-            .catch((error) => {
-                console.error("Error fetching watches:", error);
-                this.setState({ isLoading: false });
-            });
-    };
-
-    // Handle input changes for promotion details
     handleInputChange = (event) => {
         const { name, value } = event.target;
-        this.setState((prevState) => ({
-            updatedPromotion: {
-                ...prevState.updatedPromotion,
-                [name]: value,
-            },
-        }));
+        this.setState({ [name]: value });
     };
 
-    // Handle selection and deselection of watches
-    handleWatchSelection = (watchId, price) => {
-        const { selectedWatches } = this.state;
-        const alreadySelected = selectedWatches.some((watch) => watch.id === watchId);
+    handleCheckboxChange = (event) => {
+        const { value, checked } = event.target;
+        let { watchID } = this.state;
 
-        if (alreadySelected) {
-            this.setState({
-                selectedWatches: selectedWatches.filter((watch) => watch.id !== watchId),
-            });
+        if (checked) {
+            // If checked, add the watch ID to the array
+            watchID = [...watchID, value];
         } else {
-            this.setState({
-                selectedWatches: [
-                    ...selectedWatches,
-                    { id: watchId, discountedPrice: price - (price * (this.state.updatedPromotion.discount / 100)) },
-                ],
-            });
+            // If unchecked, remove the watch ID from the array
+            watchID = watchID.filter(id => id !== value);
         }
+
+        this.setState({ watchID });
     };
 
-    // Handle promotion update
-    handleUpdatePromotion = () => {
-        const { updatedPromotion, selectedWatches } = this.state;
-        const { promotionId } = this.props;
+    formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return !isNaN(date) ? date.toISOString().split('T')[0] : '';
+    };
 
-        // Validate that required fields are filled
-        if (!updatedPromotion.promotionName || !updatedPromotion.startDate || !updatedPromotion.endDate || !updatedPromotion.discount) {
-            alert("Please fill in all the required fields.");
-            return;
-        }
+    handleFormSubmit = async (event) => {
+        event.preventDefault();
+        const { promotionName, startDate, endDate, discount, watchID } = this.state;
+        const { promotion, onClose } = this.props;
 
-        const promotionData = {
-            ...updatedPromotion,
-            selectedWatches: selectedWatches.map((watch) => watch.id),
-        };
-
-        axios
-            .put(`/api/updatepromotions/${promotionId}`, promotionData)
-            .then(() => {
-                alert("Promotion updated successfully!");
-                this.props.onClose(); // Close the form after successful update
-            })
-            .catch((error) => {
-                console.error("Error updating promotion:", error);
-                alert("Failed to update promotion. Please try again.");
+        try {
+            await axios.put(`/api/updatepromotions/${promotion._id}`, {
+                promotionName,
+                startDate,
+                endDate,
+                discount,
+                watchID,
             });
+            alert('Promotion updated successfully!');
+            onClose();
+        } catch (error) {
+            console.error('Error updating promotion:', error);
+            alert('Failed to update promotion.');
+        }
     };
 
     render() {
-        const { updatedPromotion, availableWatches, selectedWatches, isLoading } = this.state;
+        const { promotionName, startDate, endDate, discount, watchID, availableWatches } = this.state;
+        const { onClose } = this.props;
 
         return (
             <div className="admin-updatepromotion-overlay">
                 <div className="admin-updatepromotion-form">
                     <h2>Update Promotion</h2>
-                    {/* Render promotion details allowing editing */}
-                    <div className="admin-updatepromotion-form-row">
-                        <label>Promotion Name:</label>
-                        <input
-                            type="text"
-                            name="promotionName"
-                            value={updatedPromotion.promotionName || ""}
-                            onChange={this.handleInputChange}
-                        />
-                    </div>
-                    <div className="admin-updatepromotion-form-row">
-                        <label>Start Date:</label>
-                        <input
-                            type="date"
-                            name="startDate"
-                            value={updatedPromotion.startDate || ""}
-                            onChange={this.handleInputChange}
-                        />
-                    </div>
-                    <div className="admin-updatepromotion-form-row">
-                        <label>End Date:</label>
-                        <input
-                            type="date"
-                            name="endDate"
-                            value={updatedPromotion.endDate || ""}
-                            onChange={this.handleInputChange}
-                        />
-                    </div>
-                    <div className="admin-updatepromotion-form-row">
-                        <label>Discount (%):</label>
-                        <input
-                            type="number"
-                            name="discount"
-                            value={updatedPromotion.discount || ""}
-                            onChange={this.handleInputChange}
-                        />
-                    </div>
+                    <form onSubmit={this.handleFormSubmit}>
+                        <div className="admin-updatepromotion-form-row">
+                            <label>Promotion Name:</label>
+                            <input
+                                type="text"
+                                name="promotionName"
+                                value={promotionName}
+                                onChange={this.handleInputChange}
+                                required
+                            />
+                        </div>
 
-                    {/* Watch Selection */}
-                    <div className="watch-selection">
-                        <h3>Select Watches:</h3>
-                        {isLoading ? (
-                            <p>Loading watches...</p>
-                        ) : (
-                            availableWatches.map((watch) => (
-                                <div key={watch._id} className="watch-item">
+                        <div className="admin-updatepromotion-form-row">
+                            <label>Start Date:</label>
+                            <input
+                                type="date"
+                                name="startDate"
+                                value={this.formatDate(startDate)}
+                                onChange={this.handleInputChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="admin-updatepromotion-form-row">
+                            <label>End Date:</label>
+                            <input
+                                type="date"
+                                name="endDate"
+                                value={this.formatDate(endDate)}
+                                onChange={this.handleInputChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="admin-updatepromotion-form-row">
+                            <label>Discount (%) :</label>
+                            <input
+                                type="number"
+                                name="discount"
+                                min="0"
+                                max="100"
+                                value={discount}
+                                onChange={this.handleInputChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="checkbox-group">
+                            {availableWatches.map((watch) => (
+                                <div key={watch._id} className="checkbox-item">
                                     <input
                                         type="checkbox"
-                                        checked={selectedWatches.some((sel) => sel.id === watch._id)}
-                                        onChange={() => this.handleWatchSelection(watch._id, watch.price)}
+                                        id={`watch-${watch._id}`}
+                                        value={watch._id}
+                                        checked={watchID.includes(watch._id)} // Simplified check
+                                        onChange={this.handleCheckboxChange}
                                     />
-                                    <label>
-                                        {watch.name} - Price: ${watch.price}
-                                    </label>
+                                    <label htmlFor={`watch-${watch._id}`}>{watch.name}</label>
                                 </div>
-                            ))
-                        )}
-                    </div>
+                            ))}
+                        </div>
 
-                    <div className="admin-updatepromotion-form-actions">
-                        <button onClick={this.handleUpdatePromotion}>Update Promotion</button>
-                        <button onClick={this.props.onClose}>Cancel</button>
-                    </div>
+                        <div className="admin-updatepromotion-form-actions">
+                            <button
+                                className="admin-updatepromotion-update-confirm-btn"
+                                type="submit"
+                            >
+                                Update
+                            </button>
+                            <button
+                                className="admin-updatepromotion-cancel-btn"
+                                type="button"
+                                onClick={onClose}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         );
     }
 }
+
 
 export default UpdatePromotion;

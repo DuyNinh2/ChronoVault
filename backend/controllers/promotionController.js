@@ -70,25 +70,32 @@ exports.addPromotion = async (req, res) => {
 };
 
 exports.updatePromotion = async (req, res) => {
-    const { id } = req.params; // Lấy ID khuyến mãi từ URL
-    const { promotionName, startDate, endDate, discount, selectedWatches } = req.body;
-
     try {
-        const updatedPromotion = await Promotion.findByIdAndUpdate(
-            id,
-            { promotionName, startDate, endDate, discount, selectedWatches },
-            { new: true } // Trả về tài liệu đã cập nhật
-        );
+        const { id } = req.params;
 
-        if (!updatedPromotion) {
-            return res.status(404).json({ message: "Promotion not found" });
+        // Lấy thông tin khuyến mãi hiện tại
+        const currentPromotion = await Promotion.findById(id);
+        if (!currentPromotion) {
+            return res.status(404).json({ message: 'Khuyến mãi không tồn tại' });
         }
 
-        res.status(200).json(updatedPromotion);
+        const { promotionName, startDate, endDate, discount, watchID } = req.body;
+
+        // Cập nhật khuyến mãi
+        currentPromotion.promotionName = promotionName || currentPromotion.promotionName;
+        currentPromotion.startDate = startDate || currentPromotion.startDate;
+        currentPromotion.endDate = endDate || currentPromotion.endDate;
+        currentPromotion.discount = discount || currentPromotion.discount;
+        currentPromotion.watchID = watchID || currentPromotion.watchID;
+
+        const updatedPromotion = await currentPromotion.save();
+
+        res.status(200).json({ message: 'Cập nhật thành công', promotion: updatedPromotion });
     } catch (error) {
-        res.status(500).json({ message: "Error updating promotion", error });
+        res.status(500).json({ message: 'Lỗi hệ thống', error: error.message });
     }
 };
+
 
 exports.deletePromotion = async (req, res) => {
     const { id } = req.params;
