@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import Favourites from '../components/Favourites';
 import Orders from "../components/Orders";
+import Setting from "../components/Setting";
 import { getCurrentUsername } from '../services/authService';
 import "../styles/Profile.scss";
 
@@ -71,8 +72,7 @@ const Profile = () => {
       </div>
 
       <div ref={settingsRef} className="section">
-        <h2>Settings</h2>
-        <p>Cài đặt tài khoản của bạn sẽ hiển thị ở đây.</p>
+        <Setting/>
       </div>
     </div>
   );

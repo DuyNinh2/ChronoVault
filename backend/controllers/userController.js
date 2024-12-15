@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-// const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
 // Register a new user
@@ -167,4 +167,136 @@ exports.getWishlist = async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
   };
+
+  // Get user settings
+  exports.getUserSettings = async (req, res) => {
+    try {
+      const userID = req.params.id;
+      const user = await User.findById(userID);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const userSettings = {
+        email: user.email,
+        phoneNumber: user.phone,
+        dateOfBirth: user.dateOfBirth,
+        address: user.address || [], // Trả về toàn bộ danh sách địa chỉ
+      };
+  
+      res.status(200).json(userSettings);
+    } catch (error) {
+      console.error('Error fetching user settings:', error);
+      res.status(500).json({ message: 'Failed to fetch user settings' });
+    }
+  };
+  
+  
+  // Update user settings
+  exports.updateUserSettings = async (req, res) => {
+    try {
+      const userID = req.params.id;
+      const { phoneNumber, dateOfBirth, address } = req.body;
+  
+      const updatedUser = await User.findByIdAndUpdate(
+        userID,
+        {
+          phone: phoneNumber,
+          dateOfBirth,
+          address: address, // Lưu toàn bộ danh sách địa chỉ
+        },
+        { new: true }
+      );
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.status(200).json({ message: 'Settings updated successfully', updatedUser });
+    } catch (error) {
+      console.error('Error updating user settings:', error);
+      res.status(500).json({ message: 'Failed to update user settings' });
+    }
+  };
+  
+
+  exports.addAddress = async (req, res) => {
+    const { userID } = req.params;
+    const { street, city, district, country } = req.body;
+  
+    if (!street || !city || !district || !country) {
+      return res.status(400).json({ message: "All address fields are required." });
+    }
+  
+    try {
+      const user = await User.findById(userID);
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+  
+      const newAddress = { street, city, district, country };
+      user.address.push(newAddress);
+  
+      await user.save();
+  
+      res.status(200).json({ message: "Address added successfully.", address: user.address });
+    } catch (error) {
+      console.error("Error adding address:", error);
+      res.status(500).json({ message: "Failed to add address.", error });
+    }
+  };
+
+  exports.deleteAddress = async (req, res) => {
+    try {
+      const { userID, addressID } = req.params;
+  
+      // Tìm user và cập nhật mảng address bằng cách loại bỏ địa chỉ
+      const updatedUser = await User.findByIdAndUpdate(
+        userID,
+        { $pull: { address: { _id: addressID } } }, // Xóa địa chỉ dựa trên _id
+        { new: true }
+      );
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      res.status(200).json({ message: "Address deleted successfully", updatedUser });
+    } catch (error) {
+      console.error("Error deleting address:", error);
+      res.status(500).json({ message: "Failed to delete address" });
+    }
+  };
+
+  exports.changePassword = async (req, res) => {
+    try {
+      const { userID } = req.params;
+      const { currentPassword, newPassword } = req.body;
+  
+      // 1. Tìm user từ database
+      const user = await User.findById(userID);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // 2. Kiểm tra Current Password
+      if (user.password !== currentPassword) {
+        return res.status(400).json({ message: "Current password is incorrect" });
+      }
+  
+      // 3. Kiểm tra New Password có trùng Current Password không
+      if (currentPassword === newPassword) {
+        return res.status(400).json({ message: "New password cannot be the same as current password" });
+      }
+  
+      user.password = newPassword;
+      await user.save();
+  
+      res.status(200).json({ message: "Password changed successfully" });
+    } catch (error) {
+      console.error("Error changing password:", error);
+      res.status(500).json({ message: "Failed to change password" });
+    }
+  };
+  
 
