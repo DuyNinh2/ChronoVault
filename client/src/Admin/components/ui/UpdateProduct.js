@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import '../../styles/UpdateProduct.scss';
 
 class UpdateProduct extends Component {
@@ -11,8 +12,8 @@ class UpdateProduct extends Component {
                 price: props.product.price,
                 stock_quantity: props.product.stock_quantity,
                 description: props.product.description,
-                brandID: props.product.brandID || '', // Chỉnh đúng key
-                category_id: props.product.category_id || '', // Chỉnh đúng key
+                brandID: props.product.brand_id || '',
+                category_id: props.product.category_id || '',
                 newBrand: '',
                 newCategory: '',
                 images: props.product.images || [],
@@ -22,19 +23,95 @@ class UpdateProduct extends Component {
         };
     }
 
+    componentDidMount() {
+        this.fetchProducts();
+        this.fetchBrands();
+        this.fetchCategories();
+    }
+    fetchProducts = async () => {
+        try {
+            const response = await axios.get('/api/watches');
+            this.setState({ products: response.data });
+            // Lọc sản phẩm theo trạng thái 'isDeleted'
+            const filteredProducts = this.state.showHidden
+                ? response.data
+                : response.data.filter(product => !product.isDeleted);
+            this.setState({ products: filteredProducts });
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            alert("Error fetching products: " + error.response?.data?.message || "Unknown error");
+        }
+    };
+    fetchBrands = async () => {
+        try {
+            const response = await axios.get('/api/brands');
+            this.setState({ brands: response.data });
+        } catch (error) {
+            console.error("Error fetching brands:", error);
+            alert("Error fetching brands: " + error.response?.data?.message || "Unknown error");
+        }
+    };
+
+    fetchCategories = async () => {
+        try {
+            const response = await axios.get('/api/categories');
+            this.setState({ categories: response.data });
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+            alert("Error fetching categories: " + error.response?.data?.message || "Unknown error");
+        }
+    };
     handleInputChange = (e) => {
         const { name, value, files } = e.target;
         this.setState(prevState => ({
             updatedProduct: {
                 ...prevState.updatedProduct,
-                [name]: files ? files : value,
+                [name]: files ? files : value,  // Dữ liệu dạng tệp sẽ được lưu vào mảng
             }
         }));
     };
 
-    handleUpdateConfirm = () => {
-        this.props.onUpdate(this.state.updatedProduct);
+
+    handleUpdateConfirm = async () => {
+        const { updatedProduct } = this.state;
+
+        if (!updatedProduct.name || !updatedProduct.price || !updatedProduct.stock_quantity) {
+            alert("Please fill out all required fields.");
+            return;
+        }
+
+        // const confirmUpdate = window.confirm("Are you sure you want to update this product?");
+        // if (!confirmUpdate) return;
+
+        try {
+            const formData = new FormData();
+
+            // Append các trường cập nhật
+            Object.keys(updatedProduct).forEach(key => {
+                if (key === 'images' && updatedProduct[key]?.length > 0) {
+                    updatedProduct[key].forEach(image => formData.append('images', image));
+                } else {
+                    formData.append(key, updatedProduct[key]);
+                }
+            });
+
+            const response = await axios.put(`/api/updatewatch/${updatedProduct}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            if (response.status === 200) {
+                alert('Product updated successfully!');
+                this.fetchProducts();
+                this.handleUpdateCancel();
+            }
+        } catch (error) {
+            console.error("Error updating product:", error);
+            alert(
+                `Error updating product: ${error.response?.data?.message || error.message || "Unknown error"}`
+            );
+        }
     };
+
 
     handleCancel = () => {
         this.props.onCancel(); // Giả sử bạn có một hàm onCancel trong props để hủy thay đổi
@@ -103,15 +180,14 @@ class UpdateProduct extends Component {
                         </div>
 
                         {/* Brand */}
-                        {/* <div className="form-group">
+                        <div className="form-group">
                             <label htmlFor="brandID">Brand</label>
                             <select
-                                id="brandID"
                                 name="brandID"
                                 value={updatedProduct.brandID}
                                 onChange={this.handleInputChange}
                             >
-                                <option value="select">Select an existing brand</option>
+                                <option value="">Select an existing brand</option>
                                 {brands.map((brand) => (
                                     <option key={brand._id} value={brand._id}>
                                         {brand.name}
@@ -127,10 +203,10 @@ class UpdateProduct extends Component {
                                     onChange={this.handleInputChange}
                                 />
                             )}
-                        </div> */}
+                        </div>
 
                         {/* Category */}
-                        {/* <div className="form-group">
+                        <div className="form-group">
                             <label htmlFor="category_id">Category</label>
                             <select
                                 id="category_id"
@@ -154,7 +230,7 @@ class UpdateProduct extends Component {
                                     onChange={this.handleInputChange}
                                 />
                             )}
-                        </div> */}
+                        </div>
 
                         {/* Upload hình ảnh */}
                         <div className="form-group">
@@ -180,7 +256,7 @@ class UpdateProduct extends Component {
 
                         {/* Nút xác nhận và hủy */}
                         <div className="form-buttons">
-                            <button type="submit" className="btn btn-primary">
+                            <button type="submit" className="btn btn-primary" onClick={this.handleUpdateConfirm}>
                                 Update Product
                             </button>
                             <button

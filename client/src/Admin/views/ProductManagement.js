@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import '../../Admin/styles/ProductManagement.scss';
-import UpdateProduct from '../../Admin/components/ui/UpdateProduct';
 
 class ProductManagement extends Component {
     state = {
@@ -10,6 +9,7 @@ class ProductManagement extends Component {
         brands: [],
         categories: [],
         showAddForm: false,
+        showUpdateForm: false,
         productToUpdate: null,
         showHidden: false,
         newProduct: {
@@ -168,57 +168,89 @@ class ProductManagement extends Component {
     handleUpdateProduct = (product) => {
         this.setState({
             showUpdateForm: true,
-            productToUpdate: product,
-            updatedProduct: { ...product }  // Đặt giá trị ban đầu của sản phẩm vào form cập nhật
+            updatedProduct: { ...product }
         });
     };
 
-    // Phương thức để cập nhật thông tin sản phẩm
-    handleUpdateConfirm = async () => {
-        const { updatedProduct } = this.state;
+    handleUpdateConfirm = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('name', this.state.updatedProduct.name);
+        formData.append('price', this.state.updatedProduct.price);
+        formData.append('stock_quantity', this.state.updatedProduct.stock_quantity);
+        formData.append('description', this.state.updatedProduct.description);
+        formData.append('brandID', this.state.updatedProduct.brandID);
+        formData.append('category_id', this.state.updatedProduct.category_id);
+        // Thêm các hình ảnh vào formData nếu có
+        this.state.updatedProduct.images.forEach((image) => {
+            formData.append('images', image.file);
+        });
 
-        if (!updatedProduct.name || !updatedProduct.price || !updatedProduct.stock_quantity) {
-            alert("Please fill out all required fields.");
-            return;
-        }
-
-        const confirmUpdate = window.confirm("Are you sure you want to update this product?");
-        if (!confirmUpdate) return;
-
+        // Gửi PUT request tới backend
         try {
-            const formData = new FormData();
-
-            // Append các trường cập nhật
-            Object.keys(updatedProduct).forEach(key => {
-                if (key === 'images' && updatedProduct[key]?.length > 0) {
-                    updatedProduct[key].forEach(image => formData.append('images', image));
-                } else {
-                    formData.append(key, updatedProduct[key]);
-                }
-            });
-
-            const response = await axios.put(`/api/updatewatch/${updatedProduct._id}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+            const response = await axios.put(`/api/updatewatch/${this.state.updatedProduct._id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
 
             if (response.status === 200) {
-                alert('Product updated successfully!');
+                alert('Product updated successfully');
+                this.setState({ showUpdateForm: false });
                 this.fetchProducts();
-                this.handleUpdateCancel();
             }
         } catch (error) {
-            console.error("Error updating product:", error);
-            alert("Error updating product: " + (error.response?.data?.message || error.message || "Unknown error"));
+            alert('Please select both Brand and Category.');
         }
     };
 
-    // Phương thức hủy bỏ form cập nhật
-    handleUpdateCancel = () => {
+    handleBrandChange = (e) => {
         this.setState({
-            showUpdateForm: false,
-            productToUpdate: null,
-            updatedProduct: { name: '', price: '', stock_quantity: '', images: [], brandID: '', category_id: '', description: '' }
+            updatedProduct: {
+                ...this.state.updatedProduct,
+                brandID: e.target.value
+            }
         });
+    };
+
+    handleCategoryChange = (e) => {
+        this.setState({
+            updatedProduct: {
+                ...this.state.updatedProduct,
+                category_id: e.target.value
+            }
+        });
+    };
+
+    handleInputChangeUpdate = (e) => {
+        const { name, value, files } = e.target;
+
+        // Nếu trường là hình ảnh
+        if (name === "images") {
+            const newImages = Array.from(files).map(file => ({
+                file: file,
+                image_url: URL.createObjectURL(file),
+                alt_text: file.name
+            }));
+
+            this.setState(prevState => ({
+                updatedProduct: {
+                    ...prevState.updatedProduct,
+                    images: [...prevState.updatedProduct.images, ...newImages]
+                }
+            }));
+        } else {
+            this.setState(prevState => ({
+                updatedProduct: {
+                    ...prevState.updatedProduct,
+                    [name]: value
+                }
+            }));
+        }
+    };
+
+    handleUpdateCancel = () => {
+        this.setState({ showUpdateForm: false });
     };
 
     handleDeleteProduct = async (productId, isDeleted) => {
@@ -245,8 +277,9 @@ class ProductManagement extends Component {
         });
     };
 
+
     render() {
-        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory, showUpdateForm, updatedProduct, currentPage, productsPerPage, productToUpdate, showHidden } = this.state;
+        const { searchTerm, products, brands, categories, showAddForm, newProduct, newBrand, newCategory, showUpdateForm, currentPage, productsPerPage, updatedProduct, showHidden } = this.state;
 
         const filteredProducts = products.filter(product =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -337,13 +370,135 @@ class ProductManagement extends Component {
                     </button>
                 </div>
                 {showUpdateForm && updatedProduct && (
-                    <UpdateProduct
-                        product={updatedProduct}
-                        onDelete={this.handleUpdateProduct}
-                        onCancel={() => this.setState({ showUpdateForm: false, productToUpdate: null })}
-                    />
-                )}
+                    <div className="overlay">
+                        <div className="update-product-form">
+                            <h2>Update Product</h2>
+                            <form onSubmit={this.handleUpdateConfirm}>
+                                {/* Tên sản phẩm */}
+                                <div className="form-group">
+                                    <label htmlFor="name">Product Name</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={updatedProduct.name}
+                                        onChange={this.handleInputChangeUpdate}
+                                        required
+                                    />
+                                </div>
 
+                                {/* Giá */}
+                                <div className="form-group">
+                                    <label htmlFor="price">Price</label>
+                                    <input
+                                        type="number"
+                                        id="price"
+                                        name="price"
+                                        value={updatedProduct.price}
+                                        onChange={this.handleInputChangeUpdate}
+                                        required
+                                    />
+                                </div>
+
+                                {/* Số lượng tồn kho */}
+                                <div className="form-group">
+                                    <label htmlFor="stock_quantity">Stock Quantity</label>
+                                    <input
+                                        type="number"
+                                        id="stock_quantity"
+                                        name="stock_quantity"
+                                        value={updatedProduct.stock_quantity}
+                                        onChange={this.handleInputChangeUpdate}
+                                        required
+                                    />
+                                </div>
+
+                                {/* Mô tả */}
+                                <div className="form-group">
+                                    <label htmlFor="description">Description</label>
+                                    <input
+                                        type="text"
+                                        id="description"
+                                        name="description"
+                                        value={updatedProduct.description}
+                                        onChange={this.handleInputChangeUpdate}
+                                    />
+                                </div>
+                                {/* Brand */}
+                                <div className="form-group">
+                                    <label htmlFor="brandID">Brand</label>
+                                    <select
+                                        id="brandID"
+                                        name="brandID"
+                                        value={updatedProduct.brandID || ''}
+                                        onChange={this.handleInputChangeUpdate}
+                                    >
+                                        <option value="">Select an existing brand</option>
+                                        {brands.map((brand) => (
+                                            <option key={brand._id} value={brand._id}>
+                                                {brand.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Category */}
+                                <div className="form-group">
+                                    <label htmlFor="category_id">Category</label>
+                                    <select
+                                        id="category_id"
+                                        name="category_id"
+                                        value={updatedProduct.category_id || ''}
+                                        onChange={this.handleInputChangeUpdate}
+                                    >
+                                        <option value="">Select an existing category</option>
+                                        {categories.map((category) => (
+                                            <option key={category._id} value={category._id}>
+                                                {category.name}
+                                            </option>
+                                        ))}
+                                    </select>
+
+                                </div>
+                                {/* Upload hình ảnh */}
+                                <div className="form-group">
+                                    <label htmlFor="images">Upload Images</label>
+                                    <input
+                                        type="file"
+                                        id="images"
+                                        name="images"
+                                        multiple
+                                        onChange={this.handleInputChangeUpdate}
+                                    />
+                                    <div className="preview-images">
+                                        {updatedProduct.images.map((img, index) => (
+                                            <img
+                                                key={index}
+                                                src={img.image_url}
+                                                alt={img.alt_text}
+                                                style={{ width: '50px', height: '50px', margin: '5px' }}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Nút xác nhận và hủy */}
+                                <div className="form-buttons">
+                                    <button type="submit" className="btn btn-primary">
+                                        Update Product
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={this.handleUpdateCancel}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
                 {showAddForm && (
                     <div className="overlay">
                         <div className="add-product-form">
