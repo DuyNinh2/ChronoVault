@@ -17,8 +17,8 @@ const Navbar = ({ staffInfo, onLogout }) => {
                 </span>
                 {showDropdown && (
                     <div className="dropdown-menu">
-                        <p>Username: {staffInfo?.name}</p>
-                        <p>Email: {staffInfo?.email}</p>
+                        {/* <p>Username: {staffInfo?.name}</p>
+                        <p>Email: {staffInfo?.email}</p> */}
                         <button onClick={onLogout} className="logout-btn">Đăng xuất</button>
                     </div>
                 )}

@@ -63,8 +63,8 @@ function Header() {
             pathname: '/products',
             state: { filter: 'new-arrivals' }
           }}>New Arrivals</Link>
-
-          <Link to='/brands'>Brands</Link>
+          {/* 
+          <Link to='/brands'>Brands</Link> */}
           <Link to='/about' onClick={handleAboutClick}>About</Link>
         </div>
         <div className="h-actions">
