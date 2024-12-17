@@ -63,12 +63,12 @@ const Orders = () => {
                   ) : order.status}
                 </span>
               </p>
-              <button
+              {/* <button
                 className={`vote-button ${order.status === "Completed" ? "active" : ""}`}
                 disabled={order.status !== "Completed"}
               >
                 {order.status === "Completed" ? "Vote" : "Vote"}
-              </button>
+              </button> */}
             </div>
           </div>
         ))

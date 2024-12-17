@@ -19,6 +19,9 @@ const CheckoutPage = () => {
   const [selectedPayment, setSelectedPayment] = useState('');
   const [street, setStreet] = useState('');
   const [paypalPaymentComplete, setPaypalPaymentComplete] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+
 
 
   const navigate = useNavigate();
@@ -203,6 +206,41 @@ const CheckoutPage = () => {
                 ))}
               </select>
             </div>
+            <button
+              type="button"
+              className="change-address-btn"
+              onClick={() => setShowModal(true)}
+            >
+              Change Address
+            </button>
+
+            {showModal && (
+              <div className="modal-overlay">
+                <div className="modal-content">
+                  <h3>Select Address</h3>
+                  {userData.address.map((addr, index) => (
+                    <div key={index} className="address-option">
+                      <p>{addr.street}, {addr.district}, {addr.city}</p>
+                      <button
+                        type="button"
+                        className="select-but"
+                        onClick={() => {
+                          setStreet(addr.street);
+                          setSelectedCity(addr.city);
+                          setSelectedDistrict(addr.district);
+                          setShowModal(false);
+                        }}
+                      >
+                        Select
+                      </button>
+                    </div>
+                  ))}
+                  <button className="close-modal" onClick={() => setShowModal(false)}>
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
             <h3>What's your contact information?</h3>
             <input type="email" placeholder="Email" defaultValue={userData.email} readOnly />
             <p className="note">A confirmation email will be sent after checkout.</p>
